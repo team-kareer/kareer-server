@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HandlerMethodValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public BaseErrorResponse  HandlerMethodValidationException(HandlerMethodValidationException e){
+    public BaseErrorResponse handlerMethodValidationException(HandlerMethodValidationException e){
         String message = e.getAllErrors().stream()
                 .map(MessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining());
