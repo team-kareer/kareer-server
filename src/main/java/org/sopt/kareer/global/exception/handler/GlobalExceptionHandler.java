@@ -1,5 +1,6 @@
 package org.sopt.kareer.global.exception.handler;
 
+import lombok.extern.slf4j.Slf4j;
 import org.sopt.kareer.global.exception.customexception.CustomException;
 import org.sopt.kareer.global.response.BaseErrorResponse;
 import org.springframework.beans.TypeMismatchException;
@@ -22,13 +23,15 @@ import java.util.stream.Collectors;
 
 import static org.sopt.kareer.global.exception.errorcode.GlobalErrorCode.*;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public BaseErrorResponse handleInternalServerError(Exception e) {
-        return BaseErrorResponse.of(INTERNAL_SERVER_ERROR, e.getMessage());
+        log.error(e.getMessage(), e);
+        return BaseErrorResponse.of(INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(HandlerMethodValidationException.class)
