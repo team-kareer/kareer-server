@@ -25,10 +25,11 @@ public class Member extends BaseEntity {
     private String profileImageUrl;
 
     @Column(nullable = false)
-    private String birthDate;
-    
+    private LocalDate birthDate;
+
     @Column(nullable = false)
-    private String country;
+    @Enumerated(EnumType.STRING)
+    private Country country;
 
     @Column(nullable = false)
     private String primaryMajor;
