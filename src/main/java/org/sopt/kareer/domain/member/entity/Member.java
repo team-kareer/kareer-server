@@ -22,10 +22,11 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
+    private String profileImageUrl;
+
     @Column(nullable = false)
     private String birthDate;
-
-    // 추후에 enum 사용 가능
+    
     @Column(nullable = false)
     private String country;
 
