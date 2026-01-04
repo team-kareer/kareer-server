@@ -46,3 +46,7 @@ reviews:
 # 채팅 기능
 chat:
   auto_reply: false
+
+issue_enrichment:
+  auto_enrich:
+    enabled: false
