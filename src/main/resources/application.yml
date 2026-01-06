@@ -1,0 +1,90 @@
+spring:
+  application:
+    name: kareer
+  profiles:
+    group:
+      local: local-db, local-port, common
+      dev: dev-db, dev-port, common
+      prod: prod-db, prod-port, common
+    active: ${SPRING_ACTIVE_PROFILE}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: common
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        highlight_sql: true
+    open-in-view: false
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local-db
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: ${LOCAL_DATASOURCE_URL}
+    username: ${LOCAL_DATASOURCE_USERNAME}
+    password: ${LOCAL_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local-port
+server:
+  port: 8080
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev-db
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: ${DEV_DATASOURCE_URL}
+    username: ${DEV_DATASOURCE_USERNAME}
+    password: ${DEV_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev-port
+server:
+  port: 8081
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod-db
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: ${PROD_DATASOURCE_URL}
+    username: ${PROD_DATASOURCE_USERNAME}
+    password: ${PROD_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod-port
+server:
+  port: 8082
