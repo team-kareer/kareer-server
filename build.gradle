@@ -26,7 +26,6 @@ repositories {
 
 dependencies {
     // h2
-    implementation 'org.springframework.boot:spring-boot-h2console'
     runtimeOnly 'com.h2database:h2'
 
     // Spring Data Jpa
@@ -38,7 +37,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
 
     // Spring Boot
-    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 
     // Lombok
