@@ -46,16 +46,6 @@ public class Member extends BaseEntity {
 
     private String personalBackground;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private VisaType visaType;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private VisaStatus visaStatus;
-
-    private LocalDate visaExpiredAt;
-
     private String university;
 
     @Enumerated(EnumType.STRING)
