@@ -3,9 +3,9 @@ spring:
     name: kareer
   profiles:
     group:
-      local: local-db, local-port, common
-      dev: dev-db, dev-port, common
-      prod: prod-db, prod-port, common
+      local: local-db, local-port, local-cors, common
+      dev: dev-db, dev-port, dev-cors, common
+      prod: prod-db, prod-port, prod-cors, common
     active: ${SPRING_ACTIVE_PROFILE}
 
 ---
@@ -49,6 +49,16 @@ server:
 spring:
   config:
     activate:
+      on-profile: local-cors
+cors:
+  allowed-origins:
+    - ${LOCAL_CORS_ALLOWED_ORIGIN}
+  allow-credentials: false
+
+---
+spring:
+  config:
+    activate:
       on-profile: dev-db
   jpa:
     hibernate:
@@ -71,6 +81,16 @@ server:
 spring:
   config:
     activate:
+      on-profile: dev-cors
+cors:
+  allowed-origins:
+    - ${DEV_CORS_ALLOWED_ORIGIN}
+  allow-credentials: false
+
+---
+spring:
+  config:
+    activate:
       on-profile: prod-db
   jpa:
     hibernate:
@@ -88,3 +108,13 @@ spring:
       on-profile: prod-port
 server:
   port: 8082
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod-cors
+cors:
+  allowed-origins:
+    - ${PROD_CORS_ALLOWED_ORIGIN}
+  allow-credentials: true
