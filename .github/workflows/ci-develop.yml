@@ -1,0 +1,84 @@
+name: ci-develop
+on:
+  pull_request:
+    branches: [develop]
+    types: [opened, synchronize, reopened]
+    paths-ignore:
+      - '**/*.md'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+
+    steps:
+      # 1. 코드 체크아웃
+      - name: 🔄 Code Checkout
+        uses: actions/checkout@v4
+
+      # 2. JDK 17 설정
+      - name: ⛏️ Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # 3. Gradle 설정
+      - name: 🛠️ Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      # 4. gradlew 실행 권한 부여
+      - name: 🗣️ Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # 5. 빌드
+      - name: 🔆 Build
+        run: ./gradlew clean build -x test
+
+      # 6. Discord 알림
+      - name: ✉️ Send CI Result to Discord
+        if: always()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          JOB_STATUS: ${{ job.status }}
+          ACTOR: ${{ github.actor }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          if [ "$JOB_STATUS" = "success" ]; then
+            STATUS_EMOJI="✅"
+            STATUS_TEXT="성공"
+            COLOR=3066993
+          else
+            STATUS_EMOJI="❌"
+            STATUS_TEXT="실패"
+            COLOR=15158332
+          fi
+          
+          PR_URL="https://github.com/$REPO/pull/$PR_NUMBER"
+          DEBUG_URL="https://github.com/$REPO/actions/runs/$RUN_ID"
+          
+          payload=$(jq -n \
+            --arg title "$STATUS_EMOJI Develop CI $STATUS_TEXT" \
+            --arg desc "**PR:** [$PR_TITLE]($PR_URL)\n👤 **담당자:** $ACTOR\n🔍 **로그:** [Actions 보기]($DEBUG_URL)" \
+            --argjson color "$COLOR" \
+            '{
+              embeds: [
+                {
+                  title: $title,
+                  description: $desc,
+                  color: $color
+                }
+              ]
+            }')
+          
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d "$payload" \
+            "$DISCORD_WEBHOOK"
