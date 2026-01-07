@@ -19,7 +19,7 @@ public class MemberVisa extends BaseEntity {
     @Column(name = "member_visa_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
