@@ -1,7 +1,6 @@
-package org.sopt.kareer.global.security.config;
+package org.sopt.kareer.global.config.security;
 
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.global.security.properties.CorsProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

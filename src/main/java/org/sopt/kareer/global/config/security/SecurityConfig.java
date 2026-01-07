@@ -1,8 +1,8 @@
-package org.sopt.kareer.global.security.config;
+package org.sopt.kareer.global.config.security;
 
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.global.security.handler.CustomAccessDeniedHandler;
-import org.sopt.kareer.global.security.handler.CustomAuthenticationEntryPoint;
+import org.sopt.kareer.global.jwt.handler.CustomAccessDeniedHandler;
+import org.sopt.kareer.global.jwt.handler.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;

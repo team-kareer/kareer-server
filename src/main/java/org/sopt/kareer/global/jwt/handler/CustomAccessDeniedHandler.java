@@ -1,4 +1,4 @@
-package org.sopt.kareer.global.security.handler;
+package org.sopt.kareer.global.jwt.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,27 +8,27 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.kareer.global.response.BaseErrorResponse;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import static org.sopt.kareer.global.exception.errorcode.GlobalErrorCode.UNAUTHORIZED;
+import static org.sopt.kareer.global.exception.errorcode.GlobalErrorCode.FORBIDDEN;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     private final ObjectMapper objectMapper;
 
     @Override
-    public void commence(HttpServletRequest request,
-                         HttpServletResponse response,
-                         AuthenticationException authException) throws IOException {
-        log.debug("Unauthorized access blocked. path={}, message={}", request.getRequestURI(), authException.getMessage());
-        BaseErrorResponse errorResponse = BaseErrorResponse.of(UNAUTHORIZED);
+    public void handle(HttpServletRequest request,
+                       HttpServletResponse response,
+                       AccessDeniedException accessDeniedException) throws IOException {
+        log.debug("Forbidden access blocked. path={}, message={}", request.getRequestURI(), accessDeniedException.getMessage());
+        BaseErrorResponse errorResponse = BaseErrorResponse.of(FORBIDDEN);
         response.setStatus(errorResponse.getCode());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());

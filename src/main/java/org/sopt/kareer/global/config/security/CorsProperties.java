@@ -1,4 +1,4 @@
-package org.sopt.kareer.global.security.properties;
+package org.sopt.kareer.global.config.security;
 
 import lombok.Getter;
 import lombok.Setter;
