@@ -3,9 +3,11 @@ package org.sopt.kareer.global.security.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.kareer.global.response.BaseErrorResponse;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
@@ -28,7 +30,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         log.debug("Forbidden access blocked. path={}, message={}", request.getRequestURI(), accessDeniedException.getMessage());
         BaseErrorResponse errorResponse = BaseErrorResponse.of(FORBIDDEN);
         response.setStatus(errorResponse.getCode());
-        response.setContentType("application/json;charset=UTF-8");
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
 }
