@@ -79,7 +79,7 @@ jobs:
                   fields: [
                     {
                       name: "📋 Pull Request",
-                      value: "[" + $pr_title + "](" + $pr_url + ")",
+                      value: "[\($pr_title)](\($pr_url))",
                       inline: false
                     },
                     {
@@ -89,7 +89,7 @@ jobs:
                     },
                     {
                       name: "🔍 로그",
-                      value: "[Actions 로그 보기](" + $debug_url + ")",
+                      value: "[Actions 로그 보기](\($debug_url))",
                       inline: false
                     }
                   ]
