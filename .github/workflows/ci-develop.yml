@@ -64,18 +64,35 @@ jobs:
           PR_URL="https://github.com/$REPO/pull/$PR_NUMBER"
           DEBUG_URL="https://github.com/$REPO/actions/runs/$RUN_ID"
           
-          DESC=$'**[PR]** ['$PR_TITLE']('$PR_URL')\n👤 **담당자:** '$ACTOR$'\n🔍 **로그:** [Actions 로그 보기]('$DEBUG_URL')'
-          
           payload=$(jq -n \
             --arg title "$STATUS_EMOJI Develop CI $STATUS_TEXT" \
-            --arg desc "$DESC" \
+            --arg pr_title "$PR_TITLE" \
+            --arg pr_url "$PR_URL" \
+            --arg actor "$ACTOR" \
+            --arg debug_url "$DEBUG_URL" \
             --argjson color "$COLOR" \
             '{
               embeds: [
                 {
                   title: $title,
-                  description: $desc,
-                  color: $color
+                  color: $color,
+                  fields: [
+                    {
+                      name: "📋 Pull Request",
+                      value: "[" + $pr_title + "](" + $pr_url + ")",
+                      inline: false
+                    },
+                    {
+                      name: "👤 담당자",
+                      value: $actor,
+                      inline: false
+                    },
+                    {
+                      name: "🔍 로그",
+                      value: "[Actions 로그 보기](" + $debug_url + ")",
+                      inline: false
+                    }
+                  ]
                 }
               ]
             }')
