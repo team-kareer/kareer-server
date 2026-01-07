@@ -66,7 +66,9 @@ jobs:
           
           payload=$(jq -n \
             --arg title "$STATUS_EMOJI Develop CI $STATUS_TEXT" \
-            --arg desc "**PR:** [$PR_TITLE]($PR_URL)\n👤 **담당자:** $ACTOR\n🔍 **로그:** [Actions 보기]($DEBUG_URL)" \
+            --arg desc "**[PR]** [$PR_TITLE]($PR_URL)\
+          👤 **담당자:** $ACTOR
+          🔍 **로그:** [Actions 로그 보기]($DEBUG_URL)" \
             --argjson color "$COLOR" \
             '{
               embeds: [
