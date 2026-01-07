@@ -52,7 +52,7 @@ spring:
       on-profile: local-cors
 cors:
   allowed-origins:
-    - "*"
+    - ${LOCAL_CORS_ALLOWED_ORIGINS}
 
 ---
 spring:
@@ -83,7 +83,7 @@ spring:
       on-profile: dev-cors
 cors:
   allowed-origins:
-    - "*"
+    - ${DEV_CORS_ALLOWED_ORIGINS}
 
 ---
 spring:
@@ -114,4 +114,4 @@ spring:
       on-profile: prod-cors
 cors:
   allowed-origins:
-    - https://prod.example.com
+    - ${PROD_CORS_ALLOWED_ORIGINS}
