@@ -53,8 +53,12 @@ dependencies {
     // Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
 
-    //Validation
+    // Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // Selenium
+    implementation 'org.seleniumhq.selenium:selenium-java:4.20.0'
+
 
 }
 
