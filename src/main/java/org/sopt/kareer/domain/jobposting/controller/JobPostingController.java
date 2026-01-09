@@ -21,7 +21,7 @@ public class JobPostingController {
     @GetMapping("crawl")
     public ResponseEntity<BaseResponse<JobPostingCrawlListResponse>> crawlJobPostings(@RequestParam(defaultValue = "5") int limit) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(BaseResponse.ok(jobPostingCrawler.crawlJobPostingList(limit), "채용 공고 크롤링에 성공하였습니다."));
+                .body(BaseResponse.ok(jobPostingCrawler.crawlJobPostingForTest(limit), "채용 공고 크롤링에 성공하였습니다."));
     }
 
 }

@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static org.sopt.kareer.domain.jobposting.constant.JobPostingCrawlConstants.*;
+import static org.sopt.kareer.domain.jobposting.util.CrawledTextUtil.parseRecruitId;
 
 
 @Slf4j
@@ -61,23 +62,34 @@ public class JobPostingCrawler {
 
             List<JobPostingCrawlResponse> out = new ArrayList<>();
 
-            for (int i = 0; i < targets.size(); i++) {
+            for(int i = 0; i < targets.size(); i++) {
                 String url = targets.get(i);
-                Long recruitId = CrawledTextUtil.parseRecruitId(url);
+                Long recruitId = parseRecruitId(url);
+
+                if (recruitId == null) {
+                    log.warn("Skip - recruitId parse failed. url={}", url);
+                    continue;
+                }
+
+                if(jobPostingRepository.existsByRecruitId(recruitId)) {
+                    log.info("Skip - already exists. idx={}/{} recruitId={}", i, targets.size(), recruitId);
+                    continue;
+                }
 
                 log.info("Crawling detail start. idx={}/{} recruitId={} url={}",
-                        i + 1, targets.size(), recruitId, url);
+                        i, targets.size(), recruitId, url);
 
                 try {
                     JobPostingCrawlResponse response = crawlJobPosting(driver, wait, url);
                     out.add(response);
 
                 } catch (Exception e) {
-                    log.warn("Crawling detail failed. recruitId={} url={}",
-                            recruitId, url);
+                    log.warn("Crawling detail failed. recruitId={} url={}", recruitId, url, e);
                 } finally {
                     sleepRandom(250, 600);
                 }
+
+
             }
 
             return new JobPostingCrawlListResponse(out);
@@ -96,7 +108,7 @@ public class JobPostingCrawler {
 
         String pageText = driver.findElement(By.tagName("body")).getText();
 
-        Long recruitId = CrawledTextUtil.parseRecruitId(url);
+        Long recruitId = parseRecruitId(url);
 
         LocalDate deadline = CrawledTextUtil.extractDeadline(pageText);
 
@@ -120,50 +132,37 @@ public class JobPostingCrawler {
         JobPosting jobPosting = JobPosting.create(postTitle, recruitId, company, deadline, url, imageUrl, preferredVisa,
                 preferredLanguage, arrangement, siteAddress);
 
+        jobPostingRepository.save(jobPosting);
+
         return JobPostingCrawlResponse.from(jobPosting);
     }
 
-    private Set<String> collectRecruitUrls(WebDriver driver, WebDriverWait wait, int limit) {
+
+    private Set<String> collectRecruitUrlsInternal(
+            WebDriver driver,
+            WebDriverWait wait,
+            Integer limit,
+            int maxPages,
+            boolean stopOnEmptyStreak
+    ) {
         Set<String> urls = new LinkedHashSet<>();
-
-        for (int page = 1; urls.size() < limit && page <= 50; page++) {
-            String pageUrl = BASE_URL + (BASE_URL.contains("?") ? "&" : "?") + "page=" + page;
-
-            driver.get(pageUrl);
-            waitDocReady(driver, wait);
-
-            @SuppressWarnings("unchecked")
-            List<String> hrefs = (List<String>) ((JavascriptExecutor) driver).executeScript(JS_COLLECT_ALL_HREFS);
-
-            if (hrefs == null || hrefs.isEmpty()) break;
-
-            for (String href : hrefs) {
-                if (href == null) continue;
-                if (href.contains(RECRUIT_DETAIL_URL_PATH)) {
-                    urls.add(href.split("#")[0]);
-                    if (urls.size() >= limit) break;
-                }
-            }
-
-            if (page >= 2 && urls.isEmpty()) break;
-        }
-
-        return urls;
-    }
-
-    private Set<String> collectAllRecruitUrls(WebDriver driver, WebDriverWait wait) {
-        Set<String> urls = new LinkedHashSet<>();
-
         int emptyNewPageStreak = 0;
 
-        for (int page = 1; page <= MAX_LIST_PAGES_ALL; page++) {
-            String pageUrl = BASE_URL + (BASE_URL.contains("?") ? "&" : "?") + "page=" + page;
+        for (int page = 1; page <= maxPages; page++) {
+
+            if (limit != null && urls.size() >= limit) break;
+
+            String pageUrl = BASE_URL
+                             + (BASE_URL.contains("?") ? "&" : "?")
+                             + "page=" + page;
 
             driver.get(pageUrl);
             waitDocReady(driver, wait);
 
             @SuppressWarnings("unchecked")
-            List<String> hrefs = (List<String>) ((JavascriptExecutor) driver).executeScript(JS_COLLECT_ALL_HREFS);
+            List<String> hrefs =
+                    (List<String>) ((JavascriptExecutor) driver)
+                            .executeScript(JS_COLLECT_ALL_HREFS);
 
             if (hrefs == null || hrefs.isEmpty()) break;
 
@@ -171,23 +170,49 @@ public class JobPostingCrawler {
 
             for (String href : hrefs) {
                 if (href == null) continue;
-                if (href.contains(RECRUIT_DETAIL_URL_PATH)) {
+
+                if (RECRUIT_DETAIL_URL_PATTERN.matcher(href).matches()) {
                     urls.add(href.split("#")[0]);
+
+                    if (limit != null && urls.size() >= limit) break;
                 }
             }
 
             int added = urls.size() - before;
-            if (added == 0) {
-                emptyNewPageStreak++;
-                if (emptyNewPageStreak >= 2) break;
-            } else {
-                emptyNewPageStreak = 0;
+
+            if (stopOnEmptyStreak) {
+                if (added == 0) {
+                    emptyNewPageStreak++;
+                    if (emptyNewPageStreak >= 2) break;
+                } else {
+                    emptyNewPageStreak = 0;
+                }
             }
 
             sleepRandom(150, 350);
         }
 
         return urls;
+    }
+
+    private Set<String> collectRecruitUrls(WebDriver driver, WebDriverWait wait, int limit) {
+        return collectRecruitUrlsInternal(
+                driver,
+                wait,
+                limit,
+                50,
+                false
+        );
+    }
+
+    private Set<String> collectAllRecruitUrls(WebDriver driver, WebDriverWait wait) {
+        return collectRecruitUrlsInternal(
+                driver,
+                wait,
+                null,
+                MAX_LIST_PAGES,
+                true
+        );
     }
 
     private String extractImageUrl(WebDriver driver) {
