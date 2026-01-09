@@ -24,7 +24,6 @@ public class JobPosting {
 
     private String company;
 
-    @Column(nullable = false)
     private LocalDate deadline;
 
     private String websiteUrl;
