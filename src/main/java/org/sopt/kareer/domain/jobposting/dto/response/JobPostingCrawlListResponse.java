@@ -7,5 +7,5 @@ import java.util.List;
 public record JobPostingCrawlListResponse(
         List<JobPostingCrawlResponse> crawlResponses
 ) {
- 
+
 }

@@ -83,14 +83,14 @@ public class JobPostingCrawler {
 
         LocalDate deadline = CrawledTextUtil.extractDeadline(pageText);
 
-        Map<String, String> kv = CrawledTextUtil.extractKeyValues(pageText);
+        Map<String, String> jobSummaryFields = CrawledTextUtil.extractJobSummaryFields(pageText);
 
-        String arrangement = kv.get(LABEL_ARRANGEMENT);
+        String arrangement = jobSummaryFields.get(LABEL_ARRANGEMENT);
 
-        String preferredVisa = kv.get(LABEL_VISA);
-        String preferredLanguage = kv.get(LABEL_LANGUAGE);
+        String preferredVisa = jobSummaryFields.get(LABEL_VISA);
+        String preferredLanguage = jobSummaryFields.get(LABEL_LANGUAGE);
 
-        String siteAddress = kv.get(LABEL_SITE);
+        String siteAddress = jobSummaryFields.get(LABEL_SITE);
 
         Map<String, String> sections = CrawledTextUtil.extractSections(pageText, SECTION_HEADERS);
 

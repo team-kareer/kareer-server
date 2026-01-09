@@ -29,7 +29,7 @@ public class CrawledTextUtil {
         return null;
     }
 
-    public static Map<String, String> extractKeyValues(String pageText) {
+    public static Map<String, String> extractJobSummaryFields(String pageText) {
         Map<String, String> map = new LinkedHashMap<>();
         if (pageText == null || pageText.isBlank()) return map;
 
