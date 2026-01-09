@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.sopt.kareer.domain.jobposting.dto.response.JobPostingCrawlListResponse;
 import org.sopt.kareer.domain.jobposting.dto.response.JobPostingCrawlResponse;
 import org.sopt.kareer.domain.jobposting.entity.JobPosting;
+import org.sopt.kareer.domain.jobposting.repository.JobPostingRepository;
 import org.sopt.kareer.domain.jobposting.util.CrawledTextUtil;
 import org.sopt.kareer.global.config.WebDriverFactory;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,20 @@ public class JobPostingCrawler {
 
     private final WebDriverFactory webDriverFactory;
 
-    public JobPostingCrawlListResponse crawlJobPostingList(int limit) {
+    private final JobPostingRepository jobPostingRepository;
+
+    // 서버 테스트용
+    public JobPostingCrawlListResponse crawlJobPostingForTest(int limit) {
+        if (limit <= 0) return new JobPostingCrawlListResponse(List.of());
+        return crawlJobPostingList(limit);
+    }
+
+    // 스케줄러 호출용
+    public JobPostingCrawlListResponse crawlAllJobPostings() {
+        return crawlJobPostingList(null);
+    }
+
+    public JobPostingCrawlListResponse crawlJobPostingList(Integer limit) {
 
         WebDriver driver = webDriverFactory.create();
         try {
@@ -37,10 +51,13 @@ public class JobPostingCrawler {
             driver.get(BASE_URL);
             waitDocReady(driver, wait);
 
-            Set<String> recruitUrls = collectRecruitUrls(driver, wait, limit);
+            Set<String> recruitUrls = (limit == null)
+                    ? collectAllRecruitUrls(driver, wait)
+                    : collectRecruitUrls(driver, wait, limit);
 
-            List<String> targets = recruitUrls.stream().limit(limit).toList();
-            log.info("links collected. uniqueLinks={} targets={}", recruitUrls.size(), targets.size());
+            List<String> targets = (limit == null)
+                    ? recruitUrls.stream().toList()
+                    : recruitUrls.stream().limit(limit).toList();
 
             List<JobPostingCrawlResponse> out = new ArrayList<>();
 
@@ -129,6 +146,45 @@ public class JobPostingCrawler {
             }
 
             if (page >= 2 && urls.isEmpty()) break;
+        }
+
+        return urls;
+    }
+
+    private Set<String> collectAllRecruitUrls(WebDriver driver, WebDriverWait wait) {
+        Set<String> urls = new LinkedHashSet<>();
+
+        int emptyNewPageStreak = 0;
+
+        for (int page = 1; page <= MAX_LIST_PAGES_ALL; page++) {
+            String pageUrl = BASE_URL + (BASE_URL.contains("?") ? "&" : "?") + "page=" + page;
+
+            driver.get(pageUrl);
+            waitDocReady(driver, wait);
+
+            @SuppressWarnings("unchecked")
+            List<String> hrefs = (List<String>) ((JavascriptExecutor) driver).executeScript(JS_COLLECT_ALL_HREFS);
+
+            if (hrefs == null || hrefs.isEmpty()) break;
+
+            int before = urls.size();
+
+            for (String href : hrefs) {
+                if (href == null) continue;
+                if (href.contains(RECRUIT_DETAIL_URL_PATH)) {
+                    urls.add(href.split("#")[0]);
+                }
+            }
+
+            int added = urls.size() - before;
+            if (added == 0) {
+                emptyNewPageStreak++;
+                if (emptyNewPageStreak >= 2) break;
+            } else {
+                emptyNewPageStreak = 0;
+            }
+
+            sleepRandom(150, 350);
         }
 
         return urls;

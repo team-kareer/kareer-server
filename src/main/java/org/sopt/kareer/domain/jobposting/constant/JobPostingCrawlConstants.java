@@ -64,4 +64,11 @@ public class JobPostingCrawlConstants {
 
     public static final String JS_DOCUMENT_READY_STATE =
             "return document.readyState";
+
+    // Integer Constants
+
+    public static int MAX_LIST_PAGES_ALL = 500;
+    public static final int MAX_LIST_PAGES = 50;
+
+
 }
