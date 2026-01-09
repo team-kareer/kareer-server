@@ -64,8 +64,7 @@ jobs:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          ./gradlew jib \
-            -Djib.to.image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          ./gradlew jib
 
       # 9. Discord 알림
       - name: ✉️ Send CI Result to Discord
