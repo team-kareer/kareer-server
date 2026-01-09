@@ -65,7 +65,7 @@ jib {
     }
 
     to {
-        image = "${System.getenv('ECR_REGISTRY')}/kareer-server"
+        image = "${System.getenv('ECR_REGISTRY')}/${System.getenv('ECR_REGISTRY')}"
 
         tags = [
                 System.getenv('GITHUB_SHA')?.take(7)
