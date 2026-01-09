@@ -16,11 +16,13 @@ public class JobPostingCrawlConstants {
 
     // Regex / Parsing Patterns
     public static final Pattern RECRUIT_ID_PATTERN =
-            Pattern.compile(".*/RC0*(\\d+)$");
+            Pattern.compile(".*/R[CS]0*(\\d+)$");
 
     public static final Pattern DEADLINE_DATE_PATTERN =
             Pattern.compile("(\\d{2})\\.\\s*(\\d{2})\\.\\s*(\\d{2})");
 
+    public static final Pattern RECRUIT_DETAIL_URL_PATTERN =
+            Pattern.compile(".*/recruit/R[CS]0*\\d+.*");
 
     // Text Prefix / Labels
     public static final String DEADLINE_PREFIX =
@@ -40,7 +42,6 @@ public class JobPostingCrawlConstants {
             LABEL_COMPANY
     );
 
-
     // Section Headers
     public static final List<String> SECTION_HEADERS = List.of(
             "Detailed work requirements",
@@ -49,11 +50,9 @@ public class JobPostingCrawlConstants {
             "Company"
     );
 
-
     // CSS Selectors
     public static final String SLIDER_IMAGE_CSS =
             "#recruitSlider a[href]";
-
 
     // JavaScript Scripts
     public static final String JS_COLLECT_ALL_HREFS = """
@@ -66,9 +65,9 @@ public class JobPostingCrawlConstants {
             "return document.readyState";
 
     // Integer Constants
-
     public static int MAX_LIST_PAGES_ALL = 500;
     public static final int MAX_LIST_PAGES = 50;
+    public static final int CRAWL_BATCH_SIZE = 1000;
 
 
 }
