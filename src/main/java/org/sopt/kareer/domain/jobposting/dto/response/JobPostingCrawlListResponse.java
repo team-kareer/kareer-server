@@ -7,9 +7,5 @@ import java.util.List;
 public record JobPostingCrawlListResponse(
         List<JobPostingCrawlResponse> crawlResponses
 ) {
-    public static JobPostingCrawlListResponse of(List<JobPosting> jobPostings) {
-        return new JobPostingCrawlListResponse(jobPostings.stream()
-                .map(JobPostingCrawlResponse::from)
-                .toList());
-        }
-    }
+ 
+}
