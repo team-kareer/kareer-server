@@ -1,0 +1,131 @@
+name: ci-main
+on:
+  pull_request:
+    branches: [develop]
+    types: [opened, synchronize, reopened]
+    paths-ignore:
+      - '**/*.md'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: main
+
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+
+    steps:
+      # 1. 코드 체크아웃
+      - name: 🔄 Code Checkout
+        uses: actions/checkout@v4
+
+      # 2. JDK 17 설정
+      - name: ⛏️ Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # 3. Gradle 설정
+      - name: 🛠️ Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      # 4. gradlew 실행 권한 부여
+      - name: 🗣️ Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # 5. 빌드
+      - name: 🔆 Build
+        run: ./gradlew clean build -x test
+
+      # 6. AWS 인증
+      - name: 🔐 Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # 7. ECR 로그인
+      - name: 🔑 Login to ECR
+        run: |
+          aws ecr get-login-password \
+            --region ${{ secrets.AWS_REGION }} \
+          | docker login \
+            --username AWS \
+            --password-stdin ${{ secrets.ECR_REGISTRY }}
+
+      # 8. ECR Push
+      - name: 📦 Build & Push Image to ECR (Jib)
+        env:
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          ./gradlew jib \
+            -Djib.to.image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      # 9. Discord 알림
+      - name: ✉️ Send CI Result to Discord
+        if: always()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          JOB_STATUS: ${{ job.status }}
+          ACTOR: ${{ github.actor }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          if [ "$JOB_STATUS" = "success" ]; then
+            STATUS_EMOJI="✅"
+            STATUS_TEXT="성공"
+            COLOR=3066993
+          else
+            STATUS_EMOJI="❌"
+            STATUS_TEXT="실패"
+            COLOR=15158332
+          fi
+          
+          PR_URL="https://github.com/$REPO/pull/$PR_NUMBER"
+          DEBUG_URL="https://github.com/$REPO/actions/runs/$RUN_ID"
+          
+          payload=$(jq -n \
+            --arg title "$STATUS_EMOJI Main CI $STATUS_TEXT" \
+            --arg pr_title "$PR_TITLE" \
+            --arg pr_url "$PR_URL" \
+            --arg actor "$ACTOR" \
+            --arg debug_url "$DEBUG_URL" \
+            --argjson color "$COLOR" \
+            '{
+              embeds: [
+                {
+                  title: $title,
+                  color: $color,
+                  fields: [
+                    {
+                      name: "📋 Pull Request",
+                      value: "[\($pr_title)](\($pr_url))",
+                      inline: false
+                    },
+                    {
+                      name: "👤 담당자",
+                      value: $actor,
+                      inline: false
+                    },
+                    {
+                      name: "🔍 로그",
+                      value: "[Actions 로그 보기](\($debug_url))",
+                      inline: false
+                    }
+                  ]
+                }
+              ]
+            }')
+          
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d "$payload" \
+            "$DISCORD_WEBHOOK"
