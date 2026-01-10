@@ -17,15 +17,7 @@ public enum GlobalErrorCode implements ErrorCode {
     INVALID_JSON(HttpStatus.BAD_REQUEST.value(), "JSON 형식이 올바르지 않습니다."),
     MISSING_REQUEST_PARAMETER(HttpStatus.BAD_REQUEST.value(), "필수 요청 파라미터가 누락되었습니다."),
     TYPE_MISMATCH(HttpStatus.BAD_REQUEST.value(), "요청 파라미터 타입이 일치하지 않습니다."),
-    MISSING_PATH_VARIABLE(HttpStatus.BAD_REQUEST.value(), "경로 변수 값이 누락되었습니다."),
-    FORBIDDEN(HttpStatus.FORBIDDEN.value(), "권한이 없습니다."),
-    UNAUTHORIZED(HttpStatus.UNAUTHORIZED.value(), "인증되지 않은 사용자입니다."),
-    JWT_MEMBER_ID_EXTRACTION_FAILED(HttpStatus.UNAUTHORIZED.value(), "JWT에서 memberId 추출 실패"),
-    JWT_INVALID_SIGNATURE(HttpStatus.UNAUTHORIZED.value(), "잘못된 JWT 서명입니다."),
-    JWT_EXPIRED(HttpStatus.UNAUTHORIZED.value(), "만료된 토큰입니다."),
-    JWT_UNSUPPORTED(HttpStatus.UNAUTHORIZED.value(), "지원하지 않는 JWT입니다."),
-    JWT_INVALID(HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 JWT입니다."),
-    AUTHENTICATION_SETTING_FAIL(HttpStatus.INTERNAL_SERVER_ERROR.value(), "인증 정보 처리에 실패했습니다")
+    MISSING_PATH_VARIABLE(HttpStatus.BAD_REQUEST.value(), "경로 변수 값이 누락되었습니다.")
     ;
 
     private final int httpStatus;
