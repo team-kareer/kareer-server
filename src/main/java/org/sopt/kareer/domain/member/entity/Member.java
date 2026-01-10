@@ -25,6 +25,17 @@ public class Member extends BaseEntity {
     private String profileImageUrl;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private MemberStatus status;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private OAuthProvider provider;
+
+    @Column(nullable = false, unique = true)
+    private String providerId;
+
+    @Column(nullable = false)
     private LocalDate birthDate;
 
     @Column(nullable = false)
