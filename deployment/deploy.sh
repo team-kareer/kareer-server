@@ -64,6 +64,9 @@ EOF
 
 if ! sudo nginx -s reload; then
   echo "### ❌ Nginx reload 실패"
+  echo "### 🔄 새 컨테이너 중지 및 롤백"
+  docker compose stop $TARGET_CONTAINER || true
+  docker compose rm -f $TARGET_CONTAINER || true
   exit 1
 fi
 
