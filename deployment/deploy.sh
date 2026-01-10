@@ -89,4 +89,4 @@ docker compose stop $STOP_CONTAINER || true
 docker compose rm -f $STOP_CONTAINER || true
 docker image prune -f --filter "dangling=true"
 
-echo "### 🎉 배포 성공"
+echo "### 🎉 배포 성공($STOP_CONTAINER -> $TARGET_CONTAINER)"
