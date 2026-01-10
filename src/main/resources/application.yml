@@ -3,9 +3,9 @@ spring:
     name: kareer
   profiles:
     group:
-      local: local-db, local-port, local-cors, local-oauth, local-jwt, common
-      dev: dev-db, dev-port, dev-cors, dev-oauth, dev-jwt, common
-      prod: prod-db, prod-port, prod-cors, prod-oauth, prod-jwt, common
+      local: local-db, local-port, local-cors, common
+      dev: dev-db, dev-port, dev-cors, common
+      prod: prod-db, prod-port, prod-cors, common
     active: ${SPRING_ACTIVE_PROFILE}
 
 ---
@@ -22,15 +22,37 @@ spring:
         show_sql: true
         highlight_sql: true
     open-in-view: false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${GOOGLE_REDIRECT_URI}
+            scope:
+              - openid
+              - profile
+              - email
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
+            user-name-attribute: sub
+jwt:
+  access-token:
+    secret: ${JWT_ACCESS_SECRET}
+    expiration-seconds: ${JWT_ACCESS_EXPIRATION}
+  refresh-token:
+    secret: ${JWT_REFRESH_SECRET}
+    expiration-seconds: ${JWT_REFRESH_EXPIRATION}
 
 ---
 spring:
   config:
     activate:
       on-profile: local-db
-  jpa:
-    hibernate:
-      ddl-auto: update
   datasource:
     url: ${LOCAL_DATASOURCE_URL}
     username: ${LOCAL_DATASOURCE_USERNAME}
@@ -54,52 +76,11 @@ cors:
   allowed-origins:
     - ${LOCAL_CORS_ALLOWED_ORIGIN}
   allow-credentials: false
-
----
-spring:
-  config:
-    activate:
-      on-profile: local-oauth
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${LOCAL_GOOGLE_CLIENT_ID}
-            client-secret: ${LOCAL_GOOGLE_CLIENT_SECRET}
-            redirect-uri: ${LOCAL_GOOGLE_REDIRECT_URI}
-            scope:
-              - openid
-              - profile
-              - email
-        provider:
-          google:
-            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
-            token-uri: https://oauth2.googleapis.com/token
-            user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
-            user-name-attribute: sub
-
----
-spring:
-  config:
-    activate:
-      on-profile: local-jwt
-jwt:
-  access-token:
-    secret: ${LOCAL_JWT_ACCESS_SECRET}
-    expiration-seconds: ${LOCAL_JWT_ACCESS_EXPIRATION}
-  refresh-token:
-    secret: ${LOCAL_JWT_REFRESH_SECRET}
-    expiration-seconds: ${LOCAL_JWT_REFRESH_EXPIRATION}
-
 ---
 spring:
   config:
     activate:
       on-profile: dev-db
-  jpa:
-    hibernate:
-      ddl-auto: update
   datasource:
     url: ${DEV_DATASOURCE_URL}
     username: ${DEV_DATASOURCE_USERNAME}
@@ -123,52 +104,11 @@ cors:
   allowed-origins:
     - ${DEV_CORS_ALLOWED_ORIGIN}
   allow-credentials: false
-
----
-spring:
-  config:
-    activate:
-      on-profile: dev-oauth
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${DEV_GOOGLE_CLIENT_ID}
-            client-secret: ${DEV_GOOGLE_CLIENT_SECRET}
-            redirect-uri: ${DEV_GOOGLE_REDIRECT_URI}
-            scope:
-              - openid
-              - profile
-              - email
-        provider:
-          google:
-            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
-            token-uri: https://oauth2.googleapis.com/token
-            user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
-            user-name-attribute: sub
-
----
-spring:
-  config:
-    activate:
-      on-profile: dev-jwt
-jwt:
-  access-token:
-    secret: ${DEV_JWT_ACCESS_SECRET}
-    expiration-seconds: ${DEV_JWT_ACCESS_EXPIRATION}
-  refresh-token:
-    secret: ${DEV_JWT_REFRESH_SECRET}
-    expiration-seconds: ${DEV_JWT_REFRESH_EXPIRATION}
-
 ---
 spring:
   config:
     activate:
       on-profile: prod-db
-  jpa:
-    hibernate:
-      ddl-auto: update
   datasource:
     url: ${PROD_DATASOURCE_URL}
     username: ${PROD_DATASOURCE_USERNAME}
@@ -192,39 +132,3 @@ cors:
   allowed-origins:
     - ${PROD_CORS_ALLOWED_ORIGIN}
   allow-credentials: true
----
-spring:
-  config:
-    activate:
-      on-profile: prod-oauth
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${PROD_GOOGLE_CLIENT_ID}
-            client-secret: ${PROD_GOOGLE_CLIENT_SECRET}
-            redirect-uri: ${PROD_GOOGLE_REDIRECT_URI}
-            scope:
-              - openid
-              - profile
-              - email
-        provider:
-          google:
-            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
-            token-uri: https://oauth2.googleapis.com/token
-            user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
-            user-name-attribute: sub
-
----
-spring:
-  config:
-    activate:
-      on-profile: prod-jwt
-jwt:
-  access-token:
-    secret: ${PROD_JWT_ACCESS_SECRET}
-    expiration-seconds: ${PROD_JWT_ACCESS_EXPIRATION}
-  refresh-token:
-    secret: ${PROD_JWT_REFRESH_SECRET}
-    expiration-seconds: ${PROD_JWT_REFRESH_EXPIRATION}
