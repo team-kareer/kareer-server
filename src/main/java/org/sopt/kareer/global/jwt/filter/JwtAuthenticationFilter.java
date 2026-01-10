@@ -11,7 +11,7 @@ import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.global.exception.customexception.NotFoundException;
 import org.sopt.kareer.global.exception.customexception.UnauthorizedException;
-import org.sopt.kareer.global.exception.errorcode.AuthErrorCode;
+import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
 import org.sopt.kareer.global.jwt.JwtTokenProvider;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,7 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Member member = memberService.getById(memberId);
                 setAuthentication(request, member);
             } catch (NotFoundException ex) {
-                throw new UnauthorizedException(AuthErrorCode.UNAUTHORIZED);
+                throw new UnauthorizedException(GlobalErrorCode.UNAUTHORIZED);
             }
         }
         filterChain.doFilter(request, response);

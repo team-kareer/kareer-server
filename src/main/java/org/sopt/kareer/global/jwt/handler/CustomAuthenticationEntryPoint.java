@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import static org.sopt.kareer.global.exception.errorcode.AuthErrorCode.UNAUTHORIZED;
+import static org.sopt.kareer.global.exception.errorcode.GlobalErrorCode.UNAUTHORIZED;
 
 @Slf4j
 @Component

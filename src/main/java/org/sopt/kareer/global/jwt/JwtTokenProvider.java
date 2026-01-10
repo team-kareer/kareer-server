@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.global.config.jwt.JwtProperties;
 import org.sopt.kareer.global.exception.customexception.UnauthorizedException;
-import org.sopt.kareer.global.exception.errorcode.AuthErrorCode;
+import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
 import org.sopt.kareer.global.jwt.dto.JwtToken;
 import org.springframework.stereotype.Component;
 
@@ -79,9 +79,9 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException ex) {
-            throw new UnauthorizedException(AuthErrorCode.JWT_EXPIRED);
+            throw new UnauthorizedException(GlobalErrorCode.JWT_EXPIRED);
         } catch (Exception ex) {
-            throw new UnauthorizedException(AuthErrorCode.JWT_INVALID);
+            throw new UnauthorizedException(GlobalErrorCode.JWT_INVALID);
         }
     }
 

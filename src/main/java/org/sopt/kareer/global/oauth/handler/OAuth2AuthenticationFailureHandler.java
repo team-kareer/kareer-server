@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.sopt.kareer.global.exception.errorcode.AuthErrorCode;
+import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
 import org.sopt.kareer.global.response.BaseErrorResponse;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
@@ -27,7 +27,7 @@ public class OAuth2AuthenticationFailureHandler implements AuthenticationFailure
                                         HttpServletResponse response,
                                         AuthenticationException exception) throws IOException, ServletException {
         log.error("OAuth2 authentication failed", exception);
-        BaseErrorResponse body = BaseErrorResponse.of(AuthErrorCode.UNAUTHORIZED, exception.getMessage());
+        BaseErrorResponse body = BaseErrorResponse.of(GlobalErrorCode.UNAUTHORIZED, exception.getMessage());
         response.setStatus(body.getCode());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());

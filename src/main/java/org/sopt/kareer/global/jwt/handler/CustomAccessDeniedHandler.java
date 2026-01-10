@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import static org.sopt.kareer.global.exception.errorcode.AuthErrorCode.FORBIDDEN;
+import static org.sopt.kareer.global.exception.errorcode.GlobalErrorCode.FORBIDDEN;
 
 @Slf4j
 @Component
