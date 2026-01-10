@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e  # 명령어 실패시 스크립트 즉시 종료
 
-DEFAULT_CONF="/etc/nginx/conf.d/service-url.conf"
+DEFAULT_CONF="/etc/nginx/conf.d/service-url.inc"
 MAX_RETRY=10
 SLEEP_SEC=10
 
