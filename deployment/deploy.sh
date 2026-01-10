@@ -5,6 +5,10 @@ DEFAULT_CONF="/etc/nginx/conf.d/service-url.inc"
 MAX_RETRY=10
 SLEEP_SEC=10
 
+# .env 로드
+export $(grep -v '^#' /home/ubuntu/app/deployment/.env | xargs)
+
+
 # 1. 현재 떠있는 컨테이너 확인
 IS_BLUE=$(docker ps --format '{{.Names}}' | grep -w kareer-blue || true)
 
@@ -33,7 +37,7 @@ docker compose pull $TARGET_CONTAINER
 echo "### 📦 2. 컨테이너 실행"
 docker compose up -d $TARGET_CONTAINER
 
-# 3. 헬스 체크
+# 4. 헬스 체크
 echo "### 3. 🔆 헬스 체크"
 HEALTH_CHECK_PASSED=false
 
@@ -59,7 +63,7 @@ if [ "$HEALTH_CHECK_PASSED" = false ]; then
   exit 1
 fi
 
-# 4. Nginx 트래픽 스위치
+# 5. Nginx 트래픽 스위치
 echo "### 🔜 4. Nginx 포트 스위치"
 
 sudo tee "$DEFAULT_CONF" > /dev/null <<EOF
@@ -75,7 +79,7 @@ if ! sudo nginx -s reload; then
   exit 1
 fi
 
-# 5. 기존 컨테이너 종료
+# 6. 기존 컨테이너 종료
 echo "### 🌀 5. 기존 컨테이너 종료"
 docker compose stop $STOP_CONTAINER || true
 docker compose rm -f $STOP_CONTAINER || true
