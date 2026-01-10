@@ -40,12 +40,8 @@ public class JwtTokenProvider {
         parseClaims(token, jwtProperties.refreshToken());
     }
 
-    public Long extractMemberIdFromAccessToken(String token) {
+    public Long extractMemberId(String token) {
         return Long.parseLong(parseClaims(token, jwtProperties.accessToken()).getSubject());
-    }
-
-    public Long extractMemberIdFromRefreshToken(String token) {
-        return Long.parseLong(parseClaims(token, jwtProperties.refreshToken()).getSubject());
     }
 
     public LocalDateTime getRefreshTokenExpiry() {

@@ -24,7 +24,7 @@ public class AuthService {
     public TokenResponse reissue(TokenReissueRequest request) {
         String refreshToken = request.refreshToken();
         jwtTokenProvider.validateRefreshToken(refreshToken);
-        Long memberId = jwtTokenProvider.extractMemberIdFromRefreshToken(refreshToken);
+        Long memberId = jwtTokenProvider.extractMemberId(refreshToken);
 
         try {
             Member member = memberService.getById(memberId);

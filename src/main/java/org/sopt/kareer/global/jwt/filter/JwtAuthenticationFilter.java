@@ -39,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
                 jwtTokenProvider.validateAccessToken(token);
-                Long memberId = jwtTokenProvider.extractMemberIdFromAccessToken(token);
+                Long memberId = jwtTokenProvider.extractMemberId(token);
                 Member member = memberService.getById(memberId);
                 setAuthentication(request, member);
             } catch (NotFoundException ex) {
