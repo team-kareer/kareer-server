@@ -27,37 +27,37 @@ public class JwtTokenProvider {
     private final JwtProperties jwtProperties;
 
     public JwtToken generate(Member member) {
-        String accessToken = buildToken(member, jwtProperties.getAccessToken());
-        String refreshToken = buildToken(member, jwtProperties.getRefreshToken());
+        String accessToken = buildToken(member, jwtProperties.accessToken());
+        String refreshToken = buildToken(member, jwtProperties.refreshToken());
         return new JwtToken(accessToken, refreshToken);
     }
 
     public void validateAccessToken(String token) {
-        parseClaims(token, jwtProperties.getAccessToken());
+        parseClaims(token, jwtProperties.accessToken());
     }
 
     public void validateRefreshToken(String token) {
-        parseClaims(token, jwtProperties.getRefreshToken());
+        parseClaims(token, jwtProperties.refreshToken());
     }
 
     public Long extractMemberIdFromAccessToken(String token) {
-        return Long.parseLong(parseClaims(token, jwtProperties.getAccessToken()).getSubject());
+        return Long.parseLong(parseClaims(token, jwtProperties.accessToken()).getSubject());
     }
 
     public Long extractMemberIdFromRefreshToken(String token) {
-        return Long.parseLong(parseClaims(token, jwtProperties.getRefreshToken()).getSubject());
+        return Long.parseLong(parseClaims(token, jwtProperties.refreshToken()).getSubject());
     }
 
     public LocalDateTime getRefreshTokenExpiry() {
         Instant now = Instant.now();
-        long seconds = jwtProperties.getRefreshToken().getExpirationSeconds();
+        long seconds = jwtProperties.refreshToken().expirationSeconds();
         return LocalDateTime.ofInstant(now.plusSeconds(seconds), ZoneId.systemDefault());
     }
 
     private String buildToken(Member member, JwtProperties.TokenProperties tokenProperties) {
         Instant now = Instant.now();
         Date issuedAt = Date.from(now);
-        Date expiry = Date.from(now.plusSeconds(tokenProperties.getExpirationSeconds()));
+        Date expiry = Date.from(now.plusSeconds(tokenProperties.expirationSeconds()));
 
         return Jwts.builder()
                 .setSubject(String.valueOf(member.getId()))
@@ -86,7 +86,7 @@ public class JwtTokenProvider {
     }
 
     private Key getSigningKey(JwtProperties.TokenProperties tokenProperties) {
-        byte[] keyBytes = Decoders.BASE64.decode(tokenProperties.getSecret());
+        byte[] keyBytes = Decoders.BASE64.decode(tokenProperties.secret());
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }
