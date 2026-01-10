@@ -15,7 +15,11 @@ public class JobPostingCrawlScheduler {
 
     @Scheduled(cron = "0 0 3 * * *")
     public void crawlJobPostingScheduled() {
-        JobPostingCrawlListResponse response = jobPostingCrawler.crawlAllJobPostings();
-        log.info("Scheduled crawl done. size={}", response.crawlResponses().size());
+        try {
+            JobPostingCrawlListResponse response = jobPostingCrawler.crawlAllJobPostings();
+            log.info("Scheduled crawl done. size={}", response.crawlResponses().size());
+        } catch (Exception e) {
+            log.error("Scheduled crawl failed", e);
+        }
     }
 }
