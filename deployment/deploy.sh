@@ -2,8 +2,8 @@
 set -e  # 명령어 실패시 스크립트 즉시 종료
 
 DEFAULT_CONF="/etc/nginx/conf.d/service-url.inc"
-MAX_RETRY=10
-SLEEP_SEC=10
+MAX_RETRY=20
+SLEEP_SEC=20
 
 # .env 로드
 export $(grep -v '^#' /home/ubuntu/app/deployment/.env | xargs)
@@ -50,7 +50,11 @@ for ((i=1; i<=MAX_RETRY; i++)); do
     HEALTH_CHECK_PASSED=true
     break
   else
-    echo "### ⏰ 헬스 체크 대기중 ($i/$MAX_RETRY)"
+    echo "### ⏰ 헬스 체크 대기중 ($i/$MAX_RETRY) - 상태 코드: $HTTP_STATUS"
+
+    # 실패 시 컨테이너 로그 마지막 20줄 출력
+    echo "### 📝 최근 컨테이너 로그:"
+    docker logs --tail 20 $TARGET_CONTAINER || true
   fi
 
   sleep "$SLEEP_SEC"
