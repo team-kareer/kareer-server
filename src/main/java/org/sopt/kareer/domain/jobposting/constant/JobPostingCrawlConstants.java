@@ -65,7 +65,7 @@ public class JobPostingCrawlConstants {
             "return document.readyState";
 
     // Integer Constants
-    public static int MAX_LIST_PAGES_ALL = 500;
+    public static final int MAX_LIST_PAGES_ALL = 500;
     public static final int MAX_LIST_PAGES = 50;
     public static final int CRAWL_BATCH_SIZE = 1000;
 
