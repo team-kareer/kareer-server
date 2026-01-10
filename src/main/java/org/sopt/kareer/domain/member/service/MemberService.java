@@ -5,6 +5,7 @@ import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.repository.MemberRepository;
 import org.sopt.kareer.global.exception.customexception.NotFoundException;
 import org.sopt.kareer.global.exception.errorcode.MemberErrorCode;
+import org.sopt.kareer.global.oauth.dto.OAuthAttributes;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,5 +19,25 @@ public class MemberService {
     public Member getById(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException(MemberErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    @Transactional
+    public Member upsertByOAuth(OAuthAttributes attributes) {
+        return memberRepository.findByProviderAndProviderId(attributes.provider(), attributes.providerId())
+                .map(existing -> {
+                    existing.updateOAuthProfile(attributes.name(), attributes.picture());
+                    return existing;
+                })
+                .orElseGet(() -> createNewMember(attributes));
+    }
+
+    private Member createNewMember(OAuthAttributes attributes) {
+        Member member = Member.createOAuthMember(
+                attributes.name(),
+                attributes.provider(),
+                attributes.providerId(),
+                attributes.picture()
+        );
+        return memberRepository.save(member);
     }
 }

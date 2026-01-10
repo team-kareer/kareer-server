@@ -35,22 +35,17 @@ public class Member extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String providerId;
 
-    @Column(nullable = false)
     private LocalDate birthDate;
 
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Country country;
 
-    @Column(nullable = false)
     private String primaryMajor;
 
     private String secondaryMajor;
 
-    @Column(nullable = false)
     private String targetJob;
 
-    @Column(nullable = false)
     private LocalDate graduationDate;
 
     private LocalDate expectedGraduationDate;
@@ -60,7 +55,24 @@ public class Member extends BaseEntity {
     private String university;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private LanguageLevel languageLevel;
+
+    public static Member createOAuthMember(String name,
+                                           OAuthProvider provider,
+                                           String providerId,
+                                           String profileImageUrl) {
+        return Member.builder()
+                .name(name)
+                .status(MemberStatus.PENDING)
+                .provider(provider)
+                .providerId(providerId)
+                .profileImageUrl(profileImageUrl)
+                .build();
+    }
+
+    public void updateOAuthProfile(String name, String profileImageUrl) {
+        this.name = name;
+        this.profileImageUrl = profileImageUrl;
+    }
 
 }
