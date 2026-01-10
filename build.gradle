@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.4'
     id 'io.spring.dependency-management' version '1.1.4'
+    id 'com.google.cloud.tools.jib' version '3.4.4'
 }
 
 group = 'org.sopt'
@@ -67,6 +68,28 @@ dependencies {
     implementation 'org.seleniumhq.selenium:selenium-java:4.20.0'
 
 
+}
+
+jib {
+    from {
+        image = 'eclipse-temurin:17-jre-alpine'
+    }
+
+    to {
+        image = "${System.getenv('ECR_REGISTRY')}/${System.getenv('ECR_REPOSITORY')}"
+
+        tags = [
+                System.getenv('GITHUB_SHA')?.take(7)
+        ]
+    }
+
+    container {
+        ports = ['8080']
+        jvmFlags = [
+                '-Duser.timezone=Asia/Seoul'
+        ]
+        creationTime = 'USE_CURRENT_TIMESTAMP'
+    }
 }
 
 tasks.named('test') {
