@@ -6,7 +6,9 @@ import org.sopt.kareer.global.entity.BaseEntity;
 
 import java.time.LocalDate;
 
-@Table(name = "members")
+@Table(name = "members", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_member_provider_provider_id", columnNames = {"provider", "provider_id"})
+})
 @Entity
 @Getter
 @Builder
@@ -32,7 +34,7 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private OAuthProvider provider;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String providerId;
 
     private LocalDate birthDate;
