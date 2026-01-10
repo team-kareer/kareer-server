@@ -26,7 +26,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           source: "deployment/*"
-          target: "/home/ubuntu/app/deployment"
+          target: "/home/ubuntu/app"
 
       # 3. 배포 스크립트 실행
       - name: 🔆 Execute blue-green deploy script on EC2
