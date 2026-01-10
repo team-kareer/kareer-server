@@ -12,7 +12,7 @@ export $(grep -v '^#' /home/ubuntu/app/deployment/.env | xargs)
 # 1. 현재 떠있는 컨테이너 확인
 IS_BLUE=$(docker ps --format '{{.Names}}' | grep -w kareer-blue || true)
 
-if [ -z "$IS_BLUE" ]; then
+if [ -n "$IS_BLUE" ]; then
   TARGET_CONTAINER="kareer-green"
   TARGET_PORT=8081
   STOP_CONTAINER="kareer-blue"
