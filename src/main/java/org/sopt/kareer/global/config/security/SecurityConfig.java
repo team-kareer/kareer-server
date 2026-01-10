@@ -36,7 +36,8 @@ public class SecurityConfig {
             "/h2-console/**",
             "/error",
             "/oauth2/**",
-            "/login/oauth2/**"
+            "/login/oauth2/**",
+            "/job-postings"
     };
 
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
