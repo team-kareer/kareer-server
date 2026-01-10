@@ -3,7 +3,9 @@ package org.sopt.kareer.domain.member.service;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.repository.MemberRepository;
+import org.sopt.kareer.global.exception.customexception.InternalServerException;
 import org.sopt.kareer.global.exception.customexception.NotFoundException;
+import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
 import org.sopt.kareer.global.exception.errorcode.MemberErrorCode;
 import org.sopt.kareer.global.oauth.dto.OAuthAttributes;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -43,7 +45,7 @@ public class MemberService {
             return memberRepository.save(member);
         } catch (DataIntegrityViolationException ex) {
             return memberRepository.findByProviderAndProviderId(attributes.provider(), attributes.providerId())
-                    .orElseThrow(() -> ex);
+                    .orElseThrow(() -> new InternalServerException(GlobalErrorCode.INTERNAL_SERVER_ERROR));
         }
     }
 }
