@@ -1,7 +1,5 @@
 package org.sopt.kareer.global.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -15,8 +13,6 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.global.config.jwt.JwtProperties;
-import org.sopt.kareer.global.exception.customexception.UnauthorizedException;
-import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
 import org.sopt.kareer.global.jwt.dto.JwtToken;
 import org.springframework.stereotype.Component;
 
@@ -30,24 +26,6 @@ public class JwtTokenProvider {
         String accessToken = buildToken(member, jwtProperties.accessToken());
         String refreshToken = buildToken(member, jwtProperties.refreshToken());
         return new JwtToken(accessToken, refreshToken);
-    }
-
-    public void validateAccessToken(String token) {
-        parseClaims(token, jwtProperties.accessToken());
-    }
-
-    public void validateRefreshToken(String token) {
-        parseClaims(token, jwtProperties.refreshToken());
-    }
-
-    public Long extractMemberId(String token) {
-        return Long.parseLong(parseClaims(token, jwtProperties.accessToken()).getSubject());
-    }
-
-    public LocalDateTime getRefreshTokenExpiry() {
-        Instant now = Instant.now();
-        long seconds = jwtProperties.refreshToken().expirationSeconds();
-        return LocalDateTime.ofInstant(now.plusSeconds(seconds), ZoneId.systemDefault());
     }
 
     private String buildToken(Member member, JwtProperties.TokenProperties tokenProperties) {
@@ -65,20 +43,6 @@ public class JwtTokenProvider {
                 .setExpiration(expiry)
                 .signWith(getSigningKey(tokenProperties), SignatureAlgorithm.HS256)
                 .compact();
-    }
-
-    private Claims parseClaims(String token, JwtProperties.TokenProperties tokenProperties) {
-        try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey(tokenProperties))
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (ExpiredJwtException ex) {
-            throw new UnauthorizedException(GlobalErrorCode.JWT_EXPIRED);
-        } catch (Exception ex) {
-            throw new UnauthorizedException(GlobalErrorCode.JWT_INVALID);
-        }
     }
 
     private Key getSigningKey(JwtProperties.TokenProperties tokenProperties) {

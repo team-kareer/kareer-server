@@ -12,7 +12,7 @@ import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.global.exception.customexception.NotFoundException;
 import org.sopt.kareer.global.exception.customexception.UnauthorizedException;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
-import org.sopt.kareer.global.jwt.JwtTokenProvider;
+import org.sopt.kareer.global.jwt.JwtTokenVerifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -28,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String BEARER_PREFIX = "Bearer ";
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenVerifier jwtTokenVerifier;
     private final MemberService memberService;
 
     @Override
@@ -38,8 +38,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = resolveToken(request);
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
-                jwtTokenProvider.validateAccessToken(token);
-                Long memberId = jwtTokenProvider.extractMemberId(token);
+                jwtTokenVerifier.validateAccessToken(token);
+                Long memberId = jwtTokenVerifier.extractMemberId(token);
                 Member member = memberService.getById(memberId);
                 setAuthentication(request, member);
             } catch (NotFoundException ex) {
