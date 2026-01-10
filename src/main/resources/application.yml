@@ -22,15 +22,37 @@ spring:
         show_sql: true
         highlight_sql: true
     open-in-view: false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${GOOGLE_REDIRECT_URI}
+            scope:
+              - openid
+              - profile
+              - email
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
+            user-name-attribute: sub
+jwt:
+  access-token:
+    secret: ${JWT_ACCESS_SECRET}
+    expiration-seconds: ${JWT_ACCESS_EXPIRATION}
+  refresh-token:
+    secret: ${JWT_REFRESH_SECRET}
+    expiration-seconds: ${JWT_REFRESH_EXPIRATION}
 
 ---
 spring:
   config:
     activate:
       on-profile: local-db
-  jpa:
-    hibernate:
-      ddl-auto: update
   datasource:
     url: ${LOCAL_DATASOURCE_URL}
     username: ${LOCAL_DATASOURCE_USERNAME}
@@ -54,20 +76,19 @@ cors:
   allowed-origins:
     - ${LOCAL_CORS_ALLOWED_ORIGIN}
   allow-credentials: false
-
 ---
 spring:
   config:
     activate:
       on-profile: dev-db
-  jpa:
-    hibernate:
-      ddl-auto: update
   datasource:
     url: ${DEV_DATASOURCE_URL}
     username: ${DEV_DATASOURCE_USERNAME}
     password: ${DEV_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
+selenium:
+  chrome:
+    driver-path: ${DEV_DRIVER_PATH}
 
 ---
 spring:
@@ -86,20 +107,19 @@ cors:
   allowed-origins:
     - ${DEV_CORS_ALLOWED_ORIGIN}
   allow-credentials: false
-
 ---
 spring:
   config:
     activate:
       on-profile: prod-db
-  jpa:
-    hibernate:
-      ddl-auto: update
   datasource:
     url: ${PROD_DATASOURCE_URL}
     username: ${PROD_DATASOURCE_USERNAME}
     password: ${PROD_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
+selenium:
+  chrome:
+    driver-path: ${PROD_DRIVER_PATH}
 
 ---
 spring:

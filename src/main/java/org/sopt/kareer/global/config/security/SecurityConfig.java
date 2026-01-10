@@ -1,8 +1,13 @@
 package org.sopt.kareer.global.config.security;
 
 import lombok.RequiredArgsConstructor;
+import org.sopt.kareer.global.jwt.filter.JwtAuthenticationFilter;
+import org.sopt.kareer.global.jwt.filter.JwtExceptionFilter;
 import org.sopt.kareer.global.jwt.handler.CustomAccessDeniedHandler;
 import org.sopt.kareer.global.jwt.handler.CustomAuthenticationEntryPoint;
+import org.sopt.kareer.global.oauth.handler.OAuth2AuthenticationFailureHandler;
+import org.sopt.kareer.global.oauth.handler.OAuth2AuthenticationSuccessHandler;
+import org.sopt.kareer.global.oauth.service.CustomOidcOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -12,6 +17,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
@@ -22,18 +28,26 @@ public class SecurityConfig {
 
     private static final String[] PERMIT_ALL_PATTERNS = new String[] {
             "/",
-            "/api/auth/**",
+            "/api/v1/auth/**",
             "/swagger-ui/**",
             "/swagger-resources/**",
             "/v3/api-docs/**",
             "/actuator/health",
             "/h2-console/**",
-            "/error"
+            "/error",
+            "/oauth2/**",
+            "/login/oauth2/**",
+            "/job-postings"
     };
 
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final CorsConfigurationSource corsConfigurationSource;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtExceptionFilter jwtExceptionFilter;
+    private final CustomOidcOAuth2UserService customOidcOAuth2UserService;
+    private final OAuth2AuthenticationSuccessHandler successHandler;
+    private final OAuth2AuthenticationFailureHandler failureHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -48,13 +62,18 @@ public class SecurityConfig {
                         .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler(accessDeniedHandler)
                 )
+                .oauth2Login(oauth -> oauth
+                        .userInfoEndpoint(info -> info.oidcUserService(customOidcOAuth2UserService))
+                        .successHandler(successHandler)
+                        .failureHandler(failureHandler)
+                )
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(PERMIT_ALL_PATTERNS).permitAll()
-                        // TODO: 추후 jwt 적용 시 주석 해제 필요
-                        // .anyRequest().authenticated()
-                );
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
 
         return http.build();
     }
-
 }

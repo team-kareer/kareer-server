@@ -1,9 +1,9 @@
 package org.sopt.kareer.global.exception.errorcode;
 
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @AllArgsConstructor
 public enum GlobalErrorCode implements ErrorCode {

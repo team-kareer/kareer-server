@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.4'
     id 'io.spring.dependency-management' version '1.1.4'
+    id 'com.google.cloud.tools.jib' version '3.4.4'
 }
 
 group = 'org.sopt'
@@ -30,15 +31,22 @@ dependencies {
 
     // Spring Data Jpa
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
 
     // Spring Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
+    testImplementation 'org.springframework.security:spring-security-test'
 
     // Spring Boot
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // Spring OAuth2 Client
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
     // Lombok
     compileOnly 'org.projectlombok:lombok'
@@ -53,9 +61,35 @@ dependencies {
     // Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
 
-    //Validation
+    // Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+    // Selenium
+    implementation 'org.seleniumhq.selenium:selenium-java:4.20.0'
+
+
+}
+
+jib {
+    from {
+        image = 'eclipse-temurin:17-jre-alpine'
+    }
+
+    to {
+        image = "${System.getenv('ECR_REGISTRY')}/${System.getenv('ECR_REPOSITORY')}"
+
+        tags = [
+                System.getenv('GITHUB_SHA')?.take(7)
+        ]
+    }
+
+    container {
+        ports = ['8080']
+        jvmFlags = [
+                '-Duser.timezone=Asia/Seoul'
+        ]
+        creationTime = 'USE_CURRENT_TIMESTAMP'
+    }
 }
 
 tasks.named('test') {

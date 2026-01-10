@@ -1,7 +1,7 @@
-name: ci-develop
+name: ci-main
 on:
   pull_request:
-    branches: [develop]
+    branches: [main]
     types: [opened, synchronize, reopened]
     paths-ignore:
       - '**/*.md'
@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: develop
+    environment: main
 
     permissions:
       contents: read
@@ -40,7 +40,33 @@ jobs:
       - name: 🔆 Build
         run: ./gradlew clean build -x test
 
-      # 6. Discord 알림
+      # 6. AWS 인증
+      - name: 🔐 Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # 7. ECR 로그인
+      - name: 🔑 Login to ECR
+        run: |
+          aws ecr get-login-password \
+            --region ${{ secrets.AWS_REGION }} \
+          | docker login \
+            --username AWS \
+            --password-stdin ${{ secrets.ECR_REGISTRY }}
+
+      # 8. ECR Push
+      - name: 📦 Build & Push Image to ECR (Jib)
+        env:
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          ./gradlew jib
+
+      # 9. Discord 알림
       - name: ✉️ Send CI Result to Discord
         if: always()
         env:
@@ -66,7 +92,7 @@ jobs:
           DEBUG_URL="https://github.com/$REPO/actions/runs/$RUN_ID"
           
           payload=$(jq -n \
-            --arg title "$STATUS_EMOJI Develop CI $STATUS_TEXT" \
+            --arg title "$STATUS_EMOJI Main CI $STATUS_TEXT" \
             --arg pr_title "$PR_TITLE" \
             --arg pr_url "$PR_URL" \
             --arg actor "$ACTOR" \
