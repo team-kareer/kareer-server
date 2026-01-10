@@ -6,6 +6,7 @@ import org.sopt.kareer.domain.member.repository.MemberRepository;
 import org.sopt.kareer.global.exception.customexception.NotFoundException;
 import org.sopt.kareer.global.exception.errorcode.MemberErrorCode;
 import org.sopt.kareer.global.oauth.dto.OAuthAttributes;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +39,11 @@ public class MemberService {
                 attributes.providerId(),
                 attributes.picture()
         );
-        return memberRepository.save(member);
+        try {
+            return memberRepository.save(member);
+        } catch (DataIntegrityViolationException ex) {
+            return memberRepository.findByProviderAndProviderId(attributes.provider(), attributes.providerId())
+                    .orElseThrow(() -> ex);
+        }
     }
 }
