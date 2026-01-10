@@ -49,9 +49,10 @@ public class SecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler)
                 )
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(PERMIT_ALL_PATTERNS).permitAll()
-                        // TODO: 추후 jwt 적용 시 주석 해제 필요
-                        // .anyRequest().authenticated()
+//                        .requestMatchers(PERMIT_ALL_PATTERNS).permitAll()
+//                                .anyRequest().authenticated()
+                                // TODO: 추후 jwt 적용 시 주석 해제 필요
+                         .anyRequest().permitAll()
                 );
 
         return http.build();

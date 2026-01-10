@@ -68,6 +68,9 @@ spring:
     username: ${DEV_DATASOURCE_USERNAME}
     password: ${DEV_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
+selenium:
+  chrome:
+    driver-path: ${DEV_DRIVER_PATH}
 
 ---
 spring:
@@ -100,6 +103,9 @@ spring:
     username: ${PROD_DATASOURCE_USERNAME}
     password: ${PROD_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
+selenium:
+  chrome:
+    driver-path: ${PROD_DRIVER_PATH}
 
 ---
 spring:
