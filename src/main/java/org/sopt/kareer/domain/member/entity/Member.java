@@ -6,7 +6,9 @@ import org.sopt.kareer.global.entity.BaseEntity;
 
 import java.time.LocalDate;
 
-@Table(name = "members")
+@Table(name = "members", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_member_provider_provider_id", columnNames = {"provider", "provider_id"})
+})
 @Entity
 @Getter
 @Builder
@@ -25,31 +27,52 @@ public class Member extends BaseEntity {
     private String profileImageUrl;
 
     @Column(nullable = false)
-    private LocalDate birthDate;
+    @Enumerated(EnumType.STRING)
+    private MemberStatus status;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Country country;
+    private OAuthProvider provider;
 
     @Column(nullable = false)
+    private String providerId;
+
+    private LocalDate birthDate;
+
+    @Enumerated(EnumType.STRING)
+    private Country country;
+
     private String primaryMajor;
 
     private String secondaryMajor;
 
-    @Column(nullable = false)
     private String targetJob;
 
-    @Column(nullable = false)
     private LocalDate graduationDate;
 
     private LocalDate expectedGraduationDate;
 
     private String personalBackground;
 
-    private String university;
-
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private LanguageLevel languageLevel;
+
+    public static Member createOAuthMember(String name,
+                                           OAuthProvider provider,
+                                           String providerId,
+                                           String profileImageUrl) {
+        return Member.builder()
+                .name(name)
+                .status(MemberStatus.PENDING)
+                .provider(provider)
+                .providerId(providerId)
+                .profileImageUrl(profileImageUrl)
+                .build();
+    }
+
+    public void updateOAuthProfile(String name, String profileImageUrl) {
+        this.name = name;
+        this.profileImageUrl = profileImageUrl;
+    }
 
 }

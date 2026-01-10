@@ -18,7 +18,7 @@ public class CorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        List<String> allowedOrigins = corsProperties.getAllowedOrigins();
+        List<String> allowedOrigins = corsProperties.allowedOrigins();
         if (allowedOrigins.stream().anyMatch(origin -> origin.contains("*"))) {
             configuration.setAllowedOriginPatterns(allowedOrigins);
         } else {
@@ -27,7 +27,7 @@ public class CorsConfig {
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
         configuration.setExposedHeaders(List.of("Authorization", "Location"));
-        configuration.setAllowCredentials(corsProperties.isAllowCredentials());
+        configuration.setAllowCredentials(corsProperties.allowCredentials());
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
