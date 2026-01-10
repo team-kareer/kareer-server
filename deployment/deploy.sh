@@ -21,7 +21,12 @@ fi
 echo "### 현재 실행 중 컨테이너: $STOP_CONTAINER"
 echo "### 새로 배포될 컨테이너: $TARGET_CONTAINER (port: $TARGET_PORT)"
 
-# 2. 이미지 Pull 및 실행
+# 2. ECR 로그인
+echo "### 🔑 ECR 로그인"
+aws ecr get-login-password --region ap-northeast-2 \
+  | docker login --username AWS --password-stdin "$ECR_REGISTRY"
+
+# 3. 이미지 Pull 및 실행
 echo "### ☁️ 1. 이미지 Pull"
 docker compose pull $TARGET_CONTAINER
 
