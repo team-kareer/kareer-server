@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("jobpostings")
+@RequestMapping("job-postings")
 public class JobPostingController {
 
     private final JobPostingCrawler jobPostingCrawler;
