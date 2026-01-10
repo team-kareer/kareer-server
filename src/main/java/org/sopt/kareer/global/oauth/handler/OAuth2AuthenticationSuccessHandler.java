@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
+import org.sopt.kareer.global.auth.dto.TokenResponse;
 import org.sopt.kareer.global.jwt.JwtTokenProvider;
 import org.sopt.kareer.global.jwt.dto.JwtToken;
 import org.sopt.kareer.global.oauth.principal.CustomOAuth2User;
@@ -35,8 +36,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         OAuth2LoginResponse body = new OAuth2LoginResponse(
                 principal.getMember().getId(),
                 onboardingRequired,
-                jwtToken.accessToken(),
-                jwtToken.refreshToken()
+                TokenResponse.of(jwtToken)
         );
 
         response.setStatus(HttpServletResponse.SC_OK);
