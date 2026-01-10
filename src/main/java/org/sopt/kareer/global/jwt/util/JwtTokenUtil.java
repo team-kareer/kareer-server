@@ -27,7 +27,11 @@ public class JwtTokenUtil {
     }
 
     public Long extractMemberId(String token) {
-        return Long.parseLong(parseClaims(token, jwtProperties.accessToken()).getSubject());
+        try {
+            return Long.parseLong(parseClaims(token, jwtProperties.accessToken()).getSubject());
+        } catch (NumberFormatException ex) {
+            throw new UnauthorizedException(GlobalErrorCode.JWT_INVALID);
+        }
     }
 
     private Claims parseClaims(String token, JwtProperties.TokenProperties tokenProperties) {
