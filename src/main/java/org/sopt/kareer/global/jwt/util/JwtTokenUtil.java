@@ -1,4 +1,4 @@
-package org.sopt.kareer.global.jwt;
+package org.sopt.kareer.global.jwt.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class JwtTokenVerifier {
+public class JwtTokenUtil {
 
     private final JwtProperties jwtProperties;
 

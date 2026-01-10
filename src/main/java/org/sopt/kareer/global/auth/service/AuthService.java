@@ -9,7 +9,7 @@ import org.sopt.kareer.global.exception.customexception.NotFoundException;
 import org.sopt.kareer.global.exception.customexception.UnauthorizedException;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
 import org.sopt.kareer.global.jwt.JwtTokenProvider;
-import org.sopt.kareer.global.jwt.JwtTokenVerifier;
+import org.sopt.kareer.global.jwt.util.JwtTokenUtil;
 import org.sopt.kareer.global.jwt.dto.JwtToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,14 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final JwtTokenVerifier jwtTokenVerifier;
+    private final JwtTokenUtil jwtTokenUtil;
     private final MemberService memberService;
 
     @Transactional(readOnly = true)
     public TokenResponse reissue(TokenReissueRequest request) {
         String refreshToken = request.refreshToken();
-        jwtTokenVerifier.validateRefreshToken(refreshToken);
-        Long memberId = jwtTokenVerifier.extractMemberId(refreshToken);
+        jwtTokenUtil.validateRefreshToken(refreshToken);
+        Long memberId = jwtTokenUtil.extractMemberId(refreshToken);
 
         try {
             Member member = memberService.getById(memberId);
