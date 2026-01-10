@@ -54,8 +54,6 @@ public class Member extends BaseEntity {
 
     private String personalBackground;
 
-    private String university;
-
     @Enumerated(EnumType.STRING)
     private LanguageLevel languageLevel;
 
