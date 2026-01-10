@@ -87,10 +87,10 @@ spring:
 jwt:
   access-token:
     secret: ${LOCAL_JWT_ACCESS_SECRET}
-    expiration-seconds: ${LOCAL_JWT_ACCESS_EXPIRATION:3600}
+    expiration-seconds: ${LOCAL_JWT_ACCESS_EXPIRATION}
   refresh-token:
     secret: ${LOCAL_JWT_REFRESH_SECRET}
-    expiration-seconds: ${LOCAL_JWT_REFRESH_EXPIRATION:1209600}
+    expiration-seconds: ${LOCAL_JWT_REFRESH_EXPIRATION}
 
 ---
 spring:
@@ -156,10 +156,10 @@ spring:
 jwt:
   access-token:
     secret: ${DEV_JWT_ACCESS_SECRET}
-    expiration-seconds: ${DEV_JWT_ACCESS_EXPIRATION:3600}
+    expiration-seconds: ${DEV_JWT_ACCESS_EXPIRATION}
   refresh-token:
     secret: ${DEV_JWT_REFRESH_SECRET}
-    expiration-seconds: ${DEV_JWT_REFRESH_EXPIRATION:1209600}
+    expiration-seconds: ${DEV_JWT_REFRESH_EXPIRATION}
 
 ---
 spring:
@@ -224,7 +224,7 @@ spring:
 jwt:
   access-token:
     secret: ${PROD_JWT_ACCESS_SECRET}
-    expiration-seconds: ${PROD_JWT_ACCESS_EXPIRATION:3600}
+    expiration-seconds: ${PROD_JWT_ACCESS_EXPIRATION}
   refresh-token:
     secret: ${PROD_JWT_REFRESH_SECRET}
-    expiration-seconds: ${PROD_JWT_REFRESH_EXPIRATION:1209600}
+    expiration-seconds: ${PROD_JWT_REFRESH_EXPIRATION}
