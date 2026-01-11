@@ -2,9 +2,10 @@ package org.sopt.kareer.domain.member.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.sopt.kareer.global.entity.BaseEntity;
-
 import java.time.LocalDate;
+import org.sopt.kareer.domain.member.entity.enums.VisaStatus;
+import org.sopt.kareer.domain.member.entity.enums.VisaType;
+import org.sopt.kareer.global.entity.BaseEntity;
 
 @Table(name = "member_visas")
 @Entity
@@ -20,7 +21,7 @@ public class MemberVisa extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @Enumerated(EnumType.STRING)
@@ -31,7 +32,11 @@ public class MemberVisa extends BaseEntity {
     @Column(nullable = false)
     private VisaStatus visaStatus;
 
+    @Column(nullable = false)
     private LocalDate visaExpiredAt;
 
+    private Integer visaPoint;
 
+    @Column(nullable = false)
+    private LocalDate visaStartDate;
 }
