@@ -57,6 +57,11 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private LanguageLevel languageLevel;
 
+    @Enumerated(EnumType.STRING)
+    private Degree degree;
+
+    private String targetJobSkill;
+
     public static Member createOAuthMember(String name,
                                            OAuthProvider provider,
                                            String providerId,
