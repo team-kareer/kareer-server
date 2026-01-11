@@ -29,6 +29,7 @@ public class ActionItem extends BaseEntity {
     private String title;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private ActionItemType actionsType;
 
     @Column(nullable = false)
