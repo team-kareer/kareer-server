@@ -68,6 +68,13 @@ dependencies {
     // Selenium
     implementation 'org.seleniumhq.selenium:selenium-java:4.20.0'
 
+    // Spring AI
+    implementation 'org.springframework.ai:spring-ai-openai-spring-boot-starter:1.0.0-M6'
+
+    // PDFBox
+    implementation 'org.apache.pdfbox:pdfbox:2.0.27'
+
+
 
 }
 
