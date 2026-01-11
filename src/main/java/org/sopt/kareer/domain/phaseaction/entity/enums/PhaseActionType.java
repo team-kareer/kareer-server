@@ -1,4 +1,4 @@
-package org.sopt.kareer.domain.phaseaction.entity;
+package org.sopt.kareer.domain.phaseaction.entity.enums;
 
 public enum PhaseActionType {
     VISA,

@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.sopt.kareer.domain.phase.entity.Phase;
+import org.sopt.kareer.domain.phaseaction.entity.enums.PhaseActionType;
 import org.sopt.kareer.global.entity.BaseEntity;
 
 @Entity

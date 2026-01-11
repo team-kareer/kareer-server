@@ -1,4 +1,4 @@
-package org.sopt.kareer.domain.phase.entity;
+package org.sopt.kareer.domain.phase.entity.enums;
 
 public enum PhaseStatus {
     CURRENT,

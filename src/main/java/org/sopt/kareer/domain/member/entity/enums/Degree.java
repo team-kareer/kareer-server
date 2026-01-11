@@ -1,4 +1,4 @@
-package org.sopt.kareer.domain.member.entity;
+package org.sopt.kareer.domain.member.entity.enums;
 
 public enum Degree {
     ASSOCIATE,

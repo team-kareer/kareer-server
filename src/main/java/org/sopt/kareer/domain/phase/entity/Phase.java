@@ -2,15 +2,13 @@ package org.sopt.kareer.domain.phase.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Builder.Default;
 import org.sopt.kareer.domain.member.entity.Member;
+import org.sopt.kareer.domain.phase.entity.enums.PhaseStatus;
 import org.sopt.kareer.global.entity.BaseEntity;
 
 @Entity

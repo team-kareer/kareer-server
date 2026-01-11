@@ -3,6 +3,8 @@ package org.sopt.kareer.domain.member.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import org.sopt.kareer.domain.member.entity.enums.VisaStatus;
+import org.sopt.kareer.domain.member.entity.enums.VisaType;
 import org.sopt.kareer.global.entity.BaseEntity;
 
 @Table(name = "member_visas")
