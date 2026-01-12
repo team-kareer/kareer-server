@@ -1,6 +1,7 @@
 package org.sopt.kareer.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
+import org.sopt.kareer.domain.member.dto.response.MemberInfoResponse;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.repository.MemberRepository;
 import org.sopt.kareer.global.exception.customexception.InternalServerException;
@@ -47,5 +48,12 @@ public class MemberService {
             return memberRepository.findByProviderAndProviderId(attributes.provider(), attributes.providerId())
                     .orElseThrow(() -> new InternalServerException(GlobalErrorCode.INTERNAL_SERVER_ERROR));
         }
+    }
+
+
+    public MemberInfoResponse getMemberInfo(Long memberId) {
+        Member member = getById(memberId);
+        member.assertOnboarded();
+        return MemberInfoResponse.fromEntity(member);
     }
 }
