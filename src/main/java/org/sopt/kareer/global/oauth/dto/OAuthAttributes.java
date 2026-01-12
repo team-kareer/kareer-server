@@ -1,7 +1,7 @@
 package org.sopt.kareer.global.oauth.dto;
 
 import java.util.Map;
-import org.sopt.kareer.domain.member.entity.OAuthProvider;
+import org.sopt.kareer.domain.member.entity.enums.OAuthProvider;
 
 public record OAuthAttributes(
         OAuthProvider provider,

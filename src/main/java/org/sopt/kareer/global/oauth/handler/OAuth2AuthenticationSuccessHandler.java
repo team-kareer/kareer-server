@@ -11,7 +11,7 @@ import org.sopt.kareer.global.auth.dto.TokenResponse;
 import org.sopt.kareer.global.jwt.JwtTokenProvider;
 import org.sopt.kareer.global.jwt.dto.JwtToken;
 import org.sopt.kareer.global.oauth.principal.CustomOAuth2User;
-import org.sopt.kareer.domain.member.entity.MemberStatus;
+import org.sopt.kareer.domain.member.entity.enums.MemberStatus;
 import org.sopt.kareer.global.oauth.response.OAuth2LoginResponse;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;

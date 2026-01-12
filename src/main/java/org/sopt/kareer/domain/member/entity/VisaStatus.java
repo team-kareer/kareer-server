@@ -1,5 +1,0 @@
-package org.sopt.kareer.domain.member.entity;
-
-public enum VisaStatus {
-    ACTIVE, INACTIVE
-}

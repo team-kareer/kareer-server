@@ -2,6 +2,11 @@ package org.sopt.kareer.domain.member.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.sopt.kareer.domain.member.entity.enums.Country;
+import org.sopt.kareer.domain.member.entity.enums.Degree;
+import org.sopt.kareer.domain.member.entity.enums.LanguageLevel;
+import org.sopt.kareer.domain.member.entity.enums.MemberStatus;
+import org.sopt.kareer.domain.member.entity.enums.OAuthProvider;
 import org.sopt.kareer.global.entity.BaseEntity;
 
 import java.time.LocalDate;
@@ -56,6 +61,11 @@ public class Member extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private LanguageLevel languageLevel;
+
+    @Enumerated(EnumType.STRING)
+    private Degree degree;
+
+    private String targetJobSkill;
 
     public static Member createOAuthMember(String name,
                                            OAuthProvider provider,
