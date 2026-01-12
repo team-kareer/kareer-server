@@ -2,7 +2,7 @@ name: cd-main
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "main" ]
     paths:
       - 'src/**'
       - 'build.gradle'
