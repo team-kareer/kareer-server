@@ -72,7 +72,7 @@ echo "### 🔜 4. Nginx 포트 스위치"
 
 sudo tee "$DEFAULT_CONF" > /dev/null <<EOF
 # managed by deploy.sh (이 파일은 자동 생성되며, 사람이 수동 수정하면 안 됨)
-set \$service_url http://127.0.0.1:$TARGET_PORT;
+server 127.0.0.1:$TARGET_PORT;
 EOF
 
 if ! sudo nginx -s reload; then
