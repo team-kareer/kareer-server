@@ -10,6 +10,8 @@ import org.sopt.kareer.domain.member.entity.enums.OAuthProvider;
 import org.sopt.kareer.global.entity.BaseEntity;
 
 import java.time.LocalDate;
+import org.sopt.kareer.global.exception.customexception.BadRequestException;
+import org.sopt.kareer.global.exception.errorcode.MemberErrorCode;
 
 @Table(name = "members", uniqueConstraints = {
         @UniqueConstraint(name = "uk_member_provider_provider_id", columnNames = {"provider", "provider_id"})
@@ -85,4 +87,9 @@ public class Member extends BaseEntity {
         this.profileImageUrl = profileImageUrl;
     }
 
+    public void assertOnboarded() {
+        if (this.status == MemberStatus.PENDING) {
+            throw new BadRequestException(MemberErrorCode.ONBOARDING_REQUIRED);
+        }
+    }
 }
