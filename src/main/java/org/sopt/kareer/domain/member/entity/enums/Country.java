@@ -1,5 +1,7 @@
 package org.sopt.kareer.domain.member.entity.enums;
 
+import java.util.Arrays;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -199,7 +201,14 @@ public enum Country {
     VIETNAM("Vietnam"),
     YEMEN("Yemen"),
     ZAMBIA("Zambia"),
-    ZIMBABWE("Zimbabwe");
+    ZIMBABWE("Zimbabwe")
+    ;
 
     private final String countryName;
+
+    public static List<String> getCountries() {
+        return Arrays.stream(Country.values())
+                .map(Country::getCountryName)
+                .toList();
+    }
 }

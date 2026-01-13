@@ -5,6 +5,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
 import org.sopt.kareer.domain.member.dto.response.MemberInfoResponse;
+import org.sopt.kareer.domain.member.dto.response.OnboardCountriesResponse;
+import org.sopt.kareer.domain.member.entity.enums.Country;
 import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.global.annotation.CustomExceptionDescription;
 import org.sopt.kareer.global.config.swagger.SwaggerResponseDescription;
@@ -43,5 +45,15 @@ public class MemberController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(BaseResponse.ok("회원 온보딩이 완료되었습니다."));
+    }
+
+    @GetMapping("/onboard/countries")
+    @Operation(summary = "온보딩 국가 목록 조회", description = "회원 온보딩 시 선택할 수 있는 국가 목록을 조회합니다.")
+    public ResponseEntity<BaseResponse<OnboardCountriesResponse>> getOnboardCountries() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(BaseResponse.ok(
+                        OnboardCountriesResponse.from(Country.getCountries()),
+                        "온보딩 국가 목록 조회에 성공하였습니다."));
     }
 }
