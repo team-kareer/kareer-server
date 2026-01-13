@@ -1,5 +1,6 @@
 package org.sopt.kareer.domain.member.entity.enums;
 
 public enum VisaType {
-    D2
+    D2,
+    D10
 }
