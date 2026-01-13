@@ -1,22 +1,22 @@
 package org.sopt.kareer.global.config.swagger;
 
 import lombok.Getter;
-import org.sopt.kareer.domain.exception.DocumentErrorCode;
 import org.sopt.kareer.global.exception.errorcode.ErrorCode;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static org.sopt.kareer.domain.exception.DocumentErrorCode.*;
+import static org.sopt.kareer.domain.document.exception.DocumentErrorCode.EMBEDDING_FAILED;
+import static org.sopt.kareer.domain.document.exception.DocumentErrorCode.EXTRACT_TEXT_FAILED;
 
 @Getter
 public enum SwaggerResponseDescription {
     DEFAULT(new LinkedHashSet<>(Set.of(
     ))),
     UPLOAD_PDF(new LinkedHashSet<>(Set.of(
-            DOCUMENT_PROCESSING_FAILED,
-            EXTRACT_TEXT_FAILED
+            EXTRACT_TEXT_FAILED,
+            EMBEDDING_FAILED
     )))
 
     ;
