@@ -82,20 +82,4 @@ public class DocumentVectorStore {
     }
 
 
-    private Map<String, Object> parseJsonToMap(String json) {
-        try {
-            if (json == null || json.isBlank()) return Map.of();
-            return objectMapper.readValue(json, Map.class);
-        } catch (Exception e) {
-            return Map.of();
-        }
-    }
-
-
-    private static float[] toFloatArray(List<Double> embedding) {
-        float[] out = new float[embedding.size()];
-        for (int i = 0; i < embedding.size(); i++) out[i] = embedding.get(i).floatValue();
-        return out;
-    }
-
 }
