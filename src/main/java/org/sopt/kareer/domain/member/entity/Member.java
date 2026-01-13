@@ -62,12 +62,37 @@ public class Member extends BaseEntity {
     private String personalBackground;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 1000)
     private LanguageLevel languageLevel;
 
     @Enumerated(EnumType.STRING)
     private Degree degree;
 
     private String targetJobSkill;
+
+    public void onboard(String name,
+                        LocalDate birthDate,
+                        Country country,
+                        LanguageLevel languageLevel,
+                        Degree degree,
+                        LocalDate expectedGraduationDate,
+                        String primaryMajor,
+                        String secondaryMajor,
+                        String targetJob,
+                        String targetJobSkill) {
+        assertPendingStatus();
+        this.name = name;
+        this.birthDate = birthDate;
+        this.country = country;
+        this.languageLevel = languageLevel;
+        this.degree = degree;
+        this.expectedGraduationDate = expectedGraduationDate;
+        this.primaryMajor = primaryMajor;
+        this.secondaryMajor = secondaryMajor;
+        this.targetJob = targetJob;
+        this.targetJobSkill = targetJobSkill;
+        this.status = MemberStatus.ACTIVE;
+    }
 
     public static Member createOAuthMember(String name,
                                            OAuthProvider provider,
@@ -90,6 +115,12 @@ public class Member extends BaseEntity {
     public void assertOnboarded() {
         if (this.status == MemberStatus.PENDING) {
             throw new BadRequestException(MemberErrorCode.ONBOARDING_REQUIRED);
+        }
+    }
+
+    private void assertPendingStatus() {
+        if (this.status == MemberStatus.ACTIVE) {
+            throw new BadRequestException(MemberErrorCode.ONBOARDING_ALREADY_COMPLETED);
         }
     }
 }

@@ -1,9 +1,12 @@
 package org.sopt.kareer.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
+import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
 import org.sopt.kareer.domain.member.dto.response.MemberInfoResponse;
 import org.sopt.kareer.domain.member.entity.Member;
+import org.sopt.kareer.domain.member.entity.MemberVisa;
 import org.sopt.kareer.domain.member.repository.MemberRepository;
+import org.sopt.kareer.domain.member.repository.MemberVisaRepository;
 import org.sopt.kareer.global.exception.customexception.InternalServerException;
 import org.sopt.kareer.global.exception.customexception.NotFoundException;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
@@ -19,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final MemberVisaRepository memberVisaRepository;
 
     public Member getById(Long memberId) {
         return memberRepository.findById(memberId)
@@ -55,5 +59,31 @@ public class MemberService {
         Member member = getById(memberId);
         member.assertOnboarded();
         return MemberInfoResponse.fromEntity(member);
+    }
+
+    @Transactional
+    public void onboardMember(MemberOnboardRequest request, Long memberId) {
+        Member member = getById(memberId);
+        member.onboard(
+                request.name(),
+                request.birthDate(),
+                request.country(),
+                request.languageLevel(),
+                request.degree(),
+                request.expectedGraduationDate(),
+                request.primaryMajor(),
+                request.secondaryMajor(),
+                request.targetJob(),
+                request.targetJobSkill()
+        );
+
+        MemberVisa memberVisa = MemberVisa.createMemberVisa(
+                member,
+                request.visaType(),
+                request.visaExpiredAt(),
+                request.visaPoint(),
+                request.visaStartDate()
+        );
+        memberVisaRepository.save(memberVisa);
     }
 }
