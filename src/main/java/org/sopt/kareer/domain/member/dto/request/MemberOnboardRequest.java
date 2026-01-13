@@ -26,7 +26,7 @@ public record MemberOnboardRequest(
         VisaType visaType,
         @Schema(description = "예상 졸업일, D2 비자인 경우만", type = "string", format = "date", example = "2025-08-31")
         LocalDate expectedGraduationDate,
-        @NotNull(message = "졸업일은 필수 입력값입니다.")
+        @NotNull(message = "비자 시작일은 필수 입력값입니다.")
         LocalDate visaStartDate,
         @NotNull(message = "비자 만료일은 필수 입력값입니다.")
         LocalDate visaExpiredAt,
