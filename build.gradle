@@ -74,7 +74,8 @@ dependencies {
     // PDFBox
     implementation 'org.apache.pdfbox:pdfbox:2.0.27'
 
-
+    // pgvector
+    implementation 'org.springframework.ai:spring-ai-pgvector-store-spring-boot-starter:1.0.0-M6'
 
 }
 

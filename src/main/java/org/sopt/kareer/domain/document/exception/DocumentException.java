@@ -1,4 +1,4 @@
-package org.sopt.kareer.domain.exception;
+package org.sopt.kareer.domain.document.exception;
 
 import org.sopt.kareer.global.exception.customexception.CustomException;
 import org.sopt.kareer.global.exception.errorcode.ErrorCode;
