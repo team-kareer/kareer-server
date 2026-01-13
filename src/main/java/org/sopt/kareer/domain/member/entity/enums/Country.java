@@ -1,9 +1,16 @@
 package org.sopt.kareer.domain.member.entity.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.sopt.kareer.global.exception.customexception.BadRequestException;
+import org.sopt.kareer.global.exception.errorcode.MemberErrorCode;
 
 @Getter
 @AllArgsConstructor
@@ -201,14 +208,36 @@ public enum Country {
     VIETNAM("Vietnam"),
     YEMEN("Yemen"),
     ZAMBIA("Zambia"),
-    ZIMBABWE("Zimbabwe")
-    ;
+    ZIMBABWE("Zimbabwe");
 
     private final String countryName;
+    private static final Map<String, Country> COUNTRY_NAME_MAP = Arrays.stream(values())
+            .collect(Collectors.toUnmodifiableMap(
+                    country -> country.countryName.toLowerCase(),
+                    Function.identity()));
 
     public static List<String> getCountries() {
         return Arrays.stream(Country.values())
                 .map(Country::getCountryName)
                 .toList();
+    }
+
+    @JsonCreator
+    public static Country from(String countryName) {
+        if (countryName == null) {
+            return null;
+        }
+        Country country = COUNTRY_NAME_MAP.get(countryName.toLowerCase());
+        if (country == null) {
+            throw new BadRequestException(
+                    MemberErrorCode.INVALID_COUNTRY,
+                    "Unsupported country: " + countryName);
+        }
+        return country;
+    }
+
+    @JsonValue
+    public String jsonValue() {
+        return countryName;
     }
 }
