@@ -4,13 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.kareer.domain.document.dto.response.DocumentUploadResponse;
 import org.sopt.kareer.domain.document.repository.DocumentVectorStore;
-import org.sopt.kareer.domain.exception.DocumentErrorCode;
 import org.sopt.kareer.domain.exception.DocumentException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.swing.text.Document;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
