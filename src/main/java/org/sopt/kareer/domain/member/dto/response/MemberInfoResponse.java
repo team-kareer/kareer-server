@@ -3,7 +3,6 @@ package org.sopt.kareer.domain.member.dto.response;
 import java.time.LocalDate;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.entity.enums.Country;
-import org.sopt.kareer.domain.member.entity.enums.Degree;
 import org.sopt.kareer.domain.member.entity.enums.LanguageLevel;
 
 public record MemberInfoResponse(
@@ -18,7 +17,7 @@ public record MemberInfoResponse(
         LocalDate graduationDate,
         LocalDate expectedGraduationDate,
         LanguageLevel languageLevel,
-        Degree degree,
+        String degree,
         String targetJobSkill
 ) {
     public static MemberInfoResponse fromEntity(Member member) {
@@ -34,7 +33,7 @@ public record MemberInfoResponse(
                 member.getGraduationDate(),
                 member.getExpectedGraduationDate(),
                 member.getLanguageLevel(),
-                member.getDegree(),
+                member.getDegree().getDescription(),
                 member.getTargetJobSkill()
         );
     }
