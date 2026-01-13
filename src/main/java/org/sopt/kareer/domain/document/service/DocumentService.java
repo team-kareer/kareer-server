@@ -3,7 +3,10 @@ package org.sopt.kareer.domain.document.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.kareer.domain.document.dto.response.DocumentUploadResponse;
+import org.sopt.kareer.domain.document.entity.RagDocument;
 import org.sopt.kareer.domain.document.repository.DocumentVectorStore;
+import org.sopt.kareer.domain.document.repository.RagDocumentRepository;
+import org.sopt.kareer.domain.document.util.DocumentHashUtil;
 import org.sopt.kareer.domain.exception.DocumentException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +26,8 @@ public class DocumentService {
 
     private final DocumentVectorStore vectorStore;
 
+    private final RagDocumentRepository ragDocumentRepository;
+
     @Transactional
     public DocumentUploadResponse uploadDocument(MultipartFile file) {
 
@@ -32,15 +37,24 @@ public class DocumentService {
             tempFile = File.createTempFile("upload_", ".pdf");
             file.transferTo(tempFile);
 
+            String fileHash = DocumentHashUtil.sha256(tempFile);
+
+            checkDocumentDuplicate(fileHash);
 
             String originalFilename = file.getOriginalFilename();
 
-            String documentId = UUID.randomUUID().toString();
+            UUID documentUuid = UUID.randomUUID();
+
+            long nowTime = System.currentTimeMillis();
+
+            ragDocumentRepository.save(RagDocument.create(documentUuid, originalFilename, nowTime, fileHash));
+
             Map<String, Object> docMetadata = new HashMap<>();
             docMetadata.put("originalFilename", originalFilename != null ? originalFilename : "");
-            docMetadata.put("uploadTime", System.currentTimeMillis());
-            vectorStore.addDocumentFile(documentId, tempFile, docMetadata);
-            return DocumentUploadResponse.of(documentId);
+            docMetadata.put("uploadTime", nowTime);
+            vectorStore.addDocumentFile(documentUuid.toString(), tempFile, docMetadata);
+
+            return DocumentUploadResponse.of(documentUuid.toString());
         }
         catch(DocumentException e){
                 throw e;
@@ -54,6 +68,12 @@ public class DocumentService {
         }
 
 
+    }
+
+    private void checkDocumentDuplicate(String fileHash) {
+        if (ragDocumentRepository.existsByFileHash(fileHash)) {
+            throw new DocumentException(DOCUMENT_ALREADY_EXISTS);
+        }
     }
 
 }

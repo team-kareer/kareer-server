@@ -33,13 +33,6 @@ public class DocumentVectorStore {
         String originalFilename = Objects.toString(docMetadata.getOrDefault("originalFilename", ""), "");
         long uploadTime = (long) docMetadata.getOrDefault("uploadTime", System.currentTimeMillis());
 
-        ragDocumentRepository.save(
-                RagDocument.builder()
-                        .documentId(docUuid)
-                        .originalFilename(originalFilename)
-                        .uploadTime(uploadTime)
-                        .build()
-        );
 
         String text = documentProcessingService.extractTextFromPdf(file);
 
