@@ -15,14 +15,16 @@ import java.util.UUID;
 public class RagDocument extends BaseEntity {
 
     @Id
-    @Column(name = "document_id", columnDefinition = "uuid")
+    @Column(columnDefinition = "uuid")
     private UUID documentId;
 
-    @Column(name = "original_filename", nullable = false)
+    @Column(nullable = false)
     private String originalFilename;
 
-    @Column(name = "upload_time", nullable = false)
+    @Column(nullable = false)
     private long uploadTime;
 
+    @Column(nullable = false, unique = true)
+    private String fileHash;
 
 }

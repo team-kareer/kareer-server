@@ -22,23 +22,23 @@ import java.util.UUID;
 public class RagDocumentChunk {
 
     @Id
-    @Column(name = "document_chunk_id", columnDefinition = "uuid")
+    @Column(columnDefinition = "uuid")
     private UUID chunkId;
 
-    @Column(name = "document_id", columnDefinition = "uuid", nullable = false)
+    @Column(columnDefinition = "uuid", nullable = false)
     private UUID documentId;
 
-    @Column(name = "chunk_index", nullable = false)
+    @Column(nullable = false)
     private int chunkIndex;
 
-    @Column(name = "content", nullable = false, columnDefinition = "text")
+    @Column(nullable = false, columnDefinition = "text")
     private String content;
 
-    @Column(name = "metadata", nullable = false, columnDefinition = "jsonb")
+    @Column(nullable = false, columnDefinition = "jsonb")
     private String metadataJson;
 
     @Convert(converter = FloatArrayToVectorStringConverter.class)
-    @Column(name = "embedding", nullable = false, columnDefinition = "vector(1536)")
+    @Column(nullable = false, columnDefinition = "vector(1536)")
     private float[] embedding;
 
 }
