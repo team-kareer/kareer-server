@@ -2,10 +2,8 @@ package org.sopt.kareer.domain.document.service;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.sopt.kareer.domain.exception.DocumentErrorCode;
-import org.sopt.kareer.domain.exception.DocumentException;
+import org.sopt.kareer.domain.document.exception.DocumentErrorCode;
+import org.sopt.kareer.domain.document.exception.DocumentException;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
