@@ -3,9 +3,11 @@ package org.sopt.kareer.domain.member.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.sopt.kareer.domain.member.dto.response.OnboardMajorsResponse;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
 import org.sopt.kareer.domain.member.dto.response.MemberInfoResponse;
 import org.sopt.kareer.domain.member.dto.response.OnboardCountriesResponse;
+import org.sopt.kareer.domain.member.entity.constants.Major;
 import org.sopt.kareer.domain.member.entity.enums.Country;
 import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.global.annotation.CustomExceptionDescription;
@@ -55,5 +57,13 @@ public class MemberController {
                 .body(BaseResponse.ok(
                         OnboardCountriesResponse.from(Country.getCountries()),
                         "온보딩 국가 목록 조회에 성공하였습니다."));
+    }
+
+    @GetMapping("/onboard/majors")
+    @Operation(summary = "온보딩 전공 목록 조회", description = "회원 온보딩 시 선택할 수 있는 전공 목록을 조회합니다.")
+    public ResponseEntity<BaseResponse<OnboardMajorsResponse>> getOnboardMajors() {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.ok(OnboardMajorsResponse.from(Major.MAJOR_LIST), "온보딩 전공 목록 조회에 성공하였습니다.")
+                );
     }
 }
