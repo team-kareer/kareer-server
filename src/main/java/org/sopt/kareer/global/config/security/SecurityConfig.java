@@ -26,9 +26,11 @@ import org.springframework.web.cors.CorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    // TODO: 추후에 admin Role 추가 필요
     private static final String[] PERMIT_ALL_PATTERNS = new String[] {
             "/",
             "/api/v1/auth/**",
+            "/api/v1/documents/**",
             "/swagger-ui/**",
             "/swagger-resources/**",
             "/v3/api-docs/**",
