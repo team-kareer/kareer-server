@@ -28,25 +28,29 @@ public class DocumentService {
 
         File tempFile = null;
 
-        try{
+        try {
             tempFile = File.createTempFile("upload_", ".pdf");
             file.transferTo(tempFile);
-        } catch (Exception e) {
-            throw new DocumentException(FILE_CREATE_FAILED);
-        }
 
-        String originalFilename = file.getOriginalFilename();
 
-        String documentId = UUID.randomUUID().toString();
-        Map<String, Object> docMetadata = new HashMap<>();
-        docMetadata.put("originalFilename", originalFilename != null ? originalFilename : "");
-        docMetadata.put("uploadTime", System.currentTimeMillis());
+            String originalFilename = file.getOriginalFilename();
 
-        try{
+            String documentId = UUID.randomUUID().toString();
+            Map<String, Object> docMetadata = new HashMap<>();
+            docMetadata.put("originalFilename", originalFilename != null ? originalFilename : "");
+            docMetadata.put("uploadTime", System.currentTimeMillis());
             vectorStore.addDocumentFile(documentId, tempFile, docMetadata);
             return DocumentUploadResponse.of(documentId);
-        } catch (Exception e) {
+        }
+        catch(DocumentException e){
+                throw e;
+        }
+        catch(Exception e) {
             throw new DocumentException(DOCUMENT_PROCESSING_FAILED);
+        } finally {
+            if (tempFile != null && tempFile.exists()) {
+                tempFile.delete();
+            }
         }
 
 
