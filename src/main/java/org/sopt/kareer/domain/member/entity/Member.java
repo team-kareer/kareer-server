@@ -62,12 +62,12 @@ public class Member extends BaseEntity {
     private String personalBackground;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 1000)
     private LanguageLevel languageLevel;
 
     @Enumerated(EnumType.STRING)
     private Degree degree;
 
+    @Column(length = 1000)
     private String targetJobSkill;
 
     public void onboard(String name,
