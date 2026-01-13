@@ -8,6 +8,7 @@ import org.sopt.kareer.domain.document.service.DocumentProcessingService;
 import org.sopt.kareer.domain.document.service.EmbeddingService;
 import org.sopt.kareer.domain.document.service.TextSplitterService;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.util.*;
@@ -25,6 +26,7 @@ public class DocumentVectorStore {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    @Transactional
     public void addDocumentFile(String documentId, File file, Map<String, Object> docMetadata) {
         UUID docUuid = UUID.fromString(documentId);
 
