@@ -27,4 +27,13 @@ public class RagDocument extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String fileHash;
 
+    public static RagDocument create(UUID documentId, String originalFilename, long uploadTime, String fileHash) {
+        return RagDocument.builder()
+                .documentId(documentId)
+                .originalFilename(originalFilename)
+                .uploadTime(uploadTime)
+                .fileHash(fileHash)
+                .build();
+    }
+
 }
