@@ -2,13 +2,12 @@ package org.sopt.kareer.global.exception.customexception;
 
 import org.sopt.kareer.global.exception.errorcode.ErrorCode;
 
-public class UnauthorizedException extends CustomException {
-
-    public UnauthorizedException(ErrorCode errorCode) {
+public class GlobalException extends CustomException{
+    public GlobalException(ErrorCode errorCode) {
         super(errorCode);
     }
 
-    public UnauthorizedException(ErrorCode errorCode, String messageDetail) {
+    public GlobalException(ErrorCode errorCode, String messageDetail) {
         super(errorCode, messageDetail);
     }
 }

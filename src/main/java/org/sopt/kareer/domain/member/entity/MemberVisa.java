@@ -5,9 +5,9 @@ import java.time.LocalDate;
 import lombok.*;
 import org.sopt.kareer.domain.member.entity.enums.VisaStatus;
 import org.sopt.kareer.domain.member.entity.enums.VisaType;
+import org.sopt.kareer.domain.member.exception.MemberException;
 import org.sopt.kareer.global.entity.BaseEntity;
-import org.sopt.kareer.global.exception.customexception.BadRequestException;
-import org.sopt.kareer.global.exception.errorcode.MemberErrorCode;
+import org.sopt.kareer.domain.member.exception.MemberErrorCode;
 
 @Table(name = "member_visas")
 @Entity
@@ -68,13 +68,13 @@ public class MemberVisa extends BaseEntity {
 
         if (visaType == VisaType.D10) {
             if (visaPoint == null) {
-                throw new BadRequestException(MemberErrorCode.INVALID_VISA_POINT);
+                throw new MemberException(MemberErrorCode.INVALID_VISA_POINT);
             }
             return;
         }
 
         if (visaPoint != null) {
-            throw new BadRequestException(MemberErrorCode.INVALID_VISA_POINT);
+            throw new MemberException(MemberErrorCode.INVALID_VISA_POINT);
         }
     }
 }

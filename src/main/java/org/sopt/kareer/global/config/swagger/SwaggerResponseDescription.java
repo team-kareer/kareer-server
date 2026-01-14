@@ -1,9 +1,9 @@
 package org.sopt.kareer.global.config.swagger;
 
-import static org.sopt.kareer.global.exception.errorcode.MemberErrorCode.INVALID_COUNTRY;
-import static org.sopt.kareer.global.exception.errorcode.MemberErrorCode.MEMBER_NOT_FOUND;
-import static org.sopt.kareer.global.exception.errorcode.MemberErrorCode.ONBOARDING_ALREADY_COMPLETED;
-import static org.sopt.kareer.global.exception.errorcode.MemberErrorCode.ONBOARDING_REQUIRED;
+import static org.sopt.kareer.domain.member.exception.MemberErrorCode.INVALID_COUNTRY;
+import static org.sopt.kareer.domain.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
+import static org.sopt.kareer.domain.member.exception.MemberErrorCode.ONBOARDING_ALREADY_COMPLETED;
+import static org.sopt.kareer.domain.member.exception.MemberErrorCode.ONBOARDING_REQUIRED;
 
 import lombok.Getter;
 import org.sopt.kareer.global.exception.errorcode.ErrorCode;

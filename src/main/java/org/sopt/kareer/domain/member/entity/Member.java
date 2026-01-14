@@ -7,11 +7,11 @@ import org.sopt.kareer.domain.member.entity.enums.Degree;
 import org.sopt.kareer.domain.member.entity.enums.LanguageLevel;
 import org.sopt.kareer.domain.member.entity.enums.MemberStatus;
 import org.sopt.kareer.domain.member.entity.enums.OAuthProvider;
+import org.sopt.kareer.domain.member.exception.MemberException;
 import org.sopt.kareer.global.entity.BaseEntity;
 
 import java.time.LocalDate;
-import org.sopt.kareer.global.exception.customexception.BadRequestException;
-import org.sopt.kareer.global.exception.errorcode.MemberErrorCode;
+import org.sopt.kareer.domain.member.exception.MemberErrorCode;
 
 @Table(name = "members", uniqueConstraints = {
         @UniqueConstraint(name = "uk_member_provider_provider_id", columnNames = {"provider", "provider_id"})
@@ -114,13 +114,13 @@ public class Member extends BaseEntity {
 
     public void assertOnboarded() {
         if (this.status == MemberStatus.PENDING) {
-            throw new BadRequestException(MemberErrorCode.ONBOARDING_REQUIRED);
+            throw new MemberException(MemberErrorCode.ONBOARDING_REQUIRED);
         }
     }
 
     private void assertPendingStatus() {
         if (this.status == MemberStatus.ACTIVE) {
-            throw new BadRequestException(MemberErrorCode.ONBOARDING_ALREADY_COMPLETED);
+            throw new MemberException(MemberErrorCode.ONBOARDING_ALREADY_COMPLETED);
         }
     }
 }

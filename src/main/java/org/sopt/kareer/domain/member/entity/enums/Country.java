@@ -9,8 +9,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.sopt.kareer.global.exception.customexception.BadRequestException;
-import org.sopt.kareer.global.exception.errorcode.MemberErrorCode;
+import org.sopt.kareer.domain.member.exception.MemberException;
+import org.sopt.kareer.domain.member.exception.MemberErrorCode;
 
 @Getter
 @AllArgsConstructor
@@ -229,7 +229,7 @@ public enum Country {
         }
         Country country = COUNTRY_NAME_MAP.get(countryName.toLowerCase());
         if (country == null) {
-            throw new BadRequestException(
+            throw new MemberException(
                     MemberErrorCode.INVALID_COUNTRY,
                     "Unsupported country: " + countryName);
         }
