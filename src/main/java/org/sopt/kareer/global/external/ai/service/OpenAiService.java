@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.global.external.ai.constant.OpenAiPrompt;
 import org.sopt.kareer.domain.member.dto.response.RoadmapResponse;
-import org.sopt.kareer.global.external.ai.exception.AiErrorCode;
-import org.sopt.kareer.global.external.ai.exception.AiException;
+import org.sopt.kareer.global.external.ai.exception.LlmErrorCode;
+import org.sopt.kareer.global.external.ai.exception.LlmException;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.document.Document;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ public class OpenAiService {
         try {
             return objectMapper.readValue(responseJson, RoadmapResponse.class);
         } catch (Exception e) {
-            throw new AiException(AiErrorCode.LLM_JSON_PARSING_FAILED, e.getMessage());
+            throw new LlmException(LlmErrorCode.LLM_JSON_PARSING_FAILED, e.getMessage());
         }
     }
 

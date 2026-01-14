@@ -11,6 +11,7 @@ import static org.sopt.kareer.global.auth.exception.AuthErrorCode.LOGIN_CODE_NOT
 import lombok.Getter;
 import org.sopt.kareer.global.exception.errorcode.ErrorCode;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
+import org.sopt.kareer.global.exception.errorcode.MemberErrorCode;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
