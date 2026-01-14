@@ -1,5 +1,7 @@
 package org.sopt.kareer.domain.jobposting.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.jobposting.crawler.JobPostingCrawler;
 import org.sopt.kareer.domain.jobposting.dto.response.JobPostingCrawlListResponse;
@@ -18,6 +20,8 @@ public class JobPostingController {
 
     private final JobPostingCrawler jobPostingCrawler;
 
+    @Tag(name = "채용 공고 관련 API")
+    @Operation(summary = "채용 공고 크롤링 (Server Only)")
     @GetMapping("crawl")
     public ResponseEntity<BaseResponse<JobPostingCrawlListResponse>> crawlJobPostings(@RequestParam(defaultValue = "5") int limit) {
         return ResponseEntity.status(HttpStatus.OK)
