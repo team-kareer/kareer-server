@@ -70,16 +70,16 @@ public class Member extends BaseEntity {
     @Column(length = 1000)
     private String targetJobSkill;
 
-    public void onboard(String name,
-                        LocalDate birthDate,
-                        Country country,
-                        LanguageLevel languageLevel,
-                        Degree degree,
-                        LocalDate expectedGraduationDate,
-                        String primaryMajor,
-                        String secondaryMajor,
-                        String targetJob,
-                        String targetJobSkill) {
+    public void updateInfo(String name,
+                           LocalDate birthDate,
+                           Country country,
+                           LanguageLevel languageLevel,
+                           Degree degree,
+                           LocalDate expectedGraduationDate,
+                           String primaryMajor,
+                           String secondaryMajor,
+                           String targetJob,
+                           String targetJobSkill) {
         assertPendingStatus();
         this.name = name;
         this.birthDate = birthDate;

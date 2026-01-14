@@ -64,7 +64,7 @@ public class MemberService {
     @Transactional
     public void onboardMember(MemberOnboardRequest request, Long memberId) {
         Member member = getById(memberId);
-        member.onboard(
+        member.updateInfo(
                 request.name(),
                 request.birthDate(),
                 request.country(),
