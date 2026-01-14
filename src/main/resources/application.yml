@@ -20,13 +20,13 @@ spring:
   ai:
     openai:
       api-key: ${OPENAI_API_KEY}
-    vectorstore:
-      pgvector:
-        enabled: true
-        table-name: vector_store
-        dimension: 1536
-        initialize-schema: true
-        distance-type: COSINE_DISTANCE
+      chat:
+        options:
+          model: gpt-4o-mini
+          temperature: 0.5
+      embedding:
+        options:
+          model: text-embedding-3-small
   jpa:
     hibernate:
       ddl-auto: update
