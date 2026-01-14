@@ -8,7 +8,7 @@ import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.global.config.jwt.JwtProperties;
-import org.sopt.kareer.global.exception.customexception.UnauthorizedException;
+import org.sopt.kareer.global.exception.customexception.GlobalException;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +30,7 @@ public class JwtTokenUtil {
         try {
             return Long.parseLong(parseClaims(token, jwtProperties.accessToken()).getSubject());
         } catch (NumberFormatException ex) {
-            throw new UnauthorizedException(GlobalErrorCode.JWT_INVALID);
+            throw new GlobalException(GlobalErrorCode.JWT_INVALID);
         }
     }
 
@@ -42,9 +42,9 @@ public class JwtTokenUtil {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException ex) {
-            throw new UnauthorizedException(GlobalErrorCode.JWT_EXPIRED);
+            throw new GlobalException(GlobalErrorCode.JWT_EXPIRED);
         } catch (Exception ex) {
-            throw new UnauthorizedException(GlobalErrorCode.JWT_INVALID);
+            throw new GlobalException(GlobalErrorCode.JWT_INVALID);
         }
     }
 

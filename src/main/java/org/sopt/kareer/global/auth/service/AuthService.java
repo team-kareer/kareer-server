@@ -2,11 +2,11 @@ package org.sopt.kareer.global.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.entity.Member;
+import org.sopt.kareer.domain.member.exception.MemberException;
 import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.global.auth.dto.TokenReissueRequest;
 import org.sopt.kareer.global.auth.dto.TokenResponse;
-import org.sopt.kareer.global.exception.customexception.NotFoundException;
-import org.sopt.kareer.global.exception.customexception.UnauthorizedException;
+import org.sopt.kareer.global.exception.customexception.GlobalException;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
 import org.sopt.kareer.global.jwt.JwtTokenProvider;
 import org.sopt.kareer.global.jwt.util.JwtTokenUtil;
@@ -32,8 +32,8 @@ public class AuthService {
             Member member = memberService.getById(memberId);
             JwtToken newToken = jwtTokenProvider.generate(member);
             return TokenResponse.of(newToken);
-        } catch (NotFoundException ex) {
-            throw new UnauthorizedException(GlobalErrorCode.UNAUTHORIZED);
+        } catch (MemberException ex) {
+            throw new GlobalException(GlobalErrorCode.UNAUTHORIZED);
         }
     }
 }
