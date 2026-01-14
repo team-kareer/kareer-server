@@ -1,6 +1,7 @@
 package org.sopt.kareer.global.config.swagger;
 
 import static org.sopt.kareer.domain.member.exception.MemberErrorCode.INVALID_COUNTRY;
+import static org.sopt.kareer.domain.member.exception.MemberErrorCode.INVALID_VISA_POINT;
 import static org.sopt.kareer.domain.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
 import static org.sopt.kareer.domain.member.exception.MemberErrorCode.ONBOARDING_ALREADY_COMPLETED;
 import static org.sopt.kareer.domain.member.exception.MemberErrorCode.ONBOARDING_REQUIRED;
@@ -26,7 +27,8 @@ public enum SwaggerResponseDescription {
     MEMBER_ONBOARD(new LinkedHashSet<>(Set.of(
             MEMBER_NOT_FOUND,
             ONBOARDING_ALREADY_COMPLETED,
-            INVALID_COUNTRY
+            INVALID_COUNTRY,
+            INVALID_VISA_POINT
     ))),
     UPLOAD_PDF(new LinkedHashSet<>(Set.of(
             EXTRACT_TEXT_FAILED,
