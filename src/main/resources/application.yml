@@ -13,6 +13,20 @@ spring:
   config:
     activate:
       on-profile: common
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+    vectorstore:
+      pgvector:
+        enabled: true
+        table-name: vector_store
+        dimension: 1536
+        initialize-schema: true
+        distance-type: COSINE_DISTANCE
   jpa:
     hibernate:
       ddl-auto: update
