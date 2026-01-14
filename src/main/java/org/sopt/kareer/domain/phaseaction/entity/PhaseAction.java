@@ -39,13 +39,28 @@ public class PhaseAction extends BaseEntity {
     @Column(nullable = false)
     private String importance;
 
-    @Column(nullable = false)
-    private String guideline;
-
-    @Column(name = "common_mistakes", nullable = false)
-    private String commonMistakes;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "phase_id", nullable = false)
     private Phase phase;
+
+    @Builder
+    private PhaseAction(String title, String description, PhaseActionType type, LocalDate deadline, String importance, Phase phase) {
+        this.title = title;
+        this.description = description;
+        this.type = type;
+        this.deadline = deadline;
+        this.importance = importance;
+        this.phase = phase;
+    }
+
+    public static PhaseAction create(String title,  String description, PhaseActionType type, LocalDate deadline, String importance, Phase phase) {
+        return PhaseAction.builder()
+                .title(title)
+                .description(description)
+                .type(type)
+                .deadline(deadline)
+                .importance(importance)
+                .phase(phase)
+                .build();
+    }
 }
