@@ -9,12 +9,13 @@ import static org.sopt.kareer.domain.member.exception.MemberErrorCode.ONBOARDING
 import lombok.Getter;
 import org.sopt.kareer.global.exception.errorcode.ErrorCode;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
+import org.sopt.kareer.global.exception.errorcode.MemberErrorCode;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static org.sopt.kareer.domain.document.exception.DocumentErrorCode.EMBEDDING_FAILED;
-import static org.sopt.kareer.domain.document.exception.DocumentErrorCode.EXTRACT_TEXT_FAILED;
+import static org.sopt.kareer.global.exception.errorcode.MemberErrorCode.*;
+import static org.sopt.kareer.global.external.ai.exception.AiErrorCode.*;
 
 @Getter
 public enum SwaggerResponseDescription {
@@ -33,6 +34,11 @@ public enum SwaggerResponseDescription {
     UPLOAD_PDF(new LinkedHashSet<>(Set.of(
             EXTRACT_TEXT_FAILED,
             EMBEDDING_FAILED
+    ))),
+    CREATE_ROADMAP(new LinkedHashSet<>(Set.of(
+            LLM_JSON_PARSING_FAILED,
+            DOCUMENTS_RETRIEVED_EMPTY,
+            MEMBER_NOT_FOUND
     )))
 
     ;
