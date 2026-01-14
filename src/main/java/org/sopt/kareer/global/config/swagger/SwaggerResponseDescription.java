@@ -15,7 +15,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static org.sopt.kareer.global.exception.errorcode.MemberErrorCode.*;
-import static org.sopt.kareer.global.external.ai.exception.AiErrorCode.*;
+import static org.sopt.kareer.global.external.ai.exception.RagErrorCode.*;
+import static org.sopt.kareer.global.external.ai.exception.LlmErrorCode.*;
 
 @Getter
 public enum SwaggerResponseDescription {

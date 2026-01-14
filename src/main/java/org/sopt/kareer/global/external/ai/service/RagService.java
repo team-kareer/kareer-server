@@ -3,7 +3,8 @@ package org.sopt.kareer.global.external.ai.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.kareer.global.external.ai.dto.response.DocumentUploadResponse;
-import org.sopt.kareer.global.external.ai.exception.AiException;
+import org.sopt.kareer.global.external.ai.exception.RagErrorCode;
+import org.sopt.kareer.global.external.ai.exception.RagException;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.pgvector.PgVectorStore;
@@ -14,8 +15,6 @@ import org.springframework.ai.document.Document;
 
 import java.io.File;
 import java.util.*;
-
-import static org.sopt.kareer.global.external.ai.exception.AiErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -66,7 +65,7 @@ public class RagService {
 
             return DocumentUploadResponse.of(UUID.randomUUID().toString());
         } catch (Exception e) {
-            throw new AiException(EMBEDDING_FAILED, e.getMessage());
+            throw new RagException(RagErrorCode.EMBEDDING_FAILED, e.getMessage());
         } finally {
             if (temp != null && temp.exists()) temp.delete();
         }
@@ -83,7 +82,7 @@ public class RagService {
         List<Document> documents = documentVectorStore.similaritySearch(request);
 
         if(documents != null && documents.isEmpty()){
-            throw new AiException(DOCUMENTS_RETRIEVED_EMPTY);
+            throw new RagException(RagErrorCode.DOCUMENTS_RETRIEVED_EMPTY);
         }
 
         return documents;
