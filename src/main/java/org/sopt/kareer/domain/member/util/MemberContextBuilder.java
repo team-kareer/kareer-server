@@ -4,13 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.entity.MemberVisa;
 import org.sopt.kareer.domain.member.entity.enums.VisaStatus;
+import org.sopt.kareer.domain.member.exception.MemberErrorCode;
 import org.sopt.kareer.domain.member.exception.MemberException;
 import org.sopt.kareer.domain.member.repository.MemberRepository;
 import org.sopt.kareer.domain.member.repository.MemberVisaRepository;
-import org.sopt.kareer.global.exception.errorcode.MemberErrorCode;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
+import static org.sopt.kareer.domain.member.exception.MemberErrorCode.*;
 
 @Component
 @RequiredArgsConstructor
@@ -20,7 +22,7 @@ public class MemberContextBuilder {
 
     public MemberAndContext load(Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
 
         List<MemberVisa> visas = memberVisaRepository.findAllByMemberIdAndVisaStatus(memberId, VisaStatus.ACTIVE);
 

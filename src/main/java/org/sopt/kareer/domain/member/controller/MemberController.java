@@ -70,7 +70,8 @@ public class MemberController {
     @GetMapping("/onboard/majors")
     @Operation(summary = "온보딩 전공 목록 조회", description = "회원 온보딩 시 선택할 수 있는 전공 목록을 조회합니다.")
     public ResponseEntity<BaseResponse<OnboardMajorsResponse>> getOnboardMajors() {
-
+        return ResponseEntity
+                .status(HttpStatus.OK)
                 .body(BaseResponse.ok(OnboardMajorsResponse.from(Major.MAJOR_LIST), "온보딩 전공 목록 조회에 성공하였습니다.")
                 );
     }
