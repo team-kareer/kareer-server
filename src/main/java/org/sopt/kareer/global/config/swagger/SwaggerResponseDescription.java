@@ -9,12 +9,10 @@ import static org.sopt.kareer.domain.member.exception.MemberErrorCode.ONBOARDING
 import lombok.Getter;
 import org.sopt.kareer.global.exception.errorcode.ErrorCode;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
-import org.sopt.kareer.global.exception.errorcode.MemberErrorCode;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static org.sopt.kareer.global.exception.errorcode.MemberErrorCode.*;
 import static org.sopt.kareer.global.external.ai.exception.RagErrorCode.*;
 import static org.sopt.kareer.global.external.ai.exception.LlmErrorCode.*;
 
