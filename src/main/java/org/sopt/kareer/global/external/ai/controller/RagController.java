@@ -25,10 +25,6 @@ public class RagController {
 
     private final RagService documentService;
 
-    private final OpenAiService openAiService;
-
-    private final RoadMapService roadMapService;
-
     @Tag(name = "RAG 관련 API")
     @Operation(summary = "정책 PDF 문서 업로드 (Server Only)" , description = "정책 관련 PDF 문서를 임베딩하여 vectorDB에 저장합니다.")
     @CustomExceptionDescription(UPLOAD_PDF)
