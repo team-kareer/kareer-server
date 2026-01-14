@@ -29,9 +29,9 @@ public class Phase extends BaseEntity {
     private Member member;
 
     @Column(nullable = false)
-    private Integer sequence;
+    private int sequence;
 
-    @Column(length = 20, nullable = false)
+    @Column(nullable = false)
     private String goal;
 
     @Column(nullable = false, columnDefinition = "TEXT")
@@ -46,4 +46,27 @@ public class Phase extends BaseEntity {
 
     @Column(nullable = false)
     private LocalDate endDate;
+
+    @Builder
+    private Phase(Member member, int sequence, String goal, String description, PhaseStatus status, LocalDate startDate, LocalDate endDate) {
+        this.member = member;
+        this.sequence = sequence;
+        this.goal = goal;
+        this.description = description;
+        this.status = status;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
+    public static Phase create(Member member, int sequence, String goal, String description, PhaseStatus status, LocalDate startDate, LocalDate endDate) {
+        return Phase.builder()
+                .member(member)
+                .sequence(sequence)
+                .goal(goal)
+                .description(description)
+                .status(status)
+                .startDate(startDate)
+                .endDate(endDate)
+                .build();
+    }
 }
