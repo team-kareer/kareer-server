@@ -47,4 +47,24 @@ public class ActionItem extends BaseEntity {
     @JoinColumn(name = "phase_actions_id", nullable = false)
     private PhaseAction phaseAction;
 
+    @Builder
+    private ActionItem(String title, ActionItemType actionsType, LocalDate deadline, boolean completed, Member member, PhaseAction phaseAction) {
+        this.title = title;
+        this.actionsType = actionsType;
+        this.deadline = deadline;
+        this.completed = completed;
+        this.member = member;
+        this.phaseAction = phaseAction;
+    }
+
+    public static ActionItem create(String title, ActionItemType actionsType, LocalDate deadline, Member member, PhaseAction phaseAction) {
+        return ActionItem.builder()
+                .title(title)
+                .actionsType(actionsType)
+                .deadline(deadline)
+                .completed(false)
+                .member(member)
+                .phaseAction(phaseAction)
+                .build();
+    }
 }
