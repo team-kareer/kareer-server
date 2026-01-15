@@ -13,6 +13,11 @@ spring:
   config:
     activate:
       on-profile: common
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
   servlet:
     multipart:
       max-file-size: 20MB
@@ -54,14 +59,23 @@ spring:
             token-uri: https://oauth2.googleapis.com/token
             user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
             user-name-attribute: sub
+      redirect:
+        redirect-uri: ${OAUTH_REDIRECT_URI}
 jwt:
+  secret: ${JWT_SECRET}
   access-token:
-    secret: ${JWT_ACCESS_SECRET}
     expiration-seconds: ${JWT_ACCESS_EXPIRATION}
   refresh-token:
-    secret: ${JWT_REFRESH_SECRET}
     expiration-seconds: ${JWT_REFRESH_EXPIRATION}
-
+auth:
+  login-code:
+    ttl-seconds: ${AUTH_LOGIN_CODE_TTL_SECONDS}
+    redis-prefix: ${AUTH_LOGIN_CODE_REDIS_PREFIX}
+  cookie:
+    refresh-token:
+      name: ${AUTH_REFRESH_TOKEN_COOKIE_NAME}
+      secure: ${AUTH_REFRESH_TOKEN_COOKIE_SECURE}
+      same-site: ${AUTH_REFRESH_TOKEN_COOKIE_SAMESITE}
 ---
 spring:
   config:

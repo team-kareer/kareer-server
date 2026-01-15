@@ -1,6 +1,6 @@
 package org.sopt.kareer.global.jwt.dto;
 
-public record JwtToken(
+public record JwtTokenDTO(
         String accessToken,
         String refreshToken
 ) {

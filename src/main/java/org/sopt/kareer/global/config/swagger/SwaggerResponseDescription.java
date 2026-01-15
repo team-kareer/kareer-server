@@ -3,10 +3,13 @@ package org.sopt.kareer.global.config.swagger;
 import lombok.Getter;
 import org.sopt.kareer.global.exception.errorcode.ErrorCode;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
+import org.sopt.kareer.global.exception.errorcode.MemberErrorCode;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static org.sopt.kareer.domain.document.exception.DocumentErrorCode.EMBEDDING_FAILED;
+import static org.sopt.kareer.domain.document.exception.DocumentErrorCode.EXTRACT_TEXT_FAILED;
 import static org.sopt.kareer.domain.member.exception.MemberErrorCode.*;
 import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.*;
 import static org.sopt.kareer.global.external.ai.exception.LlmErrorCode.LLM_JSON_PARSING_FAILED;
@@ -30,6 +33,11 @@ public enum SwaggerResponseDescription {
             EXTRACT_TEXT_FAILED,
             EMBEDDING_FAILED
     ))),
+    AUTH_LOGIN_CODE(new LinkedHashSet<>(Set.of(
+            LOGIN_CODE_NOT_FOUND,
+            LOGIN_CODE_ALREADY_USED
+    ))),
+    AUTH_REISSUE(new LinkedHashSet<>(Set.of())),
     CREATE_ROADMAP(new LinkedHashSet<>(Set.of(
             LLM_JSON_PARSING_FAILED,
             DOCUMENTS_RETRIEVED_EMPTY,
@@ -43,10 +51,18 @@ public enum SwaggerResponseDescription {
     ))),
     PHASE_LIST(new LinkedHashSet<>(Set.of(
             MEMBER_NOT_FOUND
+    ))),
+    AUTH_LOGIN_CODE(new LinkedHashSet<>(Set.of(
+            LOGIN_CODE_NOT_FOUND,
+            LOGIN_CODE_ALREADY_USED
+    ))),
+    AUTH_REISSUE(new LinkedHashSet<>(Set.of(
     )))
     ;
 
     private final Set<ErrorCode> errorCodeList;
+
+
     SwaggerResponseDescription(Set<ErrorCode> specificErrorCodes) {
         this.errorCodeList = new LinkedHashSet<>();
         this.errorCodeList.addAll(specificErrorCodes);
