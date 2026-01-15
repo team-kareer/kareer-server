@@ -5,6 +5,8 @@ import static org.sopt.kareer.domain.member.exception.MemberErrorCode.INVALID_VI
 import static org.sopt.kareer.domain.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
 import static org.sopt.kareer.domain.member.exception.MemberErrorCode.ONBOARDING_ALREADY_COMPLETED;
 import static org.sopt.kareer.domain.member.exception.MemberErrorCode.ONBOARDING_REQUIRED;
+import static org.sopt.kareer.global.auth.exception.LoginErrorCode.LOGIN_CODE_ALREADY_USED;
+import static org.sopt.kareer.global.auth.exception.LoginErrorCode.LOGIN_CODE_NOT_FOUND;
 
 import lombok.Getter;
 import org.sopt.kareer.global.exception.errorcode.ErrorCode;
@@ -33,6 +35,12 @@ public enum SwaggerResponseDescription {
     UPLOAD_PDF(new LinkedHashSet<>(Set.of(
             EXTRACT_TEXT_FAILED,
             EMBEDDING_FAILED
+    ))),
+    AUTH_LOGIN_CODE(new LinkedHashSet<>(Set.of(
+            LOGIN_CODE_NOT_FOUND,
+            LOGIN_CODE_ALREADY_USED
+    ))),
+    AUTH_REISSUE(new LinkedHashSet<>(Set.of(
     )))
 
     ;
