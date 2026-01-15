@@ -1,9 +1,10 @@
-package org.sopt.kareer.domain.member.service;
+package org.sopt.kareer.domain.roadmap.service;
 
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.domain.member.dto.response.RoadmapResponse;
 import org.sopt.kareer.domain.member.entity.Member;
+import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.domain.member.util.MemberContextBuilder;
+import org.sopt.kareer.domain.roadmap.dto.response.RoadmapResponse;
 import org.sopt.kareer.global.external.ai.service.OpenAiService;
 import org.sopt.kareer.global.external.ai.service.RagService;
 import org.springframework.ai.document.Document;
@@ -23,7 +24,7 @@ public class RoadMapService {
     private final RoadMapPersistService roadMapPersistService;
 
     @Transactional
-    public RoadmapResponse createRoadmap(Long memberId){
+    public void createRoadmap(Long memberId){
         Member member = memberService.getById(memberId);
 
         var context = memberContextBuilder.load(memberId);
@@ -32,8 +33,6 @@ public class RoadMapService {
 
         RoadmapResponse response = openAiService.generateRoadmap(context.contextText(), searchedDocs);
         roadMapPersistService.saveRoadMap(member, response);
-
-        return response;
 
     }
 

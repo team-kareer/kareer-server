@@ -2,8 +2,8 @@ package org.sopt.kareer.global.external.ai.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.sopt.kareer.domain.roadmap.dto.response.RoadmapResponse;
 import org.sopt.kareer.global.external.ai.constant.OpenAiPrompt;
-import org.sopt.kareer.domain.member.dto.response.RoadmapResponse;
 import org.sopt.kareer.global.external.ai.exception.LlmErrorCode;
 import org.sopt.kareer.global.external.ai.exception.LlmException;
 import org.springframework.ai.chat.client.ChatClient;

@@ -1,4 +1,4 @@
-package org.sopt.kareer.domain.member.dto.response;
+package org.sopt.kareer.domain.roadmap.dto.response;
 
 import java.util.List;
 

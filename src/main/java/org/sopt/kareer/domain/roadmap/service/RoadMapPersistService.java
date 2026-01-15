@@ -1,21 +1,13 @@
-package org.sopt.kareer.domain.member.service;
+package org.sopt.kareer.domain.roadmap.service;
 
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.domain.roadmap.entity.ActionItem;
-import org.sopt.kareer.domain.roadmap.entity.enums.ActionItemType;
-import org.sopt.kareer.domain.roadmap.repository.ActionItemRepository;
-import org.sopt.kareer.domain.member.dto.response.RoadmapResponse;
 import org.sopt.kareer.domain.member.entity.Member;
-import org.sopt.kareer.domain.roadmap.entity.Phase;
-import org.sopt.kareer.domain.roadmap.entity.enums.PhaseStatus;
-import org.sopt.kareer.domain.roadmap.repository.PhaseRepository;
-import org.sopt.kareer.domain.roadmap.entity.PhaseAction;
-import org.sopt.kareer.domain.roadmap.entity.PhaseActionGuideline;
-import org.sopt.kareer.domain.roadmap.entity.PhaseActionMistake;
+import org.sopt.kareer.domain.roadmap.dto.response.RoadmapResponse;
+import org.sopt.kareer.domain.roadmap.entity.*;
+import org.sopt.kareer.domain.roadmap.entity.enums.ActionItemType;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseActionType;
-import org.sopt.kareer.domain.roadmap.repository.PhaseActionGuidelineRepository;
-import org.sopt.kareer.domain.roadmap.repository.PhaseActionMistakeRepository;
-import org.sopt.kareer.domain.roadmap.repository.PhaseActionRepository;
+import org.sopt.kareer.domain.roadmap.entity.enums.PhaseStatus;
+import org.sopt.kareer.domain.roadmap.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
