@@ -1,6 +1,6 @@
-package org.sopt.kareer.domain.actionitem.repository;
+package org.sopt.kareer.domain.roadmap.repository;
 
-import org.sopt.kareer.domain.actionitem.entity.ActionItem;
+import org.sopt.kareer.domain.roadmap.entity.ActionItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ActionItemRepository extends JpaRepository<ActionItem, Long> {

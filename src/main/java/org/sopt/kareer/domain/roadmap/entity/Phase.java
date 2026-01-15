@@ -1,4 +1,4 @@
-package org.sopt.kareer.domain.phase.entity;
+package org.sopt.kareer.domain.roadmap.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.sopt.kareer.domain.member.entity.Member;
-import org.sopt.kareer.domain.phase.entity.enums.PhaseStatus;
+import org.sopt.kareer.domain.roadmap.entity.enums.PhaseStatus;
 import org.sopt.kareer.global.entity.BaseEntity;
 
 @Entity

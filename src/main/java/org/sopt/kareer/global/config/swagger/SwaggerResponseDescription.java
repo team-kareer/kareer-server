@@ -1,13 +1,5 @@
 package org.sopt.kareer.global.config.swagger;
 
-import static org.sopt.kareer.domain.member.exception.MemberErrorCode.INVALID_COUNTRY;
-import static org.sopt.kareer.domain.member.exception.MemberErrorCode.INVALID_VISA_POINT;
-import static org.sopt.kareer.domain.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
-import static org.sopt.kareer.domain.member.exception.MemberErrorCode.ONBOARDING_ALREADY_COMPLETED;
-import static org.sopt.kareer.domain.member.exception.MemberErrorCode.ONBOARDING_REQUIRED;
-import static org.sopt.kareer.global.auth.exception.AuthErrorCode.LOGIN_CODE_ALREADY_USED;
-import static org.sopt.kareer.global.auth.exception.AuthErrorCode.LOGIN_CODE_NOT_FOUND;
-
 import lombok.Getter;
 import org.sopt.kareer.global.exception.errorcode.ErrorCode;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
@@ -18,6 +10,10 @@ import java.util.Set;
 
 import static org.sopt.kareer.domain.document.exception.DocumentErrorCode.EMBEDDING_FAILED;
 import static org.sopt.kareer.domain.document.exception.DocumentErrorCode.EXTRACT_TEXT_FAILED;
+import static org.sopt.kareer.domain.member.exception.MemberErrorCode.*;
+import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.*;
+import static org.sopt.kareer.global.external.ai.exception.LlmErrorCode.LLM_JSON_PARSING_FAILED;
+import static org.sopt.kareer.global.external.ai.exception.RagErrorCode.*;
 
 @Getter
 public enum SwaggerResponseDescription {
@@ -41,11 +37,21 @@ public enum SwaggerResponseDescription {
             LOGIN_CODE_NOT_FOUND,
             LOGIN_CODE_ALREADY_USED
     ))),
-    AUTH_REISSUE(new LinkedHashSet<>(Set.of(
-    )))
-
-    ;
+    AUTH_REISSUE(new LinkedHashSet<>(Set.of())),
+    CREATE_ROADMAP(new LinkedHashSet<>(Set.of(
+            LLM_JSON_PARSING_FAILED,
+            DOCUMENTS_RETRIEVED_EMPTY,
+            MEMBER_NOT_FOUND,
+            PHASE_STATUS_INVALID,
+            PHASE_STATUS_BLANK,
+            PHASE_ACTION_TYPE_BLANK,
+            PHASE_ACTION_TYPE_INVALID,
+            ACTION_ITEM_TYPE_BLANK,
+            ACTION_ITEM_TYPE_INVALID
+    )));
     private final Set<ErrorCode> errorCodeList;
+
+
     SwaggerResponseDescription(Set<ErrorCode> specificErrorCodes) {
         this.errorCodeList = new LinkedHashSet<>();
         this.errorCodeList.addAll(specificErrorCodes);
