@@ -5,28 +5,23 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.domain.member.dto.response.RoadmapResponse;
-import org.sopt.kareer.domain.member.dto.response.OnboardMajorsResponse;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
 import org.sopt.kareer.domain.member.dto.response.MemberInfoResponse;
 import org.sopt.kareer.domain.member.dto.response.OnboardCountriesResponse;
+import org.sopt.kareer.domain.member.dto.response.OnboardMajorsResponse;
 import org.sopt.kareer.domain.member.entity.constants.Major;
 import org.sopt.kareer.domain.member.entity.enums.Country;
 import org.sopt.kareer.domain.member.service.MemberService;
-import org.sopt.kareer.domain.member.service.RoadMapService;
+import org.sopt.kareer.domain.roadmap.service.RoadMapService;
 import org.sopt.kareer.global.annotation.CustomExceptionDescription;
 import org.sopt.kareer.global.config.swagger.SwaggerResponseDescription;
 import org.sopt.kareer.global.response.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.*;
+import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.CREATE_ROADMAP;
 
 @RestController
 @RequiredArgsConstructor
@@ -80,9 +75,12 @@ public class MemberController {
     @Operation(summary = "AI 로드맵 생성 API", description = "사용자가 온보딩에 입력한 정보를 통해 로드맵을 생성합니다.")
     @CustomExceptionDescription(CREATE_ROADMAP)
     @PostMapping("roadmap")
-    public ResponseEntity<BaseResponse<RoadmapResponse>> generateRoadmap(
+    public ResponseEntity<BaseResponse<Void>> generateRoadmap(
             @AuthenticationPrincipal Long memberId){
+
+        roadMapService.createRoadmap(memberId);
+
         return ResponseEntity.status(HttpStatus.OK)
-                .body(BaseResponse.ok(roadMapService.createRoadmap(memberId), "AI 로드맵 생성에 성공하였습니다."));
+                .body(BaseResponse.ok("AI 로드맵 생성에 성공하였습니다."));
     }
 }
