@@ -1,9 +1,9 @@
-package org.sopt.kareer.domain.phase.controller;
+package org.sopt.kareer.domain.roadmap.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.domain.phase.dto.response.PhaseListResponse;
-import org.sopt.kareer.domain.phase.service.PhaseService;
+import org.sopt.kareer.domain.roadmap.dto.response.PhaseListResponse;
+import org.sopt.kareer.domain.roadmap.service.PhaseService;
 import org.sopt.kareer.global.annotation.CustomExceptionDescription;
 import org.sopt.kareer.global.config.swagger.SwaggerResponseDescription;
 import org.sopt.kareer.global.response.BaseResponse;

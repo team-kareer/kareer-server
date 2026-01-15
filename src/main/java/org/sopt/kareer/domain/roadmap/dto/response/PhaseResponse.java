@@ -1,9 +1,9 @@
-package org.sopt.kareer.domain.phase.dto.response;
+package org.sopt.kareer.domain.roadmap.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.querydsl.core.annotations.QueryProjection;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.sopt.kareer.domain.phase.entity.enums.PhaseStatus;
+import org.sopt.kareer.domain.roadmap.entity.enums.PhaseStatus;
 
 import java.time.LocalDate;
 

@@ -1,6 +1,6 @@
-package org.sopt.kareer.domain.phase.repository;
+package org.sopt.kareer.domain.roadmap.repository;
 
-import org.sopt.kareer.domain.phase.dto.response.PhaseResponse;
+import org.sopt.kareer.domain.roadmap.dto.response.PhaseResponse;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;

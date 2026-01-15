@@ -1,13 +1,14 @@
-package org.sopt.kareer.domain.phase.repository;
+package org.sopt.kareer.domain.roadmap.repository;
 
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.domain.actionitem.entity.QActionItem;
-import org.sopt.kareer.domain.phase.dto.response.PhaseResponse;
-import org.sopt.kareer.domain.phase.dto.response.QPhaseResponse;
-import org.sopt.kareer.domain.phase.entity.QPhase;
-import org.sopt.kareer.domain.phaseaction.entity.QPhaseAction;
+import org.sopt.kareer.domain.roadmap.entity.QActionItem;
+import org.sopt.kareer.domain.roadmap.dto.response.PhaseResponse;
+import org.sopt.kareer.domain.roadmap.dto.response.QPhaseResponse;
+import org.sopt.kareer.domain.roadmap.entity.QPhase;
+import org.sopt.kareer.domain.roadmap.entity.QPhase;
+import org.sopt.kareer.domain.roadmap.entity.QPhaseAction;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class PhaseRepositoryCustomImpl implements PhaseRepositoryCustom {
                                 .select(phaseAction.count())
                                 .from(phaseAction)
                                 .where(
-                                        phaseAction.phase.eq(phase),
+                                        phaseAction.phase.id.eq(phase.id),
 
                                         // 1. ActionItem이 0개이거나 미완료 action item이 1개 이상
                                         JPAExpressions
