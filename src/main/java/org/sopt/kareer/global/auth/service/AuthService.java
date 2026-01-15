@@ -10,12 +10,12 @@ import org.sopt.kareer.global.auth.dto.LoginCodePayload;
 import org.sopt.kareer.global.auth.dto.TokenExchangeRequest;
 import org.sopt.kareer.global.auth.dto.TokenExchangeResponse;
 import org.sopt.kareer.global.auth.dto.TokenResponse;
-import org.sopt.kareer.global.auth.service.LoginCodeService;
 import org.sopt.kareer.global.auth.util.RefreshTokenCookieManager;
 import org.sopt.kareer.global.exception.customexception.GlobalException;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
 import org.sopt.kareer.global.jwt.JwtTokenProvider;
 import org.sopt.kareer.global.jwt.dto.JwtToken;
+import org.sopt.kareer.global.jwt.dto.TokenType;
 import org.sopt.kareer.global.jwt.util.JwtTokenUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,8 +34,7 @@ public class AuthService {
     public TokenResponse reissue(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = refreshTokenCookieManager.read(request)
                 .orElseThrow(() -> new GlobalException(GlobalErrorCode.UNAUTHORIZED));
-        jwtTokenUtil.validateToken(refreshToken);
-        Long memberId = jwtTokenUtil.extractMemberId(refreshToken);
+        Long memberId = jwtTokenUtil.extractMemberId(refreshToken, TokenType.REFRESH);
 
         try {
             Member member = memberService.getById(memberId);

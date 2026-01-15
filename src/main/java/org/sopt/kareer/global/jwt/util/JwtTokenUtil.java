@@ -10,24 +10,21 @@ import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.global.config.jwt.JwtProperties;
 import org.sopt.kareer.global.exception.customexception.GlobalException;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
+import org.sopt.kareer.global.jwt.dto.TokenType;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class JwtTokenUtil {
 
+    private static final String TOKEN_TYPE_CLAIM = "tokenType";
+
     private final JwtProperties jwtProperties;
 
-    public void validateToken(String token) {
-        parseClaims(token);
-    }
-
-    public Long extractMemberId(String token) {
-        try {
-            return Long.parseLong(parseClaims(token).getSubject());
-        } catch (NumberFormatException ex) {
-            throw new GlobalException(GlobalErrorCode.JWT_INVALID);
-        }
+    public Long extractMemberId(String token, TokenType expectedType) {
+        Claims claims = parseClaims(token);
+        validateTokenType(claims, expectedType);
+        return parseMemberId(claims);
     }
 
     private Claims parseClaims(String token) {
@@ -47,5 +44,20 @@ public class JwtTokenUtil {
     private Key getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.secret());
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    private void validateTokenType(Claims claims, TokenType expectedType) {
+        String claimValue = claims.get(TOKEN_TYPE_CLAIM, String.class);
+        if (claimValue == null || !expectedType.claimValue().equals(claimValue)) {
+            throw new GlobalException(GlobalErrorCode.JWT_INVALID);
+        }
+    }
+
+    private Long parseMemberId(Claims claims) {
+        try {
+            return Long.parseLong(claims.getSubject());
+        } catch (NumberFormatException ex) {
+            throw new GlobalException(GlobalErrorCode.JWT_INVALID);
+        }
     }
 }

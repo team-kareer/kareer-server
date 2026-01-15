@@ -12,6 +12,7 @@ import org.sopt.kareer.domain.member.exception.MemberException;
 import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.global.exception.customexception.GlobalException;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
+import org.sopt.kareer.global.jwt.dto.TokenType;
 import org.sopt.kareer.global.jwt.util.JwtTokenUtil;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,8 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = resolveToken(request);
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
-                jwtTokenUtil.validateToken(token);
-                Long memberId = jwtTokenUtil.extractMemberId(token);
+                Long memberId = jwtTokenUtil.extractMemberId(token, TokenType.ACCESS);
                 Member member = memberService.getById(memberId);
                 setAuthentication(request, member);
             } catch (MemberException ex) {
