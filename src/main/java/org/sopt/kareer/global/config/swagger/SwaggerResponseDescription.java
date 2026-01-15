@@ -33,6 +33,9 @@ public enum SwaggerResponseDescription {
     UPLOAD_PDF(new LinkedHashSet<>(Set.of(
             EXTRACT_TEXT_FAILED,
             EMBEDDING_FAILED
+    ))),
+    PHASE_LIST(new LinkedHashSet<>(Set.of(
+            MEMBER_NOT_FOUND
     )))
 
     ;
