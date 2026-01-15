@@ -41,7 +41,7 @@ public enum PhaseStatus {
 
     public static String determineWorkStatus(PhaseStatus status, Long workCount) {
         if (status == PhaseStatus.PREVIOUS || status == PhaseStatus.PAST) {
-            return workCount == 0 ? "All completed" : "Incomplete works";
+            return (workCount == null || workCount == 0) ? "All completed" : "Incomplete works";
         }
         return status.getWorkStatus();
     }
