@@ -28,6 +28,9 @@ public class Phase extends BaseEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    @Column(nullable = false)
+    private Integer sequence;
+
     @Column(length = 20, nullable = false)
     private String goal;
 
@@ -43,5 +46,4 @@ public class Phase extends BaseEntity {
 
     @Column(nullable = false)
     private LocalDate endDate;
-
 }
