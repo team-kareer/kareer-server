@@ -18,6 +18,8 @@ public enum RoadmapErrorCode implements ErrorCode {
     ACTION_ITEM_TYPE_BLANK(HttpStatus.BAD_REQUEST.value(), "ActionItemType가 비어있습니다."),
     ACTION_ITEM_TYPE_INVALID(HttpStatus.BAD_REQUEST.value(), "잘못된 ActionItemType입니다."),
 
+    // Etc..
+    INVALID_DATE_TYPE(HttpStatus.BAD_REQUEST.value(), "올바른 날짜 형식이 아닙니다.")
     ;
 
     private final int httpStatus;
