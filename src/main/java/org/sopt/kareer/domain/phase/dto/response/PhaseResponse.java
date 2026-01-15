@@ -12,7 +12,7 @@ public record PhaseResponse(
         @Schema(description = "Phase id", example = "1")
         Long phaseId,
 
-        @Schema(description = "Phase 상태", example = "CURRENT")
+        @Schema(description = "Phase 상태", example = "Current")
         String phaseStatus,
 
         @Schema(description = "Phase 순서", example = "1")
