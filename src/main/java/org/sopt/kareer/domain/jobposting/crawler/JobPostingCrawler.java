@@ -129,8 +129,8 @@ public class JobPostingCrawler {
 
         String imageUrl = extractImageUrl(driver);
 
-        JobPosting jobPosting = JobPosting.create(postTitle, recruitId, company, deadline, url, imageUrl, preferredVisa,
-                preferredLanguage, arrangement, siteAddress);
+        JobPosting jobPosting = JobPosting.create(siteAddress, arrangement, company, deadline, imageUrl, postTitle, preferredLanguage,
+                preferredVisa, company, company, company, url);
 
         jobPostingRepository.save(jobPosting);
 

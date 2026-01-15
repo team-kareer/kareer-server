@@ -17,58 +17,76 @@ public class JobPosting {
     private Long id;
 
     @Column(nullable = false)
-    private String postTitle;
-
-    @Column(nullable = false, unique = true)
-    private Long recruitId;
-
-    private String company;
-
-    private LocalDate deadline;
-
-    private String websiteUrl;
-
-    private String imageUrl;
-
-    private String preferredVisa;
-
-    private String preferredLanguage;
-
-    private String arrangement;
-
     private String address;
 
+    @Column(nullable = false)
+    private String arrangement;
+
+    @Column(nullable = false)
+    private String company;
+
+    @Column(nullable = false)
+    private LocalDate deadline;
+
+    @Column(nullable = false)
+    private String imageUrl;
+
+    @Column(nullable = false)
+    private String postTitle;
+
+    @Column(nullable = false)
+    private String preferredLanguage;
+
+    @Column(nullable = false)
+    private String preferredVisa;
+
+    @Lob
+    @Column(nullable = false)
+    private String detail;
+
+    @Column(nullable = false)
+    private String career;
+
+    @Column(nullable = false)
+    private String education;
+
+    @Column(nullable = false)
+    private String websiteUrl;
+
     @Builder
-    private JobPosting(String postTitle, Long recruitId, String company, LocalDate deadline, String websiteUrl, String imageUrl,
-                      String preferredVisa, String preferredLanguage, String arrangement, String address) {
-        this.postTitle = postTitle;
-        this.recruitId = recruitId;
+    private JobPosting(String address, String arrangement, String company, LocalDate deadline, String imageUrl, String postTitle,
+                       String preferredLanguage, String preferredVisa, String detail, String career, String education,
+                       String websiteUrl) {
+        this.address = address;
+        this.arrangement = arrangement;
         this.company = company;
         this.deadline = deadline;
-        this.websiteUrl = websiteUrl;
         this.imageUrl = imageUrl;
-        this.preferredVisa = preferredVisa;
+        this.postTitle = postTitle;
         this.preferredLanguage = preferredLanguage;
-        this.arrangement = arrangement;
-        this.address = address;
+        this.preferredVisa = preferredVisa;
+        this.detail = detail;
+        this.career = career;
+        this.education = education;
+        this.websiteUrl = websiteUrl;
     }
 
-    public static JobPosting create(String postTitle, Long recruitId, String company, LocalDate deadline,
-                                    String websiteUrl, String imageUrl, String preferredVisa, String preferredLanguage,
-                                    String arrangement, String address) {
-        return JobPosting.builder()
-                .postTitle(postTitle)
-                .recruitId(recruitId)
-                .company(company)
-                .deadline(deadline)
-                .websiteUrl(websiteUrl)
-                .imageUrl(imageUrl)
-                .preferredVisa(preferredVisa)
-                .preferredLanguage(preferredLanguage)
-                .arrangement(arrangement)
-                .address(address)
-                .build();
+    public static JobPosting create(String address, String arrangement, String company, LocalDate deadline, String imageUrl, String postTitle,
+                                    String preferredLanguage, String preferredVisa, String detail, String career, String education,
+                                    String websiteUrl){
+        return JobPosting.builder().
+                address(address).
+                arrangement(arrangement).
+                company(company).
+                deadline(deadline).
+                imageUrl(imageUrl).
+                postTitle(postTitle).
+                preferredLanguage(preferredLanguage).
+                preferredVisa(preferredVisa).
+                detail(detail).
+                career(career).
+                education(education).
+                websiteUrl(websiteUrl).
+                build();
     }
-
-
 }
