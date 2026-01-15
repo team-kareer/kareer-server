@@ -3,15 +3,14 @@ package org.sopt.kareer.global.config.swagger;
 import lombok.Getter;
 import org.sopt.kareer.global.exception.errorcode.ErrorCode;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
-import org.sopt.kareer.global.exception.errorcode.MemberErrorCode;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static org.sopt.kareer.domain.document.exception.DocumentErrorCode.EMBEDDING_FAILED;
-import static org.sopt.kareer.domain.document.exception.DocumentErrorCode.EXTRACT_TEXT_FAILED;
 import static org.sopt.kareer.domain.member.exception.MemberErrorCode.*;
 import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.*;
+import static org.sopt.kareer.global.auth.exception.AuthErrorCode.LOGIN_CODE_ALREADY_USED;
+import static org.sopt.kareer.global.auth.exception.AuthErrorCode.LOGIN_CODE_NOT_FOUND;
 import static org.sopt.kareer.global.external.ai.exception.LlmErrorCode.LLM_JSON_PARSING_FAILED;
 import static org.sopt.kareer.global.external.ai.exception.RagErrorCode.*;
 
@@ -51,12 +50,6 @@ public enum SwaggerResponseDescription {
     ))),
     PHASE_LIST(new LinkedHashSet<>(Set.of(
             MEMBER_NOT_FOUND
-    ))),
-    AUTH_LOGIN_CODE(new LinkedHashSet<>(Set.of(
-            LOGIN_CODE_NOT_FOUND,
-            LOGIN_CODE_ALREADY_USED
-    ))),
-    AUTH_REISSUE(new LinkedHashSet<>(Set.of(
     )))
     ;
 
