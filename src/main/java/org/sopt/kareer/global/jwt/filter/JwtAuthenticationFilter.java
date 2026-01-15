@@ -8,10 +8,11 @@ import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.entity.Member;
+import org.sopt.kareer.domain.member.exception.MemberException;
 import org.sopt.kareer.domain.member.service.MemberService;
-import org.sopt.kareer.global.exception.customexception.NotFoundException;
-import org.sopt.kareer.global.exception.customexception.UnauthorizedException;
+import org.sopt.kareer.global.exception.customexception.GlobalException;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
+import org.sopt.kareer.global.jwt.dto.TokenType;
 import org.sopt.kareer.global.jwt.util.JwtTokenUtil;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,12 +39,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = resolveToken(request);
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
-                jwtTokenUtil.validateAccessToken(token);
-                Long memberId = jwtTokenUtil.extractMemberId(token);
+                Long memberId = jwtTokenUtil.extractMemberId(token, TokenType.ACCESS);
                 Member member = memberService.getById(memberId);
                 setAuthentication(request, member);
-            } catch (NotFoundException ex) {
-                throw new UnauthorizedException(GlobalErrorCode.UNAUTHORIZED);
+            } catch (MemberException ex) {
+                throw new GlobalException(GlobalErrorCode.UNAUTHORIZED);
             }
         }
         filterChain.doFilter(request, response);

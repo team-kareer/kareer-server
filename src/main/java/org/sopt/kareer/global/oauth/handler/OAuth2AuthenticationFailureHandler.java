@@ -1,18 +1,15 @@
 package org.sopt.kareer.global.oauth.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
-import org.sopt.kareer.global.response.BaseErrorResponse;
-import org.springframework.http.MediaType;
+import org.sopt.kareer.global.oauth.properties.OAuthRedirectProperties;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -20,17 +17,24 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class OAuth2AuthenticationFailureHandler implements AuthenticationFailureHandler {
 
-    private final ObjectMapper objectMapper;
+    private final OAuthRedirectProperties oAuthRedirectProperties;
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request,
                                         HttpServletResponse response,
-                                        AuthenticationException exception) throws IOException, ServletException {
-        log.error("OAuth2 authentication failed", exception);
-        BaseErrorResponse body = BaseErrorResponse.of(GlobalErrorCode.UNAUTHORIZED);
-        response.setStatus(body.getCode());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        response.getWriter().write(objectMapper.writeValueAsString(body));
+                                        AuthenticationException exception) throws IOException {
+        log.warn("OAuth2 authentication failed", exception);
+
+        String redirectUri = UriComponentsBuilder
+                .fromUriString(oAuthRedirectProperties.redirectUri())
+                .queryParam("error", "oauth_failure")
+                .queryParam("error_description", "Authentication failed")
+                .build(true)
+                .toUriString();
+
+        response.setStatus(HttpServletResponse.SC_FOUND);
+        response.setHeader(HttpHeaders.LOCATION, redirectUri);
+        response.setHeader(HttpHeaders.CACHE_CONTROL, "no-store");
+        response.setHeader("Pragma", "no-cache");
     }
 }

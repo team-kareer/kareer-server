@@ -13,13 +13,13 @@ public class JobPostingCrawlScheduler {
 
     private final JobPostingCrawler jobPostingCrawler;
 
-    @Scheduled(cron = "0 0 3 * * *")
-    public void crawlJobPostingScheduled() {
-        try {
-            JobPostingCrawlListResponse response = jobPostingCrawler.crawlAllJobPostings();
-            log.info("Scheduled crawl done. size={}", response.crawlResponses().size());
-        } catch (Exception e) {
-            log.error("Scheduled crawl failed", e);
-        }
-    }
+//    @Scheduled(cron = "0 0 3 * * *")
+//    public void crawlJobPostingScheduled() {
+//        try {
+//            JobPostingCrawlListResponse response = jobPostingCrawler.crawlAllJobPostings();
+//            log.info("Scheduled crawl done. size={}", response.crawlResponses().size());
+//        } catch (Exception e) {
+//            log.error("Scheduled crawl failed", e);
+//        }
+//    }
 }

@@ -7,9 +7,11 @@ import org.sopt.kareer.domain.member.entity.enums.Degree;
 import org.sopt.kareer.domain.member.entity.enums.LanguageLevel;
 import org.sopt.kareer.domain.member.entity.enums.MemberStatus;
 import org.sopt.kareer.domain.member.entity.enums.OAuthProvider;
+import org.sopt.kareer.domain.member.exception.MemberException;
 import org.sopt.kareer.global.entity.BaseEntity;
 
 import java.time.LocalDate;
+import org.sopt.kareer.domain.member.exception.MemberErrorCode;
 
 @Table(name = "members", uniqueConstraints = {
         @UniqueConstraint(name = "uk_member_provider_provider_id", columnNames = {"provider", "provider_id"})
@@ -65,7 +67,32 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Degree degree;
 
+    @Column(length = 1000)
     private String targetJobSkill;
+
+    public void updateInfo(String name,
+                           LocalDate birthDate,
+                           Country country,
+                           LanguageLevel languageLevel,
+                           Degree degree,
+                           LocalDate expectedGraduationDate,
+                           String primaryMajor,
+                           String secondaryMajor,
+                           String targetJob,
+                           String targetJobSkill) {
+        assertPendingStatus();
+        this.name = name;
+        this.birthDate = birthDate;
+        this.country = country;
+        this.languageLevel = languageLevel;
+        this.degree = degree;
+        this.expectedGraduationDate = expectedGraduationDate;
+        this.primaryMajor = primaryMajor;
+        this.secondaryMajor = secondaryMajor;
+        this.targetJob = targetJob;
+        this.targetJobSkill = targetJobSkill;
+        this.status = MemberStatus.ACTIVE;
+    }
 
     public static Member createOAuthMember(String name,
                                            OAuthProvider provider,
@@ -85,4 +112,15 @@ public class Member extends BaseEntity {
         this.profileImageUrl = profileImageUrl;
     }
 
+    public void assertOnboarded() {
+        if (this.status == MemberStatus.PENDING) {
+            throw new MemberException(MemberErrorCode.ONBOARDING_REQUIRED);
+        }
+    }
+
+    private void assertPendingStatus() {
+        if (this.status == MemberStatus.ACTIVE) {
+            throw new MemberException(MemberErrorCode.ONBOARDING_ALREADY_COMPLETED);
+        }
+    }
 }
