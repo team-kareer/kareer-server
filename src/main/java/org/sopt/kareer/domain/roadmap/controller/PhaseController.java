@@ -39,7 +39,7 @@ public class PhaseController {
     }
 
     @GetMapping("/{phaseId}/roadmap")
-    @Operation(summary = "로드맵 Phase 상세정보 조회", description = "로드맵 Phase 리스트를 조회합니다.")
+    @Operation(summary = "로드맵 Phase 상세정보 조회", description = "로드맵 Phase 상세조회를 조회합니다.")
     @CustomExceptionDescription(SwaggerResponseDescription.ROADMAP_LIST_DETAIL)
     public ResponseEntity<BaseResponse<RoadmapPhaseDetailResponse>> getRoadmapPhaseDetail(@PathVariable Long phaseId) {
         RoadmapPhaseDetailResponse response = phaseService.getRoadmapPhaseDetail(phaseId);
