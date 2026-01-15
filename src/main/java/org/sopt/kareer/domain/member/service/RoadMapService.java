@@ -8,6 +8,7 @@ import org.sopt.kareer.global.external.ai.service.OpenAiService;
 import org.sopt.kareer.global.external.ai.service.RagService;
 import org.springframework.ai.document.Document;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class RoadMapService {
     private final MemberService memberService;
     private final RoadMapPersistService roadMapPersistService;
 
+    @Transactional
     public RoadmapResponse createRoadmap(Long memberId){
         Member member = memberService.getById(memberId);
 
