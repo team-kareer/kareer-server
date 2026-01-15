@@ -47,7 +47,6 @@ public class AuthService {
         }
     }
 
-    @Transactional
     public TokenExchangeResponse exchange(TokenExchangeRequest request, HttpServletResponse response) {
         LoginCodePayload payload = loginCodeService.consume(request.code());
 
