@@ -1,4 +1,4 @@
-package org.sopt.kareer.global.auth.dto;
+package org.sopt.kareer.global.auth.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 

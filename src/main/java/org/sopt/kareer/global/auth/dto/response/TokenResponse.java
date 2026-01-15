@@ -1,4 +1,4 @@
-package org.sopt.kareer.global.auth.dto;
+package org.sopt.kareer.global.auth.dto.response;
 
 import org.sopt.kareer.global.jwt.dto.JwtTokenDTO;
 
