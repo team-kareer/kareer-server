@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.global.auth.config.LoginCodeProperties;
 import org.sopt.kareer.global.auth.dto.LoginCodePayload;
-import org.sopt.kareer.global.auth.exception.LoginErrorCode;
-import org.sopt.kareer.global.auth.exception.LoginException;
+import org.sopt.kareer.global.auth.exception.AuthErrorCode;
+import org.sopt.kareer.global.auth.exception.AuthException;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -50,12 +50,12 @@ public class LoginCodeService {
         List<String> values = hashOperations.multiGet(key, REQUIRED_FIELDS);
 
         if (values == null || values.stream().anyMatch(Objects::isNull)) {
-            throw new LoginException(LoginErrorCode.LOGIN_CODE_NOT_FOUND);
+            throw new AuthException(AuthErrorCode.LOGIN_CODE_NOT_FOUND);
         }
 
         Boolean deleted = redisTemplate.delete(key);
         if (deleted == null || !deleted) {
-            throw new LoginException(LoginErrorCode.LOGIN_CODE_ALREADY_USED);
+            throw new AuthException(AuthErrorCode.LOGIN_CODE_ALREADY_USED);
         }
 
         Long memberId = Long.parseLong(values.get(INDEX_MEMBER_ID));
