@@ -45,7 +45,7 @@ public class PhaseController {
         RoadmapPhaseDetailResponse response = phaseService.getRoadmapPhaseDetail(phaseId);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(BaseResponse.ok(response, "Phase 리스트가 조회되었습니다.")
+                .body(BaseResponse.ok(response, "로드맵 Phase 상세정보가 조회되었습니다.")
                 );
     }
 }
