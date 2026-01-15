@@ -50,7 +50,10 @@ public enum SwaggerResponseDescription {
     ))),
     PHASE_LIST(new LinkedHashSet<>(Set.of(
             MEMBER_NOT_FOUND
-    )))
+    ))),
+    AI_GUIDE(new LinkedHashSet<>(Set.of(
+            PHASE_ACTION_NOT_FOUND
+    ))),
     ;
 
     private final Set<ErrorCode> errorCodeList;
