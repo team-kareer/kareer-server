@@ -23,15 +23,15 @@ public class JwtTokenProvider {
     private final JwtProperties jwtProperties;
 
     public JwtToken generate(Member member) {
-        String accessToken = buildToken(member, jwtProperties.accessToken());
-        String refreshToken = buildToken(member, jwtProperties.refreshToken());
+        String accessToken = buildToken(member, jwtProperties.accessToken().expirationSeconds());
+        String refreshToken = buildToken(member, jwtProperties.refreshToken().expirationSeconds());
         return new JwtToken(accessToken, refreshToken);
     }
 
-    private String buildToken(Member member, JwtProperties.TokenProperties tokenProperties) {
+    private String buildToken(Member member, long expirationSeconds) {
         Instant now = Instant.now();
         Date issuedAt = Date.from(now);
-        Date expiry = Date.from(now.plusSeconds(tokenProperties.expirationSeconds()));
+        Date expiry = Date.from(now.plusSeconds(expirationSeconds));
 
         return Jwts.builder()
                 .setSubject(String.valueOf(member.getId()))
@@ -41,12 +41,12 @@ public class JwtTokenProvider {
                 ))
                 .setIssuedAt(issuedAt)
                 .setExpiration(expiry)
-                .signWith(getSigningKey(tokenProperties), SignatureAlgorithm.HS256)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    private Key getSigningKey(JwtProperties.TokenProperties tokenProperties) {
-        byte[] keyBytes = Decoders.BASE64.decode(tokenProperties.secret());
+    private Key getSigningKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.secret());
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

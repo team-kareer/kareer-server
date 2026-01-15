@@ -18,26 +18,22 @@ public class JwtTokenUtil {
 
     private final JwtProperties jwtProperties;
 
-    public void validateAccessToken(String token) {
-        parseClaims(token, jwtProperties.accessToken());
-    }
-
-    public void validateRefreshToken(String token) {
-        parseClaims(token, jwtProperties.refreshToken());
+    public void validateToken(String token) {
+        parseClaims(token);
     }
 
     public Long extractMemberId(String token) {
         try {
-            return Long.parseLong(parseClaims(token, jwtProperties.accessToken()).getSubject());
+            return Long.parseLong(parseClaims(token).getSubject());
         } catch (NumberFormatException ex) {
             throw new GlobalException(GlobalErrorCode.JWT_INVALID);
         }
     }
 
-    private Claims parseClaims(String token, JwtProperties.TokenProperties tokenProperties) {
+    private Claims parseClaims(String token) {
         try {
             return Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey(tokenProperties))
+                    .setSigningKey(getSigningKey())
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
@@ -48,8 +44,8 @@ public class JwtTokenUtil {
         }
     }
 
-    private Key getSigningKey(JwtProperties.TokenProperties tokenProperties) {
-        byte[] keyBytes = Decoders.BASE64.decode(tokenProperties.secret());
+    private Key getSigningKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.secret());
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }
