@@ -29,7 +29,7 @@ public class RoadMapService {
 
         var context = memberContextBuilder.load(memberId);
 
-        List<Document> searchedDocs = documentService.search(context.contextText(), 5);
+        List<Document> searchedDocs = documentService.policyDocumentSearch(context.contextText(), 5);
 
         RoadmapResponse response = openAiService.generateRoadmap(context.contextText(), searchedDocs);
         roadMapPersistService.saveRoadMap(member, response);

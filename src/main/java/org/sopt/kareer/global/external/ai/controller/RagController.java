@@ -34,7 +34,7 @@ public class RagController {
             @Parameter(description = "업로드할 PDF 파일", required = true)
             @RequestParam("file") MultipartFile file){
         return ResponseEntity.status(HttpStatus.OK)
-                .body(BaseResponse.ok(documentService.uploadDocument(file), "PDF 문서 업로드 성공"));
+                .body(BaseResponse.ok(documentService.uploadPolicyDocument(file), "PDF 문서 업로드 성공"));
     }
 
 }

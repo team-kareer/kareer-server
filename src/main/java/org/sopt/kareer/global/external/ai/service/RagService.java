@@ -23,10 +23,10 @@ public class RagService {
 
     private final DocumentProcessingService documentProcessingService;
 
-    private final PgVectorStore documentVectorStore;
+    private final PgVectorStore policyDocumentVectorStore;
 
     @Transactional
-    public DocumentUploadResponse uploadDocument(MultipartFile file) {
+    public DocumentUploadResponse uploadPolicyDocument(MultipartFile file) {
         File temp = null;
 
         try {
@@ -61,7 +61,7 @@ public class RagService {
                 toStore.add(new Document(c.getText(), meta));
             }
 
-            documentVectorStore.add(toStore);
+            policyDocumentVectorStore.add(toStore);
 
             return DocumentUploadResponse.of(UUID.randomUUID().toString());
         } catch (Exception e) {
@@ -72,14 +72,15 @@ public class RagService {
 
     }
 
-    public List<Document> search(String query, int topK){
+
+    public List<Document> policyDocumentSearch(String query, int topK){
 
         SearchRequest request = SearchRequest.builder()
                 .query(query)
                 .topK(topK)
                 .build();
 
-        List<Document> documents = documentVectorStore.similaritySearch(request);
+        List<Document> documents = policyDocumentVectorStore.similaritySearch(request);
 
         if(documents != null && documents.isEmpty()){
             throw new RagException(RagErrorCode.DOCUMENTS_RETRIEVED_EMPTY);
@@ -87,6 +88,8 @@ public class RagService {
 
         return documents;
     }
+
+
 
 
 
