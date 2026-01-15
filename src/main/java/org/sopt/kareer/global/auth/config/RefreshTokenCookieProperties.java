@@ -4,6 +4,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "auth.cookie.refresh-token")
 public record RefreshTokenCookieProperties(
-        String name
+        String name,
+        boolean secure,
+        String sameSite
 ) {
 }

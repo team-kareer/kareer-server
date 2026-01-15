@@ -23,8 +23,8 @@ public class RefreshTokenCookieManager {
     public void write(HttpServletResponse response, String refreshToken) {
         ResponseCookie cookie = ResponseCookie.from(refreshTokenCookieProperties.name(), refreshToken)
                 .httpOnly(true)
-                .secure(true)
-                .sameSite("None")
+                .secure(refreshTokenCookieProperties.secure())
+                .sameSite(refreshTokenCookieProperties.sameSite())
                 .path("/")
                 .maxAge(Duration.ofSeconds(jwtProperties.refreshToken().expirationSeconds()))
                 .build();
@@ -43,4 +43,5 @@ public class RefreshTokenCookieManager {
                 .map(Cookie::getValue)
                 .findFirst();
     }
+
 }
