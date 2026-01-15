@@ -22,7 +22,7 @@ public enum PhaseStatus {
         this.workStatus = null; // 남은 actions 수에 따라 동적으로 결정되므로 null
     }
 
-    public static String determinieWorkStatus(PhaseStatus status, Long workCount) {
+    public static String determineWorkStatus(PhaseStatus status, Long workCount) {
         if (status == PhaseStatus.PREVIOUS || status == PhaseStatus.PAST) {
             return workCount == 0 ? "All completed" : "Incomplete works";
         }
