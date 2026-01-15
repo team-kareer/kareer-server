@@ -35,7 +35,7 @@ public class OpenAiService {
                     .user(userPrompt)
                     .call()
                     .content();
-
+            
             return objectMapper.readValue(responseJson, RoadmapResponse.class);
         } catch (Exception e) {
             throw new LlmException(LlmErrorCode.LLM_JSON_PARSING_FAILED, e.getMessage());
