@@ -40,8 +40,7 @@ public class JobPosting {
     @Column(nullable = false)
     private String preferredVisa;
 
-    @Lob
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String detail;
 
     @Column(nullable = false)
