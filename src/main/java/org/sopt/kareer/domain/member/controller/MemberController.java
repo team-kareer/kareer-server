@@ -26,6 +26,7 @@ import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.C
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/members")
+@Tag(name = "Member API")
 public class MemberController {
 
     private final MemberService memberService;
@@ -71,7 +72,6 @@ public class MemberController {
                 );
     }
 
-    @Tag(name = "Member API")
     @Operation(summary = "AI 로드맵 생성 API", description = "사용자가 온보딩에 입력한 정보를 통해 로드맵을 생성합니다.")
     @CustomExceptionDescription(CREATE_ROADMAP)
     @PostMapping("roadmap")

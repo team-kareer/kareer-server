@@ -5,13 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.sopt.kareer.global.external.ai.dto.response.DocumentUploadResponse;
 import org.sopt.kareer.global.external.ai.exception.RagErrorCode;
 import org.sopt.kareer.global.external.ai.exception.RagException;
+import org.springframework.ai.document.Document;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.pgvector.PgVectorStore;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.ai.document.Document;
 
 import java.io.File;
 import java.util.*;
