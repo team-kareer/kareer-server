@@ -78,7 +78,7 @@ JSON schema (strict):
 """;
 
     public static final String ROADMAP_USER_PROMPT_FORMAT = """
-                [CURRNET_DATE]
+                [CURRENT_DATE]
                 %s
                 
 
