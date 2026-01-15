@@ -40,6 +40,9 @@ public enum SwaggerResponseDescription {
             PHASE_ACTION_TYPE_INVALID,
             ACTION_ITEM_TYPE_BLANK,
             ACTION_ITEM_TYPE_INVALID
+    ))),
+    PHASE_LIST(new LinkedHashSet<>(Set.of(
+            MEMBER_NOT_FOUND
     )))
     ;
 
