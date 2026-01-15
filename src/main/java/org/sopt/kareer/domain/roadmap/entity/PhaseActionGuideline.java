@@ -1,19 +1,18 @@
-package org.sopt.kareer.domain.phaseaction.entity;
+package org.sopt.kareer.domain.roadmap.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
-@Table(name = "phase_action_mistakes")
+@Table(name = "phase_action_guidelines")
 @Entity
 @Getter
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class PhaseActionMistake {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+public class PhaseActionGuideline {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "phase_action_mistakes_id")
     private Long id;
 
     private String content;
@@ -23,13 +22,13 @@ public class PhaseActionMistake {
     private PhaseAction phaseAction;
 
     @Builder
-    private PhaseActionMistake(String content, PhaseAction phaseAction) {
+    private PhaseActionGuideline(String content, PhaseAction phaseAction) {
         this.content = content;
         this.phaseAction = phaseAction;
     }
 
-    public static PhaseActionMistake create(String content, PhaseAction phaseAction) {
-        return PhaseActionMistake.builder()
+    public static PhaseActionGuideline create(String content, PhaseAction phaseAction) {
+        return PhaseActionGuideline.builder()
                 .content(content)
                 .phaseAction(phaseAction)
                 .build();
