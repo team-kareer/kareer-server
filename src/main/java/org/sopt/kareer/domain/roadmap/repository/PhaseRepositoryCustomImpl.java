@@ -7,7 +7,6 @@ import org.sopt.kareer.domain.roadmap.entity.QActionItem;
 import org.sopt.kareer.domain.roadmap.dto.response.PhaseResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.QPhaseResponse;
 import org.sopt.kareer.domain.roadmap.entity.QPhase;
-import org.sopt.kareer.domain.roadmap.entity.QPhase;
 import org.sopt.kareer.domain.roadmap.entity.QPhaseAction;
 import org.springframework.stereotype.Repository;
 
