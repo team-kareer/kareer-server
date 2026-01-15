@@ -3,7 +3,7 @@ spring:
     name: kareer
   profiles:
     group:
-      local: local-db, local-port, local-cors, local-cookie, common
+      local: local-db, local-port, local-cors, common
       dev: dev-db, dev-port, dev-cors, common
       prod: prod-db, prod-port, prod-cors, common
     active: ${SPRING_ACTIVE_PROFILE}
