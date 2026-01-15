@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class QuerydslConfig {
 
-    @PersistenceContext
     private final EntityManager entityManager;
 
     @Bean
