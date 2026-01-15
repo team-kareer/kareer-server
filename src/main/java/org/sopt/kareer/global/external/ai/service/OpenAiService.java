@@ -26,15 +26,16 @@ public class OpenAiService {
         String systemPrompt = OpenAiPrompt.ROADMAP_SYSTEM_PROMPT;
 
         String userPrompt = OpenAiPrompt.ROADMAP_USER_PROMPT_FORMAT.formatted(LocalDate.now(), memberContext, context);
-
-        String responseJson = chatClient
-                .prompt()
-                .system(systemPrompt)
-                .user(userPrompt)
-                .call()
-                .content();
-
+        
         try {
+
+            String responseJson = chatClient
+                    .prompt()
+                    .system(systemPrompt)
+                    .user(userPrompt)
+                    .call()
+                    .content();
+
             return objectMapper.readValue(responseJson, RoadmapResponse.class);
         } catch (Exception e) {
             throw new LlmException(LlmErrorCode.LLM_JSON_PARSING_FAILED, e.getMessage());
