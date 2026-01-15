@@ -1,8 +1,6 @@
 package org.sopt.kareer.domain.roadmap.dto.response;
 
 import com.querydsl.core.annotations.QueryProjection;
-import com.querydsl.core.types.dsl.DatePath;
-import com.querydsl.core.types.dsl.StringPath;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDate;
