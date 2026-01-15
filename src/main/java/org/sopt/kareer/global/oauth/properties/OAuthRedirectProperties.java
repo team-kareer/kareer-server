@@ -1,4 +1,4 @@
-package org.sopt.kareer.global.oauth.config;
+package org.sopt.kareer.global.oauth.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

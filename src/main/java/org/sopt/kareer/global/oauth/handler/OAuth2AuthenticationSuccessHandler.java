@@ -6,7 +6,7 @@ import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.entity.enums.MemberStatus;
 import org.sopt.kareer.global.auth.service.LoginCodeService;
-import org.sopt.kareer.global.oauth.config.OAuthRedirectProperties;
+import org.sopt.kareer.global.oauth.properties.OAuthRedirectProperties;
 import org.sopt.kareer.global.oauth.principal.CustomOAuth2User;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
