@@ -17,7 +17,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OpenAiService {
 
-    private final ChatClient chatClient;
+
+    private final ChatClient.Builder chatClientBuilder;
     private final ObjectMapper objectMapper;
 
     public RoadmapResponse generateRoadmap(String memberContext, List<Document> retrievedDocument){
@@ -29,6 +30,7 @@ public class OpenAiService {
         
         try {
 
+            ChatClient chatClient = chatClientBuilder.build();
             String responseJson = chatClient
                     .prompt()
                     .system(systemPrompt)
