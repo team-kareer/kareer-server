@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,13 +36,13 @@ public class RoadMapPersistService {
     @Transactional
     public void saveRoadMap(Member member, RoadmapResponse response) {
 
-        for(RoadmapResponse.PhasePlan phasePlan : response.phases()){
+        for(RoadmapResponse.PhasePlan phasePlan : Optional.ofNullable(response.phases()).orElse(Collections.emptyList())){
             Phase phase = Phase.create(
                     member,
                     phasePlan.sequence(),
                     phasePlan.goal(),
                     phasePlan.description(),
-                    PhaseStatus.valueOf(phasePlan.status()),
+                    PhaseStatus.from(phasePlan.status()),
                     LocalDate.parse(phasePlan.startDate()),
                     LocalDate.parse(phasePlan.endDate())
             );
@@ -50,7 +52,7 @@ public class RoadMapPersistService {
                 PhaseAction phaseAction = PhaseAction.create(
                         phaseActionPlan.title(),
                         phaseActionPlan.description(),
-                        PhaseActionType.valueOf(phaseActionPlan.type()),
+                        PhaseActionType.from(phaseActionPlan.type()),
                         LocalDate.parse(phaseActionPlan.deadline()),
                         phaseActionPlan.importance(),
                         savedPhase
@@ -70,7 +72,7 @@ public class RoadMapPersistService {
                 for(RoadmapResponse.ActionItemPlan actionItemPlan : phaseActionPlan.actionItems()){
                     ActionItem actionItem = ActionItem.create(
                             actionItemPlan.title(),
-                            ActionItemType.valueOf(actionItemPlan.actionsType()),
+                            ActionItemType.from(actionItemPlan.actionsType()),
                             LocalDate.parse(actionItemPlan.deadline()),
                             member,
                             savedPhaseAction
