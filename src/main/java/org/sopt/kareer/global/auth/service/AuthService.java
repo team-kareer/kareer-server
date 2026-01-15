@@ -14,7 +14,7 @@ import org.sopt.kareer.global.auth.util.RefreshTokenCookieManager;
 import org.sopt.kareer.global.exception.customexception.GlobalException;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
 import org.sopt.kareer.global.jwt.JwtTokenProvider;
-import org.sopt.kareer.global.jwt.dto.JwtToken;
+import org.sopt.kareer.global.jwt.dto.JwtTokenDTO;
 import org.sopt.kareer.global.jwt.dto.TokenType;
 import org.sopt.kareer.global.jwt.util.JwtTokenUtil;
 import org.springframework.stereotype.Service;
@@ -38,7 +38,7 @@ public class AuthService {
 
         try {
             Member member = memberService.getById(memberId);
-            JwtToken newToken = jwtTokenProvider.generate(member);
+            JwtTokenDTO newToken = jwtTokenProvider.generate(member);
             refreshTokenCookieManager.write(response, newToken.refreshToken());
             return TokenResponse.of(newToken);
         } catch (MemberException ex) {
@@ -51,7 +51,7 @@ public class AuthService {
 
         try {
             Member member = memberService.getById(payload.memberId());
-            JwtToken newToken = jwtTokenProvider.generate(member);
+            JwtTokenDTO newToken = jwtTokenProvider.generate(member);
             refreshTokenCookieManager.write(response, newToken.refreshToken());
             return new TokenExchangeResponse(newToken.accessToken(), payload.onboardingRequired());
         } catch (MemberException ex) {

@@ -11,7 +11,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.global.config.jwt.JwtProperties;
-import org.sopt.kareer.global.jwt.dto.JwtToken;
+import org.sopt.kareer.global.jwt.dto.JwtTokenDTO;
 import org.sopt.kareer.global.jwt.dto.TokenType;
 import org.springframework.stereotype.Component;
 
@@ -21,10 +21,10 @@ public class JwtTokenProvider {
 
     private final JwtProperties jwtProperties;
 
-    public JwtToken generate(Member member) {
+    public JwtTokenDTO generate(Member member) {
         String accessToken = buildToken(member, TokenType.ACCESS, jwtProperties.accessToken().expirationSeconds());
         String refreshToken = buildToken(member, TokenType.REFRESH, jwtProperties.refreshToken().expirationSeconds());
-        return new JwtToken(accessToken, refreshToken);
+        return new JwtTokenDTO(accessToken, refreshToken);
     }
 
     private String buildToken(Member member, TokenType tokenType, long expirationSeconds) {
