@@ -54,6 +54,9 @@ public enum SwaggerResponseDescription {
     ROADMAP_LIST_DETAIL(new LinkedHashSet<>(Set.of(
             PHASE_NOT_FOUND
     ))),
+    UPLOAD_JOBPOSTING(new LinkedHashSet<>(Set.of(
+            EMBEDDING_FAILED
+    )))
     ;
 
     private final Set<ErrorCode> errorCodeList;
