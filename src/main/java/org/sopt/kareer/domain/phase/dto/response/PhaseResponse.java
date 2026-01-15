@@ -55,7 +55,7 @@ public record PhaseResponse(
                         sequence,
                         goal,
                         description,
-                        PhaseStatus.determinieWorkStatus(status, worksCount),
+                        PhaseStatus.determineWorkStatus(status, worksCount),
                         worksCount,
                         startDate,
                         endDate
