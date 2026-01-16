@@ -36,7 +36,7 @@ public class PhaseController {
         );
     }
 
-    @GetMapping("/phase-actions/{phaseActionId}/ai")
+    @GetMapping("/phase-actions/{phaseActionId}/guide")
     @Operation(summary = "AI 가이드 조회", description = "AI 가이드를 조회합니다.")
     @CustomExceptionDescription(SwaggerResponseDescription.AI_GUIDE)
     public ResponseEntity<BaseResponse<AiGuideResponse>> getAiGuide(
