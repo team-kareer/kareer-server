@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.jobposting.dto.response.JobPostingCrawlListResponse;
 import org.sopt.kareer.domain.jobposting.dto.response.JobPostingListResponse;
-import org.sopt.kareer.domain.jobposting.dto.response.JobPostingRecommendResponse;
 import org.sopt.kareer.domain.jobposting.service.JobPostingCrawler;
 import org.sopt.kareer.domain.jobposting.service.JobPostingService;
 import org.sopt.kareer.global.annotation.CustomExceptionDescription;
@@ -41,7 +40,7 @@ public class JobPostingController {
     @Operation(summary = "채용 공고 추천", description = "사용자가 업로드한 이력서/자소서, 사용자 정보 기반으로 채용 공고를 추천합니다.")
     @CustomExceptionDescription(RECOMMEND_JOBPOSTING)
     @PostMapping(value = "recommend", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<BaseResponse<JobPostingRecommendResponse>> recommendJobPostings(
+    public ResponseEntity<BaseResponse<JobPostingListResponse>> recommendJobPostings(
             @AuthenticationPrincipal Long memberId,
             @Parameter List<MultipartFile> files
     ){

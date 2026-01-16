@@ -2,7 +2,6 @@ package org.sopt.kareer.domain.jobposting.service;
 
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.jobposting.dto.response.JobPostingListResponse;
-import org.sopt.kareer.domain.jobposting.dto.response.JobPostingRecommendResponse;
 import org.sopt.kareer.domain.jobposting.dto.response.JobPostingResponse;
 import org.sopt.kareer.domain.jobposting.entity.JobPosting;
 import org.sopt.kareer.domain.jobposting.entity.JobPostingBookmark;
@@ -42,7 +41,7 @@ public class JobPostingService {
     private final MemberContextBuilder memberContextBuilder;
     private final MemberService memberService;
 
-    public JobPostingRecommendResponse recommend(Long memberId, List<MultipartFile> files) {
+    public JobPostingListResponse recommend(Long memberId, List<MultipartFile> files) {
 
         if (files != null && files.size() > 2) {
             throw new JobPostingException(JobPostingErrorCode.TOO_MANY_FILES);
@@ -86,7 +85,7 @@ public class JobPostingService {
                 .map(jp -> JobPostingResponse.from(jp, bookmarkedIds.contains(jp.getId())))
                 .toList();
 
-        return new JobPostingRecommendResponse(responses);
+        return new JobPostingListResponse(responses);
     }
 
     @Transactional
