@@ -3,10 +3,15 @@ package org.sopt.kareer.domain.jobposting.service;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.jobposting.dto.response.JobPostingRecommendResponse;
 import org.sopt.kareer.domain.jobposting.dto.response.JobPostingResponse;
+import org.sopt.kareer.domain.jobposting.entity.JobPosting;
+import org.sopt.kareer.domain.jobposting.entity.JobPostingBookmark;
 import org.sopt.kareer.domain.jobposting.exception.JobPostingErrorCode;
 import org.sopt.kareer.domain.jobposting.exception.JobPostingException;
+import org.sopt.kareer.domain.jobposting.repository.JobPostingBookmarkRepository;
 import org.sopt.kareer.domain.jobposting.repository.JobPostingRepository;
 import org.sopt.kareer.domain.jobposting.util.ResumeContextService;
+import org.sopt.kareer.domain.member.entity.Member;
+import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.domain.member.util.MemberContextBuilder;
 import org.sopt.kareer.global.external.ai.enums.RagType;
 import org.sopt.kareer.global.external.ai.service.OpenAiService;
@@ -30,7 +35,9 @@ public class JobPostingService {
     private final RagService ragService;
     private final OpenAiService openAiService;
     private final JobPostingRepository jobPostingRepository;
+    private final JobPostingBookmarkRepository jobPostingBookmarkRepository;
     private final MemberContextBuilder memberContextBuilder;
+    private final MemberService memberService;
 
     public JobPostingRecommendResponse recommend(Long memberId, List<MultipartFile> files) {
 
@@ -67,6 +74,24 @@ public class JobPostingService {
                 .toList();
 
         return new JobPostingRecommendResponse(ordered);
+    }
+
+    @Transactional
+    public void createBookmark(Long memberId, Long jobPostingId) {
+
+        JobPosting jobPosting = jobPostingRepository.findById(jobPostingId)
+                .orElseThrow(() -> new JobPostingException(JobPostingErrorCode.JOB_POSTING_NOT_FOUND));
+
+        Member member = memberService.getById(memberId);
+
+        if(jobPostingBookmarkRepository.existsByJobPostingIdAndMemberId(jobPostingId, memberId)){
+            jobPostingBookmarkRepository.deleteByJobPostingIdAndMemberId(jobPostingId, memberId);
+            return;
+        }
+
+        JobPostingBookmark jobPostingBookmark = JobPostingBookmark.create(member, jobPosting);
+        jobPostingBookmarkRepository.save(jobPostingBookmark);
+
     }
 
 }
