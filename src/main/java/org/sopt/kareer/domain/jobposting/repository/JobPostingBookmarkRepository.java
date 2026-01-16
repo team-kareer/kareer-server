@@ -15,4 +15,16 @@ public interface JobPostingBookmarkRepository extends JpaRepository<JobPostingBo
         select jpb from JobPostingBookmark jpb where jpb.member.id = :memberId order by jpb.jobPosting.deadline asc
     """)
     List<JobPostingBookmark> findAllByMemberId(Long memberId);
+
+    @Query("""
+    select jpb
+    from JobPostingBookmark jpb
+    where jpb.member.id = :memberId
+      and jpb.jobPosting.id in :jobPostingIds
+    order by jpb.jobPosting.deadline asc
+""")
+    List<JobPostingBookmark> findAllByMemberIdAndJobPostingId(
+            Long memberId,
+            List<Long> jobPostingIds
+    );
 }

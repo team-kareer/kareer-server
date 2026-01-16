@@ -25,6 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -63,18 +65,28 @@ public class JobPostingService {
 
         List<Long> recommendedIds = openAiService.recommendJobPosting(userContext, retrieved);
 
-        List<JobPostingResponse> responses = jobPostingRepository.findAllById(recommendedIds).stream()
-                .map(JobPostingResponse::from)
-                .toList();
+        List<JobPosting> jobPostings = jobPostingRepository.findAllById(recommendedIds);
 
-        Map<Long, JobPostingResponse> map = responses.stream()
-                .collect(Collectors.toMap(JobPostingResponse::jobPostingId, r -> r));
-        List<JobPostingResponse> ordered = recommendedIds.stream()
-                .map(map::get)
+        Map<Long, JobPosting> jobPostingMap = jobPostings.stream()
+                .collect(Collectors.toMap(JobPosting::getId, Function.identity()));
+
+        List<JobPosting> orderedJobPostings = recommendedIds.stream()
+                .map(jobPostingMap::get)
                 .filter(Objects::nonNull)
                 .toList();
 
-        return new JobPostingRecommendResponse(ordered);
+        List<JobPostingBookmark> bookmarked = jobPostingBookmarkRepository
+                .findAllByMemberIdAndJobPostingId(memberId, recommendedIds);
+
+        Set<Long> bookmarkedIds = bookmarked.stream()
+                .map(b -> b.getJobPosting().getId())
+                .collect(Collectors.toSet());
+
+        List<JobPostingResponse> responses = orderedJobPostings.stream()
+                .map(jp -> JobPostingResponse.from(jp, bookmarkedIds.contains(jp.getId())))
+                .toList();
+
+        return new JobPostingRecommendResponse(responses);
     }
 
     @Transactional
@@ -99,13 +111,14 @@ public class JobPostingService {
 
         memberService.getById(memberId);
 
-        List<JobPosting> jobPostings = jobPostingBookmarkRepository
+        List<JobPostingResponse> responses = jobPostingBookmarkRepository
                 .findAllByMemberId(memberId)
                 .stream()
                 .map(JobPostingBookmark::getJobPosting)
+                .map(jp -> JobPostingResponse.from(jp, true))
                 .toList();
 
-        return JobPostingListResponse.from(jobPostings);
+        return new JobPostingListResponse(responses);
 
     }
 
