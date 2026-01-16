@@ -20,8 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.CREATE_BOOKMARK;
-import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.RECOMMEND_JOBPOSTING;
+import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -63,6 +62,7 @@ public class JobPostingController {
     }
 
     @Operation(summary = "채용 공고 북마크 조회", description = "사용자가 북마크한 채용 공고를 조회합니다.")
+    @CustomExceptionDescription(GET_BOOKMARK)
     @GetMapping("bookmarks")
     public ResponseEntity<BaseResponse<JobPostingListResponse>> getJobPostingBookmarks(
             @AuthenticationPrincipal Long memberId
