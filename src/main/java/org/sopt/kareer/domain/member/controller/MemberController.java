@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
 import org.sopt.kareer.domain.member.dto.response.MemberInfoResponse;
+import org.sopt.kareer.domain.member.dto.response.MemberStatusResponse;
 import org.sopt.kareer.domain.member.dto.response.OnboardCountriesResponse;
 import org.sopt.kareer.domain.member.dto.response.OnboardMajorsResponse;
 import org.sopt.kareer.domain.member.entity.constants.Major;
@@ -22,6 +23,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.CREATE_ROADMAP;
+import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.USER_STATUS;
 
 @RestController
 @RequiredArgsConstructor
@@ -82,5 +84,13 @@ public class MemberController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok("AI 로드맵 생성에 성공하였습니다."));
+    }
+
+    @Operation(summary = "유저 상태 조회", description = "사용자의 비자 정보, 졸업 정보를 조회합니다.")
+    @CustomExceptionDescription(USER_STATUS)
+    @GetMapping("me/status")
+    public ResponseEntity<BaseResponse<MemberStatusResponse>> getMemberStatus(@AuthenticationPrincipal Long memberId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.ok(memberService.getMemberStatus(memberId), "My status 조회에 성공하였습니다."));
     }
 }

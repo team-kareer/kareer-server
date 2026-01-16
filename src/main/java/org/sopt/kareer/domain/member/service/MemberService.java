@@ -3,14 +3,15 @@ package org.sopt.kareer.domain.member.service;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
 import org.sopt.kareer.domain.member.dto.response.MemberInfoResponse;
+import org.sopt.kareer.domain.member.dto.response.MemberStatusResponse;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.entity.MemberVisa;
+import org.sopt.kareer.domain.member.exception.MemberErrorCode;
 import org.sopt.kareer.domain.member.exception.MemberException;
 import org.sopt.kareer.domain.member.repository.MemberRepository;
 import org.sopt.kareer.domain.member.repository.MemberVisaRepository;
 import org.sopt.kareer.global.exception.customexception.GlobalException;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
-import org.sopt.kareer.domain.member.exception.MemberErrorCode;
 import org.sopt.kareer.global.oauth.dto.OAuthAttributes;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -85,5 +86,14 @@ public class MemberService {
                 request.visaStartDate()
         );
         memberVisaRepository.save(memberVisa);
+    }
+
+    public MemberStatusResponse getMemberStatus(Long memberId) {
+        Member member = getById(memberId);
+
+        MemberVisa memberVisa = memberVisaRepository.findActiveByMemberId(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        return MemberStatusResponse.from(member, memberVisa );
     }
 }
