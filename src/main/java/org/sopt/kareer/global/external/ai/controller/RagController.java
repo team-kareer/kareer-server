@@ -28,7 +28,7 @@ public class RagController {
     @Tag(name = "RAG 관련 API")
     @Operation(summary = "정책 PDF 문서 업로드 (Server Only)" , description = "정책 관련 PDF 문서를 임베딩하여 vectorDB에 저장합니다.")
     @CustomExceptionDescription(UPLOAD_PDF)
-    @PostMapping(name = "policy",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "policy",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<BaseResponse<DocumentUploadResponse>> uploadPdfFile(
             @Parameter(description = "업로드할 PDF 파일", required = true)
             @RequestParam("file") MultipartFile file){
