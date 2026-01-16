@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.sopt.kareer.domain.roadmap.entity.enums.ActionItemStatus;
 import org.sopt.kareer.domain.roadmap.entity.enums.ActionItemType;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.global.entity.BaseEntity;
@@ -30,6 +31,11 @@ public class ActionItem extends BaseEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ActionItemType actionsType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Default
+    private ActionItemStatus status = ActionItemStatus.INACTIVE;
 
     @Column(nullable = false)
     private LocalDate deadline;
@@ -61,6 +67,7 @@ public class ActionItem extends BaseEntity {
                 .title(title)
                 .actionsType(actionsType)
                 .deadline(deadline)
+                .status(ActionItemStatus.INACTIVE)
                 .completed(false)
                 .member(member)
                 .phaseAction(phaseAction)
