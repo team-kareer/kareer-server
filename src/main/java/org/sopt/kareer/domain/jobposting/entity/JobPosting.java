@@ -25,10 +25,8 @@ public class JobPosting {
     @Column(nullable = false)
     private String company;
 
-    @Column(nullable = false)
     private LocalDate deadline;
 
-    @Column(nullable = false)
     private String imageUrl;
 
     @Column(nullable = false)
