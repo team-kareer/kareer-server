@@ -73,4 +73,12 @@ public class PhaseAction extends BaseEntity {
                 .phase(phase)
                 .build();
     }
+
+    public void markCompleted() {
+        this.completed = true;
+    }
+
+    public void markAdded() {
+        this.added = true;
+    }
 }
