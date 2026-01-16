@@ -33,7 +33,9 @@ public class ActionItem extends BaseEntity {
     private ActionItemType actionsType;
 
     @Enumerated(EnumType.STRING)
-    private ActionItemStatus status;
+    @Column(nullable = false)
+    @Default
+    private ActionItemStatus status = ActionItemStatus.INACTIVE;
 
     @Column(nullable = false)
     private LocalDate deadline;
