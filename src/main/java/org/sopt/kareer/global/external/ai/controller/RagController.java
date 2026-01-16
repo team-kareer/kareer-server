@@ -44,7 +44,7 @@ public class RagController {
             @RequestBody JobPostingEmbeddingRequest request
             ){
 
-        ragService.embedJobPosting(request.jobPostingId());
+        ragService.embedJobPosting(request.jobPostingIds());
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok("채용 공고 임베딩 성공"));

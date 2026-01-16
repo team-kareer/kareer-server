@@ -1,6 +1,8 @@
 package org.sopt.kareer.global.external.ai.dto.request;
 
+import java.util.List;
+
 public record JobPostingEmbeddingRequest(
-        Long jobPostingId
+        List<Long> jobPostingIds
 ) {
 }

@@ -63,24 +63,26 @@ public class RagService {
     }
 
     @Transactional
-    public void embedJobPosting(Long jobPostingId) {
+    public void embedJobPosting(List<Long> jobPostingIds) {
 
-        JobPosting jobPosting = jobPostingRepository.findById(jobPostingId).orElseThrow(() -> new JobPostingException(JobPostingErrorCode.JOB_POSTING_NOT_FOUND));
+        for (Long jobPostingId : jobPostingIds) {
+            JobPosting jobPosting = jobPostingRepository.findById(jobPostingId).orElseThrow(() -> new JobPostingException(JobPostingErrorCode.JOB_POSTING_NOT_FOUND));
 
-        try{
-            String embeddingText = JobPostingEmbeddingTextBuilder.buildEmbeddingText(jobPosting);
+            try{
+                String embeddingText = JobPostingEmbeddingTextBuilder.buildEmbeddingText(jobPosting);
 
-            Map<String, Object> baseMeta = new HashMap<>();
+                Map<String, Object> baseMeta = new HashMap<>();
 
-            baseMeta.put("jobPostingId", jobPosting.getId());
+                baseMeta.put("jobPostingId", jobPosting.getId());
 
-            List<Document> toStore = getDocuments(embeddingText, baseMeta);
+                List<Document> toStore = getDocuments(embeddingText, baseMeta);
 
-            jobPostingVectorStore.add(toStore);
+                jobPostingVectorStore.add(toStore);
 
 
-        } catch (Exception e){
-            throw new RagException(RagErrorCode.EMBEDDING_FAILED, e.getMessage());
+            } catch (Exception e){
+                throw new RagException(RagErrorCode.EMBEDDING_FAILED, e.getMessage());
+            }
         }
 
     }
