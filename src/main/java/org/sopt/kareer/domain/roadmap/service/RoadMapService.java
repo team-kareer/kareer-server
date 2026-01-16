@@ -5,6 +5,7 @@ import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.domain.member.util.MemberContextBuilder;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapResponse;
+import org.sopt.kareer.global.external.ai.enums.RagType;
 import org.sopt.kareer.global.external.ai.service.OpenAiService;
 import org.sopt.kareer.global.external.ai.service.RagService;
 import org.springframework.ai.document.Document;
@@ -29,7 +30,7 @@ public class RoadMapService {
 
         var context = memberContextBuilder.load(memberId);
 
-        List<Document> searchedDocs = documentService.policyDocumentSearch(context.contextText(), 5);
+        List<Document> searchedDocs = documentService.search(context.contextText(), 5, RagType.DOCUMENT);
 
         RoadmapResponse response = openAiService.generateRoadmap(context.contextText(), searchedDocs);
         roadMapPersistService.saveRoadMap(member, response);
