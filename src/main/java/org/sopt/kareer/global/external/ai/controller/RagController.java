@@ -40,7 +40,7 @@ public class RagController {
     @Operation(summary = "채용 공고 임베딩 (Server Only)", description = "채용 공고 정보를 임베딩하여 vectorDB에 저장합니다.")
     @CustomExceptionDescription(UPLOAD_JOBPOSTING)
     @PostMapping("job-posting")
-    public ResponseEntity<BaseResponse<DocumentUploadResponse>> uploadJobPosting(
+    public ResponseEntity<BaseResponse<Void>> uploadJobPosting(
             @RequestBody JobPostingEmbeddingRequest request
             ){
 
