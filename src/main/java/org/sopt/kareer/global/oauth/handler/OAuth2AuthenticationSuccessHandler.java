@@ -2,17 +2,18 @@ package org.sopt.kareer.global.oauth.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.entity.enums.MemberStatus;
 import org.sopt.kareer.global.auth.service.LoginCodeService;
-import org.sopt.kareer.global.oauth.properties.OAuthRedirectProperties;
 import org.sopt.kareer.global.oauth.principal.CustomOAuth2User;
+import org.sopt.kareer.global.oauth.properties.OAuthRedirectProperties;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor

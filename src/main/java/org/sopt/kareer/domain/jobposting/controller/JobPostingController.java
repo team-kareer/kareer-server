@@ -19,17 +19,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.CREATE_BOOKMARK;
 import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.RECOMMEND_JOBPOSTING;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/job-postings")
+@Tag(name = "채용 공고 관련 API")
 public class JobPostingController {
 
     private final JobPostingCrawler jobPostingCrawler;
     private final JobPostingService jobPostingService;
 
-    @Tag(name = "채용 공고 관련 API")
     @Operation(summary = "채용 공고 크롤링 (Server Only)")
     @GetMapping("crawl")
     public ResponseEntity<BaseResponse<JobPostingCrawlListResponse>> crawlJobPostings(@RequestParam(defaultValue = "5") int limit) {
@@ -37,7 +38,6 @@ public class JobPostingController {
                 .body(BaseResponse.ok(jobPostingCrawler.crawlJobPostingForTest(limit), "채용 공고 크롤링에 성공하였습니다."));
     }
 
-    @Tag(name = "채용 공고 관련 API")
     @Operation(summary = "채용 공고 추천", description = "사용자가 업로드한 이력서/자소서, 사용자 정보 기반으로 채용 공고를 추천합니다.")
     @CustomExceptionDescription(RECOMMEND_JOBPOSTING)
     @PostMapping(value = "recommend", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -47,6 +47,18 @@ public class JobPostingController {
     ){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok(jobPostingService.recommend(memberId, files), "채용 공고 추천에 성공하였습니다."));
+    }
+
+    @Operation(summary = "채용 공고 북마크 추가/삭제", description = "사용자가 추천된 채용 공고를 추가하거나 삭제합니다.")
+    @CustomExceptionDescription(CREATE_BOOKMARK)
+    @PostMapping("{job-posting-id}/bookmarks")
+    public ResponseEntity<BaseResponse<Void>> createJobPostingBookmark(
+            @AuthenticationPrincipal Long memberId,
+            @PathVariable("job-posting-id") Long jobPostingId){
+        jobPostingService.createBookmark(memberId, jobPostingId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.ok("채용 공고 북마크 추가 / 삭제에 성공했습니다."));
     }
 
 }
