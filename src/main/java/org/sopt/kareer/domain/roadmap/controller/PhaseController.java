@@ -28,7 +28,6 @@ public class PhaseController {
 
     @GetMapping("/phases")
     @Operation(summary = "Phase 리스트 조회", description = "Phase 리스트를 조회합니다.")
-    @CustomExceptionDescription(SwaggerResponseDescription.PHASE_LIST)
     public ResponseEntity<BaseResponse<PhaseListResponse>> getPhaseList(
             @AuthenticationPrincipal Long memberId
     ) {
