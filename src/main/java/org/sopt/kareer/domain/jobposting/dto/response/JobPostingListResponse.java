@@ -2,7 +2,7 @@ package org.sopt.kareer.domain.jobposting.dto.response;
 
 import java.util.List;
 
-public record JobPostingRecommendResponse(
+public record JobPostingListResponse(
         List<JobPostingResponse> jobPostingResponses
 ) {
 }

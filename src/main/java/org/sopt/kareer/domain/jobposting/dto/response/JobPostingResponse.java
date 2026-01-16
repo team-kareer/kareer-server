@@ -29,9 +29,12 @@ public record JobPostingResponse(
         String address,
 
         @Schema(description = "공고 url")
-        String websiteUrl
+        String websiteUrl,
+
+        @Schema(description = "북마크 여부")
+        boolean isBookmarked
 ) {
-        public static JobPostingResponse from(JobPosting jobPosting) {
+        public static JobPostingResponse from(JobPosting jobPosting, boolean isbookmarked) {
                 return new JobPostingResponse(
                         jobPosting.getId(),
                         jobPosting.getDeadline(),
@@ -40,7 +43,8 @@ public record JobPostingResponse(
                         jobPosting.getPostTitle(),
                         jobPosting.getArrangement(),
                         jobPosting.getAddress(),
-                        jobPosting.getWebsiteUrl()
+                        jobPosting.getWebsiteUrl(),
+                        isbookmarked
                 );
         }
 }
