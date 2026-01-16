@@ -1,11 +1,7 @@
 package org.sopt.kareer.domain.jobposting.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.global.entity.BaseEntity;
 
@@ -37,4 +33,17 @@ public class JobPostingBookmark extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_posting_id", nullable = false)
     private JobPosting jobPosting;
+
+    @Builder
+    private JobPostingBookmark(Member member, JobPosting jobPosting) {
+        this.member = member;
+        this.jobPosting = jobPosting;
+    }
+
+    public static JobPostingBookmark create(Member member, JobPosting jobPosting) {
+        return JobPostingBookmark.builder()
+                .member(member)
+                .jobPosting(jobPosting)
+                .build();
+    }
 }
