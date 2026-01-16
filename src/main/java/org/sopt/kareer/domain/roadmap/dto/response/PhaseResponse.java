@@ -7,7 +7,7 @@ import org.sopt.kareer.domain.roadmap.entity.enums.PhaseStatus;
 
 import java.time.LocalDate;
 
-@Schema(description = "Phase 리스트 응답")
+@Schema(description = "Phase 리스트 아이템 응답")
 public record PhaseResponse(
         @Schema(description = "Phase id", example = "1")
         Long phaseId,

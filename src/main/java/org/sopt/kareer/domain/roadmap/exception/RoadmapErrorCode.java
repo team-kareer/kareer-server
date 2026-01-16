@@ -14,6 +14,7 @@ public enum RoadmapErrorCode implements ErrorCode {
     //PhaseAction
     PHASE_ACTION_TYPE_BLANK(HttpStatus.BAD_REQUEST.value(), "PhaseActionType이 비어있습니다."),
     PHASE_ACTION_TYPE_INVALID(HttpStatus.BAD_REQUEST.value(), "잘못된 PhaseActionType입니다."),
+    PHASE_ACTION_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "PhaseAction이 존재하지 않습니다."),
 
     //ActionItem
     ACTION_ITEM_TYPE_BLANK(HttpStatus.BAD_REQUEST.value(), "ActionItemType가 비어있습니다."),

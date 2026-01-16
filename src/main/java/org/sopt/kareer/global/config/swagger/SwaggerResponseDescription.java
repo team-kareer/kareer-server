@@ -50,8 +50,8 @@ public enum SwaggerResponseDescription {
             ACTION_ITEM_TYPE_BLANK,
             ACTION_ITEM_TYPE_INVALID
     ))),
-    PHASE_LIST(new LinkedHashSet<>(Set.of(
-            MEMBER_NOT_FOUND
+    AI_GUIDE(new LinkedHashSet<>(Set.of(
+            PHASE_ACTION_NOT_FOUND
     ))),
     ROADMAP_LIST_DETAIL(new LinkedHashSet<>(Set.of(
             PHASE_NOT_FOUND
