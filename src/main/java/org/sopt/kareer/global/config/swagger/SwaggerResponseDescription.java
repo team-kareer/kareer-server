@@ -66,6 +66,9 @@ public enum SwaggerResponseDescription {
     CREATE_BOOKMARK(new LinkedHashSet<>(Set.of(
             MEMBER_NOT_FOUND,
             JOB_POSTING_NOT_FOUND
+    ))),
+    GET_BOOKMARK(new LinkedHashSet<>(Set.of(
+            MEMBER_NOT_FOUND
     )))
     ;
 
