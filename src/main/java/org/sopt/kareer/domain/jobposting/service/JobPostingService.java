@@ -1,6 +1,7 @@
 package org.sopt.kareer.domain.jobposting.service;
 
 import lombok.RequiredArgsConstructor;
+import org.sopt.kareer.domain.jobposting.dto.response.JobPostingListResponse;
 import org.sopt.kareer.domain.jobposting.dto.response.JobPostingRecommendResponse;
 import org.sopt.kareer.domain.jobposting.dto.response.JobPostingResponse;
 import org.sopt.kareer.domain.jobposting.entity.JobPosting;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -91,6 +93,23 @@ public class JobPostingService {
 
         JobPostingBookmark jobPostingBookmark = JobPostingBookmark.create(member, jobPosting);
         jobPostingBookmarkRepository.save(jobPostingBookmark);
+
+    }
+
+    public JobPostingListResponse getJobPostingBookmarks(Long memberId){
+
+        Member member = memberService.getById(memberId);
+
+        List<JobPostingBookmark> bookmarks = jobPostingBookmarkRepository.findAllByMemberId(memberId);
+
+        List<JobPosting> jobPostings = new ArrayList<>();
+
+        for (JobPostingBookmark bookmark : bookmarks) {
+            jobPostings.add(bookmark.getJobPosting());
+        }
+
+        return JobPostingListResponse.from(jobPostings);
+
 
     }
 

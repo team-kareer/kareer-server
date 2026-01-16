@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.jobposting.dto.response.JobPostingCrawlListResponse;
+import org.sopt.kareer.domain.jobposting.dto.response.JobPostingListResponse;
 import org.sopt.kareer.domain.jobposting.dto.response.JobPostingRecommendResponse;
 import org.sopt.kareer.domain.jobposting.service.JobPostingCrawler;
 import org.sopt.kareer.domain.jobposting.service.JobPostingService;
@@ -59,6 +60,15 @@ public class JobPostingController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok("채용 공고 북마크 추가 / 삭제에 성공했습니다."));
+    }
+
+    @Operation(summary = "채용 공고 북마크 조회", description = "사용자가 북마크한 채용 공고를 조회합니다.")
+    @GetMapping("bookmarks")
+    public ResponseEntity<BaseResponse<JobPostingListResponse>> getJobPostingBookmarks(
+            @AuthenticationPrincipal Long memberId
+    ){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.ok(jobPostingService.getJobPostingBookmarks(memberId), "북마크 채용 공고 조회에 성공하였습니다."));
     }
 
 }
