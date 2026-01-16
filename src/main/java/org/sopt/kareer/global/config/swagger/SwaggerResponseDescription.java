@@ -55,6 +55,23 @@ public enum SwaggerResponseDescription {
     ROADMAP_LIST_DETAIL(new LinkedHashSet<>(Set.of(
             PHASE_NOT_FOUND
     ))),
+    TOGGLE_ACTION_ITEM_COMPLETION(new LinkedHashSet<>(Set.of(
+            ACTION_ITEM_NOT_FOUND,
+            ACTION_ITEM_FORBIDDEN,
+            ACTION_ITEM_INACTIVE,
+            PHASE_ACTION_ALREADY_COMPLETED
+    ))),
+    GET_ALL_ACTION_ITEMS(
+            new LinkedHashSet<>(Set.of(
+            ))
+    ),
+    CREATE_TODO(
+            new LinkedHashSet<>(Set.of(
+                    PHASE_ACTION_NOT_FOUND,
+                    TODO_ALREADY_ADDED,
+                    PHASE_ACTION_FORBIDDEN
+            ))
+    ),
     UPLOAD_JOBPOSTING(new LinkedHashSet<>(Set.of(
             EMBEDDING_FAILED
     ))),

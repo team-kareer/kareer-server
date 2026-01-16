@@ -77,4 +77,12 @@ public class ActionItem extends BaseEntity {
     public void toggleCompletion() {
         this.completed = !this.completed;
     }
+
+    public void deactivate() {
+        this.status = ActionItemStatus.INACTIVE;
+    }
+
+    public void activate() {
+        this.status = ActionItemStatus.ACTIVE;
+    }
 }
