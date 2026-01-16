@@ -46,7 +46,7 @@ public class PhaseService {
         // 전체 item 수
         long totalCount = raw.values().stream().mapToLong(List::size).sum();
 
-        return new RoadmapPhaseDetailResponse(totalCount, actions);
+        return RoadmapPhaseDetailResponse.from(totalCount, actions);
     }
 
     // items가 없는 경우 빈 리스트를 넣어주고, item 수를 count해주는 메서드
