@@ -7,6 +7,8 @@ import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static org.sopt.kareer.domain.jobposting.exception.JobPostingErrorCode.RESUME_CONTEXT_FAILED;
+import static org.sopt.kareer.domain.jobposting.exception.JobPostingErrorCode.TOO_MANY_FILES;
 import static org.sopt.kareer.domain.member.exception.MemberErrorCode.*;
 import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.*;
 import static org.sopt.kareer.global.auth.exception.AuthErrorCode.LOGIN_CODE_ALREADY_USED;
@@ -56,6 +58,11 @@ public enum SwaggerResponseDescription {
     ))),
     UPLOAD_JOBPOSTING(new LinkedHashSet<>(Set.of(
             EMBEDDING_FAILED
+    ))),
+    RECOMMEND_JOBPOSTING(new LinkedHashSet<>(Set.of(
+            TOO_MANY_FILES,
+            RESUME_CONTEXT_FAILED,
+            LLM_JSON_PARSING_FAILED
     )))
     ;
 
