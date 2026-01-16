@@ -7,6 +7,7 @@ import org.sopt.kareer.domain.jobposting.exception.JobPostingErrorCode;
 import org.sopt.kareer.domain.jobposting.exception.JobPostingException;
 import org.sopt.kareer.domain.jobposting.repository.JobPostingRepository;
 import org.sopt.kareer.global.external.ai.dto.response.DocumentUploadResponse;
+import org.sopt.kareer.global.external.ai.enums.RagType;
 import org.sopt.kareer.global.external.ai.exception.RagErrorCode;
 import org.sopt.kareer.global.external.ai.exception.RagException;
 import org.sopt.kareer.global.external.ai.util.JobPostingEmbeddingTextBuilder;
@@ -61,8 +62,6 @@ public class RagService {
 
     }
 
-
-
     @Transactional
     public void embedJobPosting(Long jobPostingId) {
 
@@ -86,6 +85,19 @@ public class RagService {
 
     }
 
+    public List<Document> search(String query, int topK, RagType ragType) {
+
+        SearchRequest request = SearchRequest.builder()
+                .query(query)
+                .topK(topK)
+                .build();
+
+        return switch (ragType) {
+            case DOCUMENT -> policyDocumentVectorStore.similaritySearch(request);
+            case JOBPOSTING -> jobPostingVectorStore.similaritySearch(request);
+        };
+    }
+
     private List<Document> getDocuments(String text, Map<String, Object> baseMeta) {
         Document doc = new Document(text, baseMeta);
 
@@ -101,7 +113,7 @@ public class RagService {
         List<Document> toStore = new ArrayList<>(chunks.size());
         for (int i = 0; i < chunks.size(); i++) {
             Document c = chunks.get(i);
-            Map<String, Object> meta = new HashMap<>(c.getMetadata() != null ? c.getMetadata() : Map.of());
+            Map<String, Object> meta = new HashMap<>(c.getMetadata());
             meta.put("chunkIndex", i);
 
             meta.put("chunkId", UUID.randomUUID().toString());
@@ -110,23 +122,6 @@ public class RagService {
         }
         return toStore;
     }
-
-    public List<Document> policyDocumentSearch(String query, int topK){
-
-        SearchRequest request = SearchRequest.builder()
-                .query(query)
-                .topK(topK)
-                .build();
-
-        List<Document> documents = policyDocumentVectorStore.similaritySearch(request);
-
-        if(documents != null && documents.isEmpty()){
-            throw new RagException(RagErrorCode.DOCUMENTS_RETRIEVED_EMPTY);
-        }
-
-        return documents;
-    }
-
 
 
 
