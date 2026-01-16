@@ -33,7 +33,7 @@ public class OpenAiService {
 
         String userPrompt = RoadmapPrompt.ROADMAP_USER_PROMPT_FORMAT.formatted(LocalDate.now(), memberContext, context);
         
-        return executeJson(systemPrompt, userPrompt, RoadmapResponse.class);
+        return call(systemPrompt, userPrompt, RoadmapResponse.class);
     }
 
     public List<Long> recommendJobPosting(String userContext, List<Document> retrievedDocument){
@@ -42,7 +42,7 @@ public class OpenAiService {
         String systemPrompt = JobPostingRecommendPrompt.JOB_POSTING_SYSTEM_PROMPT;
         String userPrompt = JobPostingRecommendPrompt.JOB_POSTING_USER_PROMPT_FORMAT.formatted(userContext, ragContext);
 
-        JobPostingRecommendResults searched = executeJson(systemPrompt, userPrompt, JobPostingRecommendResults.class);
+        JobPostingRecommendResults searched = call(systemPrompt, userPrompt, JobPostingRecommendResults.class);
 
         searched.results().forEach(i ->
                 log.info("[JOB_RECOMMEND] jobPostingId={}, reason={}", i.jobPostingId(), i.reason()));
@@ -73,7 +73,7 @@ public class OpenAiService {
         return sb.toString();
     }
 
-    private <T> T executeJson(String systemPrompt, String userPrompt, Class<T> clazz) {
+    private <T> T call(String systemPrompt, String userPrompt, Class<T> clazz) {
         try {
             ChatClient chatClient = chatClientBuilder.build();
 
