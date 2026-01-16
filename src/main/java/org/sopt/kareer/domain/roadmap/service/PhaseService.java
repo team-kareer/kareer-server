@@ -2,9 +2,7 @@ package org.sopt.kareer.domain.roadmap.service;
 
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.repository.MemberRepository;
-import org.sopt.kareer.domain.roadmap.dto.response.PhaseResponse;
-import org.sopt.kareer.domain.roadmap.dto.response.PhaseListResponse;
-import org.sopt.kareer.domain.roadmap.dto.response.RoadmapPhaseDetailResponse;
+import org.sopt.kareer.domain.roadmap.dto.response.*;
 import org.sopt.kareer.domain.roadmap.exception.RoadMapException;
 import org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode;
 import org.sopt.kareer.domain.roadmap.repository.PhaseRepository;
@@ -55,5 +53,15 @@ public class PhaseService {
     ) {
         if (items == null) items = List.of();
         return new RoadmapPhaseDetailResponse.ActionGroupResponse((long) items.size(), items);
+    }
+
+    public HomePhaseDetailResponse getHomePhaseDetail(Long phaseId) {
+        if (!phaseRepository.existsById(phaseId)) {
+            throw new RoadMapException(RoadmapErrorCode.PHASE_NOT_FOUND);
+        }
+
+        List<HomePhaseActionResponse> actions = phaseRepository.getHomePhaseDetail(phaseId);
+
+        return HomePhaseDetailResponse.from(actions);
     }
 }

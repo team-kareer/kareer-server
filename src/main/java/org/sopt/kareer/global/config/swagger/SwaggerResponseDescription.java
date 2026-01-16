@@ -51,7 +51,10 @@ public enum SwaggerResponseDescription {
     PHASE_LIST(new LinkedHashSet<>(Set.of(
             MEMBER_NOT_FOUND
     ))),
-    ROADMAP_LIST_DETAIL(new LinkedHashSet<>(Set.of(
+    ROADMAP_PHASE_LIST_DETAIL(new LinkedHashSet<>(Set.of(
+            PHASE_NOT_FOUND
+    ))),
+    HOME_PHASE_LIST_DETAIL(new LinkedHashSet<>(Set.of(
             PHASE_NOT_FOUND
     ))),
     ;
