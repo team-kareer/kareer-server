@@ -69,6 +69,10 @@ public enum SwaggerResponseDescription {
     ))),
     GET_BOOKMARK(new LinkedHashSet<>(Set.of(
             MEMBER_NOT_FOUND
+    ))),
+    USER_STATUS(new LinkedHashSet<>(Set.of(
+            MEMBER_NOT_FOUND,
+            VISA_NOT_FOUND
     )))
     ;
 

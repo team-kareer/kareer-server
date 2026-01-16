@@ -11,7 +11,8 @@ public enum MemberErrorCode implements ErrorCode {
     ONBOARDING_REQUIRED(HttpStatus.BAD_REQUEST.value(), "온보딩이 완료되지 않은 회원입니다."),
     ONBOARDING_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST.value(), "이미 온보딩이 완료된 회원입니다."),
     INVALID_VISA_POINT(HttpStatus.BAD_REQUEST.value(), "visaPoint는 D10 비자인 경우에만 입력할 수 있습니다."),
-    INVALID_COUNTRY(HttpStatus.BAD_REQUEST.value(), "지원하지 않는 국가입니다.")
+    INVALID_COUNTRY(HttpStatus.BAD_REQUEST.value(), "지원하지 않는 국가입니다."),
+    VISA_NOT_FOUND(HttpStatus.BAD_REQUEST.value(), "비자 정보가 존재하지 않습니다.")
     ;
 
     private final int httpStatus;
