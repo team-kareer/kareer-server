@@ -47,6 +47,10 @@ public class PhaseAction extends BaseEntity {
     @Column(nullable = false)
     private boolean isAdded = false;
 
+    @Default
+    @Column(nullable = false)
+    private boolean isCompleted = false;
+
     @Builder
     private PhaseAction(String title, String description, PhaseActionType type, LocalDate deadline, String importance, Phase phase) {
         this.title = title;
@@ -63,6 +67,7 @@ public class PhaseAction extends BaseEntity {
                 .description(description)
                 .type(type)
                 .isAdded(false)
+                .isCompleted(false)
                 .deadline(deadline)
                 .importance(importance)
                 .phase(phase)
