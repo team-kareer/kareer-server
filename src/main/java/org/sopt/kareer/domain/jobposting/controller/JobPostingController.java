@@ -1,24 +1,30 @@
 package org.sopt.kareer.domain.jobposting.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.jobposting.dto.response.JobPostingCrawlListResponse;
+import org.sopt.kareer.domain.jobposting.dto.response.JobPostingRecommendResponse;
 import org.sopt.kareer.domain.jobposting.service.JobPostingCrawler;
+import org.sopt.kareer.domain.jobposting.service.JobPostingService;
 import org.sopt.kareer.global.response.BaseResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("job-postings")
+@RequestMapping("/api/v1/job-postings")
 public class JobPostingController {
 
     private final JobPostingCrawler jobPostingCrawler;
+    private final JobPostingService jobPostingService;
 
     @Tag(name = "채용 공고 관련 API")
     @Operation(summary = "채용 공고 크롤링 (Server Only)")
@@ -26,6 +32,17 @@ public class JobPostingController {
     public ResponseEntity<BaseResponse<JobPostingCrawlListResponse>> crawlJobPostings(@RequestParam(defaultValue = "5") int limit) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok(jobPostingCrawler.crawlJobPostingForTest(limit), "채용 공고 크롤링에 성공하였습니다."));
+    }
+
+    @Tag(name = "채용 공고 관련 API")
+    @Operation(summary = "채용 공고 추천", description = "사용자가 업로드한 이력서/자소서, 사용자 정보 기반으로 채용 공고를 추천합니다.")
+    @PostMapping(value = "recommend", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<BaseResponse<JobPostingRecommendResponse>> recommendJobPostings(
+            @AuthenticationPrincipal Long memberId,
+            @Parameter List<MultipartFile> files
+    ){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.ok(jobPostingService.recommend(memberId, files), "채용 공고 추천에 성공하였습니다."));
     }
 
 }
