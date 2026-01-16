@@ -15,9 +15,18 @@ public class VectorStoreConfig {
     private final EmbeddingModel embeddingModel;
 
     @Bean
-    PgVectorStore documentVectorStore(){
+    PgVectorStore policyDocumentVectorStore(){
         return PgVectorStore.builder(jdbcTemplate, embeddingModel)
-                .vectorTableName("document_vectors")
+                .vectorTableName("policy_document_vectors")
+                .initializeSchema(true)
+                .distanceType(PgVectorStore.PgDistanceType.COSINE_DISTANCE)
+                .build();
+    }
+
+    @Bean
+    PgVectorStore resumeDocumentVectorStore(){
+        return PgVectorStore.builder(jdbcTemplate, embeddingModel)
+                .vectorTableName("resume_document_vectors")
                 .initializeSchema(true)
                 .distanceType(PgVectorStore.PgDistanceType.COSINE_DISTANCE)
                 .build();
@@ -31,4 +40,6 @@ public class VectorStoreConfig {
                 .distanceType(PgVectorStore.PgDistanceType.COSINE_DISTANCE)
                 .build();
     }
+
+
 }

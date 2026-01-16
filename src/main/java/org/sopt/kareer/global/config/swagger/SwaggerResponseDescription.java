@@ -7,6 +7,8 @@ import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static org.sopt.kareer.domain.jobposting.exception.JobPostingErrorCode.RESUME_CONTEXT_FAILED;
+import static org.sopt.kareer.domain.jobposting.exception.JobPostingErrorCode.TOO_MANY_FILES;
 import static org.sopt.kareer.domain.member.exception.MemberErrorCode.*;
 import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.*;
 import static org.sopt.kareer.global.auth.exception.AuthErrorCode.LOGIN_CODE_ALREADY_USED;
@@ -48,12 +50,20 @@ public enum SwaggerResponseDescription {
             ACTION_ITEM_TYPE_BLANK,
             ACTION_ITEM_TYPE_INVALID
     ))),
-    PHASE_LIST(new LinkedHashSet<>(Set.of(
-            MEMBER_NOT_FOUND
-    ))),
     AI_GUIDE(new LinkedHashSet<>(Set.of(
             PHASE_ACTION_NOT_FOUND
     ))),
+    ROADMAP_LIST_DETAIL(new LinkedHashSet<>(Set.of(
+            PHASE_NOT_FOUND
+    ))),
+    UPLOAD_JOBPOSTING(new LinkedHashSet<>(Set.of(
+            EMBEDDING_FAILED
+    ))),
+    RECOMMEND_JOBPOSTING(new LinkedHashSet<>(Set.of(
+            TOO_MANY_FILES,
+            RESUME_CONTEXT_FAILED,
+            LLM_JSON_PARSING_FAILED
+    )))
     ;
 
     private final Set<ErrorCode> errorCodeList;

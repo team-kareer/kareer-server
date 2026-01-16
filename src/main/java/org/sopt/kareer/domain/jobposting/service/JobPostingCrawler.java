@@ -1,4 +1,4 @@
-package org.sopt.kareer.domain.jobposting.crawler;
+package org.sopt.kareer.domain.jobposting.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -71,10 +71,10 @@ public class JobPostingCrawler {
                     continue;
                 }
 
-                if(jobPostingRepository.existsByRecruitId(recruitId)) {
-                    log.info("Skip - already exists. idx={}/{} recruitId={}", i, targets.size(), recruitId);
-                    continue;
-                }
+//                if(jobPostingRepository.existsByRecruitId(recruitId)) {
+//                    log.info("Skip - already exists. idx={}/{} recruitId={}", i, targets.size(), recruitId);
+//                    continue;
+//                }
 
                 log.info("Crawling detail start. idx={}/{} recruitId={} url={}",
                         i, targets.size(), recruitId, url);
@@ -129,8 +129,8 @@ public class JobPostingCrawler {
 
         String imageUrl = extractImageUrl(driver);
 
-        JobPosting jobPosting = JobPosting.create(postTitle, recruitId, company, deadline, url, imageUrl, preferredVisa,
-                preferredLanguage, arrangement, siteAddress);
+        JobPosting jobPosting = JobPosting.create(siteAddress, arrangement, company, deadline, imageUrl, postTitle, preferredLanguage,
+                preferredVisa, company, company, company, url);
 
         jobPostingRepository.save(jobPosting);
 

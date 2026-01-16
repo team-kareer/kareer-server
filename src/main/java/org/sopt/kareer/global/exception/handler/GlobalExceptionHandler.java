@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public BaseErrorResponse handleInternalServerError(Exception e) {
         log.error(e.getMessage(), e);
-        return BaseErrorResponse.of(INTERNAL_SERVER_ERROR);
+        return BaseErrorResponse.of(INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
     @ExceptionHandler(HandlerMethodValidationException.class)

@@ -1,6 +1,6 @@
 package org.sopt.kareer.global.external.ai.constant;
 
-public class OpenAiPrompt {
+public class RoadmapPrompt {
 
     public static final String ROADMAP_SYSTEM_PROMPT = """
 당신은 한국에 거주하는 외국인을 위한 커리어 및 비자 로드맵을 설계하는 전문가입니다.
