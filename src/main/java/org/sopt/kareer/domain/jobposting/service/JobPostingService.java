@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -98,18 +97,15 @@ public class JobPostingService {
 
     public JobPostingListResponse getJobPostingBookmarks(Long memberId){
 
-        Member member = memberService.getById(memberId);
+        memberService.getById(memberId);
 
-        List<JobPostingBookmark> bookmarks = jobPostingBookmarkRepository.findAllByMemberId(memberId);
-
-        List<JobPosting> jobPostings = new ArrayList<>();
-
-        for (JobPostingBookmark bookmark : bookmarks) {
-            jobPostings.add(bookmark.getJobPosting());
-        }
+        List<JobPosting> jobPostings = jobPostingBookmarkRepository
+                .findAllByMemberId(memberId)
+                .stream()
+                .map(JobPostingBookmark::getJobPosting)
+                .toList();
 
         return JobPostingListResponse.from(jobPostings);
-
 
     }
 
