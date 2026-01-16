@@ -9,8 +9,7 @@ import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.PHASE_AC
 
 public enum PhaseActionType {
     VISA,
-    CAREER,
-    URGENT
+    CAREER
     ;
 
     public static PhaseActionType from(String value){
