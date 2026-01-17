@@ -18,7 +18,7 @@ public class CorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        List<String> allowedOrigins = corsProperties.allowedOrigins();
+        List<String> allowedOrigins = corsProperties.allowedOriginList();
         if (allowedOrigins.stream().anyMatch(origin -> origin.contains("*"))) {
             configuration.setAllowedOriginPatterns(allowedOrigins);
         } else {
