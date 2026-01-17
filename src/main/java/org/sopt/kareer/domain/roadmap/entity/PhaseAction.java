@@ -45,7 +45,11 @@ public class PhaseAction extends BaseEntity {
 
     @Default
     @Column(nullable = false)
-    private boolean isAdded = false;
+    private Boolean added = false;
+
+    @Default
+    @Column(nullable = false)
+    private Boolean completed = false;
 
     @Default
     @Column(nullable = false)
@@ -67,10 +71,19 @@ public class PhaseAction extends BaseEntity {
                 .title(title)
                 .description(description)
                 .type(type)
-                .isAdded(false)
+                .added(false)
+                .completed(false)
                 .deadline(deadline)
                 .importance(importance)
                 .phase(phase)
                 .build();
+    }
+
+    public void markCompleted() {
+        this.completed = true;
+    }
+
+    public void markAdded() {
+        this.added = true;
     }
 }

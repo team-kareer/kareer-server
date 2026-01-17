@@ -14,10 +14,17 @@ public enum RoadmapErrorCode implements ErrorCode {
     //PhaseAction
     PHASE_ACTION_TYPE_BLANK(HttpStatus.BAD_REQUEST.value(), "PhaseActionType이 비어있습니다."),
     PHASE_ACTION_TYPE_INVALID(HttpStatus.BAD_REQUEST.value(), "잘못된 PhaseActionType입니다."),
+    PHASE_ACTION_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST.value(), "이미 완료된 PhaseAction입니다."),
+    PHASE_ACTION_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "존재하지 않는 PhaseAction입니다."),
+    PHASE_ACTION_FORBIDDEN(HttpStatus.FORBIDDEN.value(), "해당 PhaseAction에 대한 권한이 없습니다."),
+    TODO_ALREADY_ADDED(HttpStatus.BAD_REQUEST.value(), "이미 Todo가 추가되었습니다."),
 
     //ActionItem
     ACTION_ITEM_TYPE_BLANK(HttpStatus.BAD_REQUEST.value(), "ActionItemType가 비어있습니다."),
     ACTION_ITEM_TYPE_INVALID(HttpStatus.BAD_REQUEST.value(), "잘못된 ActionItemType입니다."),
+    ACTION_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "존재하지 않는 ActionItem입니다."),
+    ACTION_ITEM_FORBIDDEN(HttpStatus.FORBIDDEN.value(), "해당 ActionItem에 대한 권한이 없습니다."),
+    ACTION_ITEM_INACTIVE(HttpStatus.BAD_REQUEST.value(), "비활성화된 ActionItem입니다."),
 
     // Etc..
     INVALID_DATE_TYPE(HttpStatus.BAD_REQUEST.value(), "올바른 날짜 형식이 아닙니다.")

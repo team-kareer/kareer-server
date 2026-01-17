@@ -9,9 +9,6 @@ import java.time.LocalDate;
 @Builder
 public record JobPostingCrawlResponse(
 
-        @Schema(description = "채용 공고 ID", example = "90401")
-        Long recruitId,
-
         @Schema(description = "채용 공고 제목", example = "D2, D10 Golf Caddy Training and Employment Linkage Program for International")
         String postTitle,
 
@@ -42,7 +39,6 @@ public record JobPostingCrawlResponse(
 
     public static JobPostingCrawlResponse from(JobPosting jobPosting) {
         return JobPostingCrawlResponse.builder()
-                .recruitId(jobPosting.getRecruitId())
                 .postTitle(jobPosting.getPostTitle())
                 .company(jobPosting.getCompany())
                 .deadline(jobPosting.getDeadline())
