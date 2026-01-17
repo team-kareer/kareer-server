@@ -6,7 +6,6 @@ import org.sopt.kareer.domain.jobposting.entity.JobPosting;
 import org.sopt.kareer.domain.jobposting.exception.JobPostingErrorCode;
 import org.sopt.kareer.domain.jobposting.exception.JobPostingException;
 import org.sopt.kareer.domain.jobposting.repository.JobPostingRepository;
-import org.sopt.kareer.global.external.ai.dto.response.DocumentUploadResponse;
 import org.sopt.kareer.global.external.ai.enums.RagType;
 import org.sopt.kareer.global.external.ai.exception.RagErrorCode;
 import org.sopt.kareer.global.external.ai.exception.RagException;
@@ -36,30 +35,36 @@ public class RagService {
     private final JobPostingRepository jobPostingRepository;
 
     @Transactional
-    public DocumentUploadResponse uploadPolicyDocument(MultipartFile file) {
+    public void uploadPolicyDocument(List<MultipartFile> files) {
         File temp = null;
 
-        try {
-            temp = File.createTempFile("upload_", ".pdf");
-            file.transferTo(temp);
+        for (MultipartFile file : files) {
+            try {
+                temp = File.createTempFile("upload_", ".pdf");
+                file.transferTo(temp);
 
-            String text = documentProcessingService.extractTextFromPdf(temp);
+                Map<String, Object> baseMeta = new HashMap<>();
+                baseMeta.put("originalFilename", Objects.toString(file.getOriginalFilename(), ""));
+                baseMeta.put("uploadedAt", System.currentTimeMillis());
 
-            Map<String, Object> baseMeta = new HashMap<>();
-            baseMeta.put("originalFilename", Objects.toString(file.getOriginalFilename(), ""));
-            baseMeta.put("uploadedAt", System.currentTimeMillis());
+                var pages = documentProcessingService.extractPageFromPdf(temp);
 
-            List<Document> toStore = getDocuments(text, baseMeta);
+                List<Document> toStore = new ArrayList<>();
+                for (var page : pages) {
+                    Map<String, Object> pageMeta = new HashMap<>(baseMeta);
+                    pageMeta.put("page", page.pageNumber());
 
-            policyDocumentVectorStore.add(toStore);
+                    toStore.addAll(getDocuments(page.text(), pageMeta));
+                }
 
-            return DocumentUploadResponse.of(UUID.randomUUID().toString());
-        } catch (Exception e) {
-            throw new RagException(RagErrorCode.EMBEDDING_FAILED, e.getMessage());
-        } finally {
-            if (temp != null && temp.exists()) temp.delete();
+                policyDocumentVectorStore.add(toStore);
+
+            } catch (Exception e) {
+                throw new RagException(RagErrorCode.EMBEDDING_FAILED, e.getMessage());
+            } finally {
+                if (temp != null && temp.exists()) temp.delete();
+            }
         }
-
     }
 
     @Transactional
