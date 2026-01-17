@@ -1,10 +1,10 @@
 package org.sopt.kareer.domain.roadmap.service;
 
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.domain.member.repository.MemberRepository;
 import org.sopt.kareer.domain.roadmap.dto.response.*;
 import org.sopt.kareer.domain.roadmap.exception.RoadMapException;
 import org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode;
+import org.sopt.kareer.domain.roadmap.repository.PhaseActionRepository;
 import org.sopt.kareer.domain.roadmap.repository.PhaseRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,8 +18,8 @@ import java.util.Map;
 @Transactional(readOnly = true)
 public class PhaseService {
 
-    private final MemberRepository memberRepository;
     private final PhaseRepository phaseRepository;
+    private final PhaseActionRepository phaseActionRepository;
 
     public PhaseListResponse getPhases(Long memberId) {
         List<PhaseResponse> responses= phaseRepository.findPhases(memberId);
@@ -60,8 +60,12 @@ public class PhaseService {
             throw new RoadMapException(RoadmapErrorCode.PHASE_NOT_FOUND);
         }
 
-        List<HomePhaseActionResponse> actions = phaseRepository.getHomePhaseDetail(phaseId);
+        List<HomePhaseDetailResponse.HomePhaseActionResponse> actionResponses =
+                phaseActionRepository.findByPhaseIdAndIsCompletedIsFalse(phaseId)
+                        .stream()
+                        .map(HomePhaseDetailResponse.HomePhaseActionResponse::from)
+                        .toList();
 
-        return HomePhaseDetailResponse.from(actions);
+        return HomePhaseDetailResponse.from(actionResponses);
     }
 }
