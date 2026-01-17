@@ -15,6 +15,9 @@ public record HomePhaseDetailResponse(
         List<HomePhaseActionResponse> actions
 ) {
     public record HomePhaseActionResponse(
+            @Schema(description = "Phase Action 고유번호", example="1")
+            Long id,
+
             @Schema(description = "Phase Action 타입", example="Visa")
             String type,
 
@@ -26,6 +29,7 @@ public record HomePhaseDetailResponse(
     ) {
         public static HomePhaseActionResponse from(PhaseAction phaseAction) {
             return new HomePhaseActionResponse(
+                    phaseAction.getId(),
                     phaseAction.getType().getDisplayName(),
                     phaseAction.getTitle(),
                     phaseAction.getDeadline()
