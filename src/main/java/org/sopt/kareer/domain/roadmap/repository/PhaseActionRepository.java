@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface PhaseActionRepository extends JpaRepository<PhaseAction, Long> {
 
-    List<PhaseAction> findByPhaseIdAndIsCompletedIsFalse(Long phaseId);
+    List<PhaseAction> findByPhaseIdAndCompletedIsFalse(Long phaseId);
 }

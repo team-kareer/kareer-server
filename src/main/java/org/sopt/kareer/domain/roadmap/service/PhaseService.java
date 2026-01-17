@@ -80,7 +80,7 @@ public class PhaseService {
         }
 
         List<HomePhaseDetailResponse.HomePhaseActionResponse> actionResponses =
-                phaseActionRepository.findByPhaseIdAndIsCompletedIsFalse(phaseId)
+                phaseActionRepository.findByPhaseIdAndCompletedIsFalse(phaseId)
                         .stream()
                         .map(HomePhaseDetailResponse.HomePhaseActionResponse::from)
                         .toList();
