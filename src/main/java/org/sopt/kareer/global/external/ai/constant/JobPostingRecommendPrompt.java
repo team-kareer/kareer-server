@@ -12,6 +12,11 @@ public class JobPostingRecommendPrompt {
 - 비자/언어/경력/직무 적합도를 우선 고려하세요.
 - reason은 왜 해당 공고가 사용자에게 적합한지 **간결한 한 문장**으로 작성하세요.
 
+추가 규칙 (USER_COMPLETED_TODO 활용):
+- [USER_COMPLETED_TODO]가 제공된 경우, 사용자가 최근/반복적으로 수행한 활동으로부터
+  관심 직무/기술스택/업무 성향을 추론하여 공고 선택에 반영하세요.
+- 다만 Todo만 보고 과도한 추측은 하지 말고, 공고 본문에 근거가 있을 때만 강하게 연결하세요.
+
 출력 JSON 스키마 (엄격):
 {
   "results": [
