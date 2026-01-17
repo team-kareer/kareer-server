@@ -21,7 +21,7 @@ public record ActionItemResponse(
                 actionItem.getId(),
                 actionItem.getTitle(),
                 actionItem.getDeadline(),
-                actionItem.getCompleted()
+                Boolean.TRUE.equals(actionItem.getCompleted())
         );
     }
 }
