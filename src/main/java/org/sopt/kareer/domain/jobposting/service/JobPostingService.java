@@ -1,3 +1,4 @@
+
 package org.sopt.kareer.domain.jobposting.service;
 
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,8 @@ import org.sopt.kareer.domain.jobposting.util.ResumeContextService;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.domain.member.util.MemberContextBuilder;
+import org.sopt.kareer.domain.roadmap.entity.ActionItem;
+import org.sopt.kareer.domain.roadmap.repository.ActionItemRepository;
 import org.sopt.kareer.global.external.ai.enums.RagType;
 import org.sopt.kareer.global.external.ai.service.OpenAiService;
 import org.sopt.kareer.global.external.ai.service.RagService;
@@ -39,16 +42,32 @@ public class JobPostingService {
     private final JobPostingRepository jobPostingRepository;
     private final JobPostingBookmarkRepository jobPostingBookmarkRepository;
     private final MemberContextBuilder memberContextBuilder;
+    private final ActionItemRepository actionItemRepository;
     private final MemberService memberService;
 
-    public JobPostingListResponse recommend(Long memberId, List<MultipartFile> files) {
+    public JobPostingListResponse recommend(Long memberId, List<MultipartFile> files, boolean includeCompletedTodos) {
 
         if (files != null && files.size() > 2) {
             throw new JobPostingException(JobPostingErrorCode.TOO_MANY_FILES);
         }
 
+        List<ActionItem> completedTodos = actionItemRepository.findAllByMemberIdAndCompletedTrue(memberId);
+
+        String userTodoText = completedTodos.stream()
+                .map(todo -> "- " + todo.getTitle())
+                .collect(Collectors.joining("\n"));
+
+        String completedTodoContext = includeCompletedTodos ? userTodoText : null;
+
         var memberContext = memberContextBuilder.load(memberId);
         String userContext = memberContext.contextText();
+
+        String enrichedUserContext = """
+                %s
+
+                [USER_COMPLETED_TODO]
+                %s
+                """.formatted(userContext, completedTodoContext);
 
         String resumeContext = resumeContextService.buildContext(files);
 
@@ -58,7 +77,8 @@ public class JobPostingService {
 
                 [RESUME_OR_COVER_LETTER]
                 %s
-                """.formatted(userContext, resumeContext);
+                
+                """.formatted(enrichedUserContext, resumeContext);
 
         List<Document> retrieved = ragService.search(combinedContext, 4, RagType.JOBPOSTING);
 
