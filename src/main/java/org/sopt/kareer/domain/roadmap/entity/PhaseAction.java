@@ -51,11 +51,6 @@ public class PhaseAction extends BaseEntity {
     @Column(nullable = false)
     private Boolean completed = false;
 
-    @Default
-    @Column(nullable = false)
-    private boolean isCompleted = false;
-
-
     @Builder
     private PhaseAction(String title, String description, PhaseActionType type, LocalDate deadline, String importance, Phase phase) {
         this.title = title;
