@@ -70,7 +70,7 @@ JSON schema (strict):
               "deadline": "yyyy-MM-dd"
             }
           ]
-        }=
+        }
       ]
     }
   ]
