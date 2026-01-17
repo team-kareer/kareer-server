@@ -15,10 +15,9 @@ public class JobPostingFixture {
     public static final String ARRANGEMENT = "test";
     public static final String ADDRESS = "test";
 
-    public static JobPosting getJobPosting(Long recruitId, LocalDate deadline){
+    public static JobPosting getJobPosting(LocalDate deadline){
         return JobPosting.builder()
                 .postTitle(POST_TITLE)
-                .recruitId(recruitId)
                 .deadline(deadline)
                 .company(COMPANY)
                 .websiteUrl(WEBSITE_URL)
