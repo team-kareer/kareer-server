@@ -42,7 +42,7 @@ public class ActionItem extends BaseEntity {
 
     @Default
     @Column(nullable = false)
-    private boolean completed = false;
+    private Boolean completed = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
@@ -72,5 +72,17 @@ public class ActionItem extends BaseEntity {
                 .member(member)
                 .phaseAction(phaseAction)
                 .build();
+    }
+
+    public void toggleCompletion() {
+        this.completed = !this.completed;
+    }
+
+    public void deactivate() {
+        this.status = ActionItemStatus.INACTIVE;
+    }
+
+    public void activate() {
+        this.status = ActionItemStatus.ACTIVE;
     }
 }
