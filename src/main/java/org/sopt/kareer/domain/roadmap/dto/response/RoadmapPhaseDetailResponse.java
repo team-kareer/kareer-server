@@ -36,4 +36,8 @@ public record RoadmapPhaseDetailResponse(
             public ActionResponse { }
         }
     }
+
+    public static RoadmapPhaseDetailResponse from(Long count,Map<String, RoadmapPhaseDetailResponse.ActionGroupResponse> phase) {
+        return new RoadmapPhaseDetailResponse(count, phase);
+    }
 }
