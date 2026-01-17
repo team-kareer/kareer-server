@@ -83,6 +83,7 @@ public class PhaseRepositoryCustomImpl implements PhaseRepositoryCustom {
                 .transform(
                         groupBy(typeLabel).as(
                                 list(new QRoadmapPhaseDetailResponse_ActionGroupResponse_ActionResponse(
+                                        phaseAction.id,
                                         phaseAction.title,
                                         phaseAction.description,
                                         phaseAction.deadline
