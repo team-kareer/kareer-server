@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -22,24 +24,42 @@ import java.util.List;
 public class DocumentProcessingService {
 
     private static final double MIN_TEXT_PAGE_RATIO = 0.2;
-    private static final int MIN_TOTAL_TEXT_CHARS = 300;
     private static final int OCR_DPI = 300;
 
     private final Tesseract tesseract;
 
     public List<PageText> extractPagesWithOcr(File pdfFile) {
-        List<PageText> textPages = extractPageFromPdf(pdfFile);
 
+        List<PageText> textPages = extractPageFromPdf(pdfFile);
         int totalPages = getTotalPages(pdfFile);
 
         int totalChars = textPages.stream().mapToInt(p -> p.text().length()).sum();
-        boolean tooFewPages = textPages.size() < Math.max(1, (int) Math.ceil(totalPages * MIN_TEXT_PAGE_RATIO));
-        boolean tooShort = totalChars < MIN_TOTAL_TEXT_CHARS;
+        int avgChars = Math.max(1, totalChars / Math.max(1, totalPages));
 
-        if (tooFewPages || tooShort) {
-            return extractTextFromImage(pdfFile);
+        Map<Integer, String> pageTextMap = textPages.stream()
+                .collect(Collectors.toMap(PageText::pageNumber, PageText::text));
+
+        try (PDDocument document = PDDocument.load(pdfFile)) {
+            PDFRenderer renderer = new PDFRenderer(document);
+            List<PageText> pages = new ArrayList<>(totalPages);
+
+            for (int i = 1; i <= totalPages; i++) {
+                String text = pageTextMap.getOrDefault(i, "");
+
+                if (textPages.size() < Math.max(1, (int) Math.ceil(totalPages * MIN_TEXT_PAGE_RATIO))) {
+                    BufferedImage image = renderer.renderImageWithDPI(i - 1, OCR_DPI);
+                    text = sanitizeText(tesseract.doOCR(image));
+                }
+
+                if (!text.isBlank()) {
+                    pages.add(new PageText(i, text));
+                }
+            }
+            return pages;
+
+        } catch (Exception e) {
+            throw new RagException(RagErrorCode.EXTRACT_IMAGE_FAILED, e.getMessage());
         }
-        return textPages;
     }
 
     public String extractTextWithOcr(File pdfFile) {
@@ -96,7 +116,7 @@ public class DocumentProcessingService {
             for (int i = 0; i < totalPages; i++) {
                 BufferedImage image = renderer.renderImageWithDPI(i, OCR_DPI);
                 String cleaned = sanitizeText(tesseract.doOCR(image));
-                
+
                 if (!cleaned.isBlank()) {
                     pages.add(new PageText(i + 1, cleaned));
                 }
