@@ -23,11 +23,11 @@ public class PhaseActionController {
 
     private final PhaseActionService phaseActionService;
 
-    @PostMapping("/{phase-action-id}/todo")
+    @PostMapping("/{phaseActionId}/todo")
     @Operation(summary = "Phase Action 기반 Todo 생성", description = "특정 Phase Action을 기반으로 Todo를 생성합니다.")
     @CustomExceptionDescription(CREATE_TODO)
     public ResponseEntity<BaseResponse<Void>> createPhaseActionTodo(@AuthenticationPrincipal Long memberId,
-                                                                    @PathVariable("phase-action-id") Long phaseActionId) {
+                                                                    @PathVariable Long phaseActionId) {
         phaseActionService.createPhaseActionTodo(memberId, phaseActionId);
         return ResponseEntity.ok(BaseResponse.ok("Phase Action 기반 Todo가 생성되었습니다."));
     }

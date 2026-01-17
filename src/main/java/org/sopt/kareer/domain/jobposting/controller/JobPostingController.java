@@ -50,10 +50,10 @@ public class JobPostingController {
 
     @Operation(summary = "채용 공고 북마크 추가/삭제", description = "사용자가 추천된 채용 공고를 추가하거나 삭제합니다.")
     @CustomExceptionDescription(CREATE_BOOKMARK)
-    @PostMapping("{job-posting-id}/bookmarks")
+    @PostMapping("{jobPostingId}/bookmarks")
     public ResponseEntity<BaseResponse<Void>> createJobPostingBookmark(
             @AuthenticationPrincipal Long memberId,
-            @PathVariable("job-posting-id") Long jobPostingId){
+            @PathVariable Long jobPostingId){
         jobPostingService.createBookmark(memberId, jobPostingId);
 
         return ResponseEntity.status(HttpStatus.OK)
