@@ -30,7 +30,7 @@ public class ActionItemController {
     public ResponseEntity<BaseResponse<Void>> toggleActionItemCompletion(@AuthenticationPrincipal Long memberId,
                                                                          @PathVariable Long actionItemId) {
         actionItemService.toggleCompletion(memberId, actionItemId);
-        return ResponseEntity.ok(BaseResponse.ok(null, "액션 아이템 완료 상태가 토글되었습니다."));
+        return ResponseEntity.ok(BaseResponse.ok("액션 아이템 완료 상태가 토글되었습니다."));
     }
 
     @GetMapping("")

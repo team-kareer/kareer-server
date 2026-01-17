@@ -29,6 +29,6 @@ public class PhaseActionController {
     public ResponseEntity<BaseResponse<Void>> createPhaseActionTodo(@AuthenticationPrincipal Long memberId,
                                                                     @PathVariable("phase-action-id") Long phaseActionId) {
         phaseActionService.createPhaseActionTodo(memberId, phaseActionId);
-        return ResponseEntity.ok(BaseResponse.ok(null, "Phase Action 기반 Todo가 생성되었습니다."));
+        return ResponseEntity.ok(BaseResponse.ok("Phase Action 기반 Todo가 생성되었습니다."));
     }
 }
