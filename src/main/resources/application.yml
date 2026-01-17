@@ -1,0 +1,168 @@
+spring:
+  application:
+    name: kareer
+  profiles:
+    group:
+      local: local-db, local-port, local-cors, common
+      dev: dev-db, dev-port, dev-cors, common
+      prod: prod-db, prod-port, prod-cors, common
+    active: ${SPRING_ACTIVE_PROFILE}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: common
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: gpt-4.1-mini
+          temperature: 0.5
+      embedding:
+        options:
+          model: text-embedding-3-small
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        highlight_sql: true
+    open-in-view: false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${GOOGLE_REDIRECT_URI}
+            scope:
+              - openid
+              - profile
+              - email
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
+            user-name-attribute: sub
+      redirect:
+        redirect-uri: ${OAUTH_REDIRECT_URI}
+jwt:
+  secret: ${JWT_SECRET}
+  access-token:
+    expiration-seconds: ${JWT_ACCESS_EXPIRATION}
+  refresh-token:
+    expiration-seconds: ${JWT_REFRESH_EXPIRATION}
+auth:
+  login-code:
+    ttl-seconds: ${AUTH_LOGIN_CODE_TTL_SECONDS}
+    redis-prefix: ${AUTH_LOGIN_CODE_REDIS_PREFIX}
+  cookie:
+    refresh-token:
+      name: ${AUTH_REFRESH_TOKEN_COOKIE_NAME}
+      secure: ${AUTH_REFRESH_TOKEN_COOKIE_SECURE}
+      same-site: ${AUTH_REFRESH_TOKEN_COOKIE_SAMESITE}
+---
+spring:
+  config:
+    activate:
+      on-profile: local-db
+  datasource:
+    url: ${LOCAL_DATASOURCE_URL}
+    username: ${LOCAL_DATASOURCE_USERNAME}
+    password: ${LOCAL_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local-port
+server:
+  port: 8080
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local-cors
+cors:
+  allowed-origins:
+    - ${LOCAL_CORS_ALLOWED_ORIGIN}
+  allow-credentials: false
+---
+spring:
+  config:
+    activate:
+      on-profile: dev-db
+  datasource:
+    url: ${DEV_DATASOURCE_URL}
+    username: ${DEV_DATASOURCE_USERNAME}
+    password: ${DEV_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+selenium:
+  chrome:
+    driver-path: ${DEV_DRIVER_PATH}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev-port
+server:
+  port: 8081
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev-cors
+cors:
+  allowed-origins:
+    - ${DEV_CORS_ALLOWED_ORIGIN}
+  allow-credentials: false
+---
+spring:
+  config:
+    activate:
+      on-profile: prod-db
+  datasource:
+    url: ${PROD_DATASOURCE_URL}
+    username: ${PROD_DATASOURCE_USERNAME}
+    password: ${PROD_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+selenium:
+  chrome:
+    driver-path: ${PROD_DRIVER_PATH}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod-port
+server:
+  port: 8082
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod-cors
+cors:
+  allowed-origins:
+    - ${PROD_CORS_ALLOWED_ORIGIN}
+  allow-credentials: true

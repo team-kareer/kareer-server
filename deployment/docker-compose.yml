@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  kareer-blue:
+    image: ${ECR_REGISTRY}/kareer-server:${IMAGE_TAG}
+    container_name: kareer-blue
+    ports:
+      - "8080:8082"
+    environment:
+      - TZ=Asia/Seoul
+    env_file:
+      - .env
+    networks:
+      - kareer-net
+    restart: always
+
+  kareer-green:
+    image: ${ECR_REGISTRY}/kareer-server:${IMAGE_TAG}
+    container_name: kareer-green
+    ports:
+      - "8081:8082"
+    environment:
+      - TZ=Asia/Seoul
+    env_file:
+      - .env
+    networks:
+      - kareer-net
+    restart: always
+
+networks:
+  kareer-net:
+    driver: bridge

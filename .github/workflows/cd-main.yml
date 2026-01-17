@@ -1,0 +1,43 @@
+name: cd-main
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'src/**'
+      - 'build.gradle'
+      - '.github/workflows/**'
+      - 'deployment/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: main
+
+    steps:
+      # 1. 코드 체크아웃
+      - name: 🔄 Code Checkout
+        uses: actions/checkout@v4
+
+      # 2. 배포 파일 복사
+      - name: 📄 Copy deployment files to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          source: "deployment/*"
+          target: "/home/ubuntu/app"
+
+      # 3. 배포 스크립트 실행
+      - name: 🔆 Execute blue-green deploy script on EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            cd ~/app/deployment
+            export IMAGE_TAG=latest
+            chmod +x deploy.sh
+            ./deploy.sh
