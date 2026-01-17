@@ -16,7 +16,7 @@ public record HomePhaseDetailResponse(
 ) {
     public record HomePhaseActionResponse(
             @Schema(description = "Phase Action 고유번호", example="1")
-            Long id,
+            Long phaseActionId,
 
             @Schema(description = "Phase Action 타입", example="Visa")
             String type,

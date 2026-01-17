@@ -24,7 +24,7 @@ public record RoadmapPhaseDetailResponse(
     ) {
         public record ActionResponse(
                 @Schema(description = "Phase Action 고유번호", example="1")
-                Long id,
+                Long phaseActionId,
 
                 @Schema(description = "Phase Action 제목", example = "Prepare internship log")
                 String title,
