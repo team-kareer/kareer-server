@@ -38,7 +38,7 @@ public class ResumeContextService {
                 temp = File.createTempFile("resume_", ".pdf");
                 file.transferTo(temp);
 
-                String text = documentProcessingService.extractTextFromPdf(temp);
+                String text = documentProcessingService.extractTextWithOcr(temp);
 
                 sb.append("----- FILE START -----\n");
                 sb.append(text).append("\n");

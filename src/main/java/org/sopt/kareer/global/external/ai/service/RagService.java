@@ -47,7 +47,7 @@ public class RagService {
                 baseMeta.put("originalFilename", Objects.toString(file.getOriginalFilename(), ""));
                 baseMeta.put("uploadedAt", System.currentTimeMillis());
 
-                var pages = documentProcessingService.extractPageFromPdf(temp);
+                var pages = documentProcessingService.extractPagesWithOcr(temp);
 
                 List<Document> toStore = new ArrayList<>();
                 for (var page : pages) {
