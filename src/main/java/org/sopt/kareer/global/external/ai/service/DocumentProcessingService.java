@@ -96,7 +96,7 @@ public class DocumentProcessingService {
             for (int i = 0; i < totalPages; i++) {
                 BufferedImage image = renderer.renderImageWithDPI(i, OCR_DPI);
                 String cleaned = sanitizeText(tesseract.doOCR(image));
-                log.info("OCR 작동 : " + cleaned);
+                
                 if (!cleaned.isBlank()) {
                     pages.add(new PageText(i + 1, cleaned));
                 }
