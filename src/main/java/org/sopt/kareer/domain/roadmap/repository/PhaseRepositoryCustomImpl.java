@@ -32,7 +32,6 @@ public class PhaseRepositoryCustomImpl implements PhaseRepositoryCustom {
     public List<PhaseResponse> findPhases(Long memberId) {
         QPhase phase = QPhase.phase;
         QPhaseAction phaseAction = QPhaseAction.phaseAction;
-        QActionItem actionItem = QActionItem.actionItem;
 
         return query
                 .select(new QPhaseResponse(
@@ -42,31 +41,14 @@ public class PhaseRepositoryCustomImpl implements PhaseRepositoryCustom {
                         phase.goal,
                         phase.description,
 
-
-                        // 미완료 PhaseAction 개수
                         JPAExpressions
                                 .select(phaseAction.count())
                                 .from(phaseAction)
                                 .where(
                                         phaseAction.phase.id.eq(phase.id),
-
-                                        // 1. ActionItem이 0개이거나 미완료 action item이 1개 이상
-                                        JPAExpressions
-                                                .select(actionItem.count())
-                                                .from(actionItem)
-                                                .where(actionItem.phaseAction.eq(phaseAction))
-                                                .eq(0L)
-                                                .or(
-                                                        JPAExpressions
-                                                                .select(actionItem.count())
-                                                                .from(actionItem)
-                                                                .where(
-                                                                        actionItem.phaseAction.eq(phaseAction),
-                                                                        actionItem.completed.eq(false)
-                                                                )
-                                                                .gt(0L)
-                                                )
+                                        phaseAction.completed.isFalse()
                                 ),
+
                         phase.startDate,
                         phase.endDate
                 ))
@@ -81,28 +63,14 @@ public class PhaseRepositoryCustomImpl implements PhaseRepositoryCustom {
         QPhaseAction phaseAction = QPhaseAction.phaseAction;
         QActionItem item = QActionItem.actionItem;
 
-        // 해당 PhaseAction이 done인지 판단 (item이 1개 이상이면서 모두 완료된 경우 done)
-        BooleanExpression allDone =
-                JPAExpressions
-                        .select(item.count())
-                        .from(item)
-                        .where(
-                                item.phaseAction.id.eq(phaseAction.id),
-                                item.completed.isFalse()
-                        )
-                        .eq(0L)
-                        .and(
-                                JPAExpressions
-                                        .select(item.count())
-                                        .from(item)
-                                        .where(item.phaseAction.id.eq(phaseAction.id))
-                                        .gt(0L)
-                        );
-        ;
+        // 해당 PhaseAction이 done인지 판단
+        BooleanExpression isDone =
+                phaseAction.completed.isTrue()
+                        .and(phaseAction.added.isTrue());
 
         // Visa, Career, Done 라벨링
         Expression<String> typeLabel = new CaseBuilder()
-                .when(allDone).then("Done")
+                .when(isDone).then("Done")
                 .when(phaseAction.type.eq(PhaseActionType.VISA)).then("Visa")
                 .when(phaseAction.type.eq(PhaseActionType.CAREER)).then("Career")
                 .otherwise(phaseAction.type.stringValue());
