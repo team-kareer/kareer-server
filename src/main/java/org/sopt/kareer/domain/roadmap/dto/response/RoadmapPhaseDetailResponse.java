@@ -23,6 +23,9 @@ public record RoadmapPhaseDetailResponse(
         List<ActionResponse> items
     ) {
         public record ActionResponse(
+                @Schema(description = "Phase Action 고유번호", example="1")
+                Long phaseActionId,
+
                 @Schema(description = "Phase Action 제목", example = "Prepare internship log")
                 String title,
 
@@ -35,5 +38,9 @@ public record RoadmapPhaseDetailResponse(
             @QueryProjection
             public ActionResponse { }
         }
+    }
+
+    public static RoadmapPhaseDetailResponse from(Long count,Map<String, RoadmapPhaseDetailResponse.ActionGroupResponse> phase) {
+        return new RoadmapPhaseDetailResponse(count, phase);
     }
 }

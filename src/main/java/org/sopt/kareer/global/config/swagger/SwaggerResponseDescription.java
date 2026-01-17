@@ -52,7 +52,10 @@ public enum SwaggerResponseDescription {
     AI_GUIDE(new LinkedHashSet<>(Set.of(
             PHASE_ACTION_NOT_FOUND
     ))),
-    ROADMAP_LIST_DETAIL(new LinkedHashSet<>(Set.of(
+    ROADMAP_PHASE_LIST_DETAIL(new LinkedHashSet<>(Set.of(
+            PHASE_NOT_FOUND
+    ))),
+    HOME_PHASE_LIST_DETAIL(new LinkedHashSet<>(Set.of(
             PHASE_NOT_FOUND
     ))),
     TOGGLE_ACTION_ITEM_COMPLETION(new LinkedHashSet<>(Set.of(

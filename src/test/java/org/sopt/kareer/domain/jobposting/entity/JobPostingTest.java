@@ -1,13 +1,12 @@
 package org.sopt.kareer.domain.jobposting.entity;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.sopt.kareer.domain.jobposting.fixture.JobPostingFixture;
 
 import java.time.LocalDate;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class JobPostingTest {
 
@@ -18,12 +17,11 @@ class JobPostingTest {
         LocalDate deadline = LocalDate.now();
 
         //when
-        JobPosting jobPosting = JobPostingFixture.getJobPosting(1L, deadline);
+        JobPosting jobPosting = JobPostingFixture.getJobPosting(deadline);
 
        //then
         assertThat(jobPosting.getPostTitle()).isEqualTo(JobPostingFixture.POST_TITLE);
         assertThat(jobPosting.getDeadline()).isEqualTo(deadline);
-        assertThat(jobPosting.getRecruitId()).isEqualTo(1L);
     }
 
 }

@@ -24,15 +24,6 @@ public class VectorStoreConfig {
     }
 
     @Bean
-    PgVectorStore resumeDocumentVectorStore(){
-        return PgVectorStore.builder(jdbcTemplate, embeddingModel)
-                .vectorTableName("resume_document_vectors")
-                .initializeSchema(true)
-                .distanceType(PgVectorStore.PgDistanceType.COSINE_DISTANCE)
-                .build();
-    }
-
-    @Bean
     PgVectorStore jobPostingVectorStore(){
         return PgVectorStore.builder(jdbcTemplate, embeddingModel)
                 .vectorTableName("job_posting_vectors")
