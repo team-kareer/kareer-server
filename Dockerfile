@@ -1,18 +1,14 @@
-FROM gradle:8.7-jdk17 AS build
-WORKDIR /workspace
-
-COPY gradlew gradlew.bat ./
-COPY gradle ./gradle
-COPY build.gradle settings.gradle ./
-COPY src ./src
-
-RUN chmod +x gradlew \
-    && ./gradlew bootJar -x test
-
 FROM eclipse-temurin:17-jre
-WORKDIR /app
 
-COPY --from=build /workspace/build/libs/*.jar app.jar
+# Tesseract + 언어 데이터 설치
+RUN apt-get update \
+ && apt-get install -y \
+    tesseract-ocr \
+    tesseract-ocr-kor \
+    tesseract-ocr-eng \
+ && rm -rf /var/lib/apt/lists/*
 
-EXPOSE 8080
-ENTRYPOINT ["java","-jar","/app/app.jar"]
+# 애플리케이션
+COPY app.jar /app.jar
+
+ENTRYPOINT ["java", "-jar", "/app.jar"]
