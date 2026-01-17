@@ -151,7 +151,7 @@ spring:
     password: ${PROD_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   ocr:
-    tessdataPath: ${DEV_TESS_PATH}
+    tessdataPath: ${PROD_TESS_PATH}
 
 selenium:
   chrome:
