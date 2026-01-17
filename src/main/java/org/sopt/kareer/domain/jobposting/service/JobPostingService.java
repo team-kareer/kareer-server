@@ -51,23 +51,22 @@ public class JobPostingService {
             throw new JobPostingException(JobPostingErrorCode.TOO_MANY_FILES);
         }
 
-        List<ActionItem> completedTodos = actionItemRepository.findAllByMemberIdAndCompletedTrue(memberId);
-
-        String userTodoText = completedTodos.stream()
-                .map(todo -> "- " + todo.getTitle())
-                .collect(Collectors.joining("\n"));
-
-        String completedTodoContext = includeCompletedTodos ? userTodoText : null;
 
         var memberContext = memberContextBuilder.load(memberId);
         String userContext = memberContext.contextText();
 
-        String enrichedUserContext = """
-                %s
+        String enrichedUserContext = userContext;
+                if (includeCompletedTodos) {
+                        List<ActionItem> completedTodos = actionItemRepository.findAllByMemberIdAndCompletedTrue(memberId);
+                      String userTodoText = completedTodos.stream()
+                              .map(todo -> "- " + todo.getTitle())
+                              .collect(Collectors.joining("\n"));
+                        enrichedUserContext = """
+                    %s
 
-                [USER_COMPLETED_TODO]
-                %s
-                """.formatted(userContext, completedTodoContext);
+                    [USER_COMPLETED_TODO]
+                   %s""".formatted(userContext, userTodoText);
+                }
 
         String resumeContext = resumeContextService.buildContext(files);
 
