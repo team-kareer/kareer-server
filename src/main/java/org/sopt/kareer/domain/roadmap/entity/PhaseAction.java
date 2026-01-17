@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseActionType;
@@ -42,6 +43,14 @@ public class PhaseAction extends BaseEntity {
     @JoinColumn(name = "phase_id", nullable = false)
     private Phase phase;
 
+    @Default
+    @Column(nullable = false)
+    private Boolean added = false;
+
+    @Default
+    @Column(nullable = false)
+    private Boolean completed = false;
+
     @Builder
     private PhaseAction(String title, String description, PhaseActionType type, LocalDate deadline, String importance, Phase phase) {
         this.title = title;
@@ -57,9 +66,19 @@ public class PhaseAction extends BaseEntity {
                 .title(title)
                 .description(description)
                 .type(type)
+                .added(false)
+                .completed(false)
                 .deadline(deadline)
                 .importance(importance)
                 .phase(phase)
                 .build();
+    }
+
+    public void markCompleted() {
+        this.completed = true;
+    }
+
+    public void markAdded() {
+        this.added = true;
     }
 }
