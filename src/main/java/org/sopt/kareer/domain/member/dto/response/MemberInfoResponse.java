@@ -3,8 +3,12 @@ package org.sopt.kareer.domain.member.dto.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import org.sopt.kareer.domain.member.entity.Member;
+import org.sopt.kareer.domain.member.entity.Member;
+import org.sopt.kareer.domain.member.entity.MemberVisa;
 import org.sopt.kareer.domain.member.entity.enums.Country;
 import org.sopt.kareer.domain.member.entity.enums.LanguageLevel;
+import org.sopt.kareer.domain.member.entity.enums.VisaStatus;
+import org.sopt.kareer.domain.member.entity.enums.VisaType;
 
 @Schema(description = "회원 정보 응답")
 public record MemberInfoResponse(
@@ -45,9 +49,12 @@ public record MemberInfoResponse(
         String degree,
 
         @Schema(description = "타겟 직무 스킬", example = "Java, Spring")
-        String targetJobSkill
+        String targetJobSkill,
+
+        @Schema(description = "비자 유형")
+        VisaType visaType
 ) {
-    public static MemberInfoResponse fromEntity(Member member) {
+    public static MemberInfoResponse from(Member member, MemberVisa memberVisa) {
         return new MemberInfoResponse(
                 member.getId(),
                 member.getName(),
@@ -61,7 +68,8 @@ public record MemberInfoResponse(
                 member.getExpectedGraduationDate(),
                 member.getLanguageLevel(),
                 member.getDegree().getDescription(),
-                member.getTargetJobSkill()
+                member.getTargetJobSkill(),
+                memberVisa.getVisaType()
         );
     }
 }

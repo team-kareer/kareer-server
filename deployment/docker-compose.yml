@@ -8,10 +8,16 @@ services:
       - "8080:8082"
     environment:
       - TZ=Asia/Seoul
+      - "JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS:--Xms512m -Xmx2048m}"
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=
     env_file:
       - .env
     networks:
       - kareer-net
+    depends_on:
+      - redis
     restart: always
 
   kareer-green:
@@ -21,8 +27,24 @@ services:
       - "8081:8082"
     environment:
       - TZ=Asia/Seoul
+      - "JAVA_TOOL_OPTIONS=${JAVA_TOOL_OPTIONS:--Xms512m -Xmx2048m}"
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=
     env_file:
       - .env
+    networks:
+      - kareer-net
+    depends_on:
+      - redis
+    restart: always
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: kareer-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
     networks:
       - kareer-net
     restart: always
@@ -30,3 +52,6 @@ services:
 networks:
   kareer-net:
     driver: bridge
+
+volumes:
+  redis-data:
