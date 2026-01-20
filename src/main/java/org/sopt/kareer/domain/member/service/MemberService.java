@@ -58,8 +58,10 @@ public class MemberService {
 
     public MemberInfoResponse getMemberInfo(Long memberId) {
         Member member = getById(memberId);
-        member.assertOnboarded();
-        return MemberInfoResponse.fromEntity(member);
+//        member.assertOnboarded();
+        MemberVisa memberVisa = memberVisaRepository.findActiveByMemberId(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+        return MemberInfoResponse.from(member, memberVisa);
     }
 
     @Transactional

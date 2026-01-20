@@ -80,7 +80,7 @@ public class Member extends BaseEntity {
                            String secondaryMajor,
                            String targetJob,
                            String targetJobSkill) {
-        assertPendingStatus();
+//        assertPendingStatus();
         this.name = name;
         this.birthDate = birthDate;
         this.country = country;
