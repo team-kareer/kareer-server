@@ -1,10 +1,9 @@
-package org.sopt.kareer.domain.member.util;
+package org.sopt.kareer.global.external.ai.util;
 
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.entity.MemberVisa;
 import org.sopt.kareer.domain.member.entity.enums.VisaStatus;
-import org.sopt.kareer.domain.member.exception.MemberErrorCode;
 import org.sopt.kareer.domain.member.exception.MemberException;
 import org.sopt.kareer.domain.member.repository.MemberRepository;
 import org.sopt.kareer.domain.member.repository.MemberVisaRepository;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static org.sopt.kareer.domain.member.exception.MemberErrorCode.*;
+import static org.sopt.kareer.domain.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
