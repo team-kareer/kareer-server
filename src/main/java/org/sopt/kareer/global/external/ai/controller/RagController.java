@@ -7,9 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.global.annotation.CustomExceptionDescription;
 import org.sopt.kareer.global.external.ai.dto.request.JobPostingEmbeddingRequest;
 import org.sopt.kareer.global.external.ai.enums.RequiredCategory;
-import org.sopt.kareer.global.external.ai.service.JobPostingEmbeddingService;
-import org.sopt.kareer.global.external.ai.service.RagService;
-import org.sopt.kareer.global.external.ai.service.RequiredDocumentService;
+import org.sopt.kareer.global.external.ai.service.RagEmbeddingService;
 import org.sopt.kareer.global.response.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,11 +25,8 @@ import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.U
 @RequestMapping("api/v1/rag")
 public class RagController {
 
-    private final RagService ragService;
+    private final RagEmbeddingService ragEmbeddingService;
 
-    private final RequiredDocumentService requiredDocumentService;
-
-    private final JobPostingEmbeddingService jobPostingEmbeddingService;
 
     @Tag(name = "RAG 관련 API")
     @Operation(summary = "정책 PDF 문서 업로드 (Server Only)" , description = "정책 관련 PDF 문서를 임베딩하여 vectorDB에 저장합니다.")
@@ -41,7 +36,7 @@ public class RagController {
             @Parameter(description = "업로드할 PDF 파일", required = true)
             @RequestParam("files") List<MultipartFile> files){
 
-        ragService.uploadPolicyDocument(files);
+        ragEmbeddingService.uploadPolicyDocument(files);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok("PDF 문서 업로드 성공"));
     }
@@ -54,7 +49,7 @@ public class RagController {
             @RequestBody JobPostingEmbeddingRequest request
             ){
 
-        jobPostingEmbeddingService.embedJobPosting(request.jobPostingIds());
+        ragEmbeddingService.embedJobPosting(request.jobPostingIds());
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok("채용 공고 임베딩 성공"));
@@ -68,7 +63,7 @@ public class RagController {
             @RequestParam("file") MultipartFile file,
             @RequestParam RequiredCategory requiredCategory
             ){
-        requiredDocumentService.uploadRequiredDocument(file, requiredCategory);
+        ragEmbeddingService.uploadRequiredDocument(file, requiredCategory);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok("필수 문서 업로드 성공"));
     }

@@ -17,7 +17,8 @@ import org.sopt.kareer.domain.roadmap.entity.ActionItem;
 import org.sopt.kareer.domain.roadmap.repository.ActionItemRepository;
 import org.sopt.kareer.global.external.ai.enums.RagType;
 import org.sopt.kareer.global.external.ai.service.OpenAiService;
-import org.sopt.kareer.global.external.ai.service.RagService;
+import org.sopt.kareer.global.external.ai.service.RagEmbeddingService;
+import org.sopt.kareer.global.external.ai.service.RagSearchService;
 import org.sopt.kareer.global.external.ai.util.MemberContextBuilder;
 import org.springframework.ai.document.Document;
 import org.springframework.stereotype.Service;
@@ -37,13 +38,14 @@ import java.util.stream.Collectors;
 public class JobPostingService {
 
     private final ResumeContextService resumeContextService;
-    private final RagService ragService;
+    private final RagEmbeddingService ragEmbeddingService;
     private final OpenAiService openAiService;
     private final JobPostingRepository jobPostingRepository;
     private final JobPostingBookmarkRepository jobPostingBookmarkRepository;
     private final MemberContextBuilder memberContextBuilder;
     private final ActionItemRepository actionItemRepository;
     private final MemberService memberService;
+    private final RagSearchService ragSearchService;
 
     public JobPostingListResponse recommend(Long memberId, List<MultipartFile> files, boolean includeCompletedTodos) {
 
@@ -79,7 +81,7 @@ public class JobPostingService {
                 
                 """.formatted(enrichedUserContext, resumeContext);
 
-        List<Document> retrieved = ragService.search(combinedContext, 4, RagType.JOBPOSTING);
+        List<Document> retrieved = ragSearchService.search(combinedContext, 4, RagType.JOBPOSTING);
 
         List<Long> recommendedIds = openAiService.recommendJobPosting(userContext, retrieved);
 
