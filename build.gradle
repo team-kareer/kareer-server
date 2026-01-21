@@ -103,7 +103,7 @@ clean {
 }
 
 jib {
-    def tessBaseImage = System.getenv('JIB_TESSERACT_BASE_IMAGE') ?: 'eclipse-temurin:21-jre'
+    def tessBaseImage = System.getenv('JIB_TESSERACT_BASE_IMAGE') ?: 'eclipse-temurin:21-jre-jammy'
 
     from {
         image = tessBaseImage
