@@ -14,7 +14,7 @@ public enum MemberErrorCode implements ErrorCode {
     INVALID_COUNTRY(HttpStatus.BAD_REQUEST.value(), "지원하지 않는 국가입니다."),
     VISA_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "비자 정보가 존재하지 않습니다."),
     ROADMAP_IN_PROGRESS(HttpStatus.BAD_REQUEST.value(), "로드맵이 생성 중입니다."),
-    ROADMAP_ALREADY_GENERATED(HttpStatus.CONTINUE.value(), "이미 로드맵을 생성하였습니다.");
+    ROADMAP_ALREADY_GENERATED(HttpStatus.CONFLICT.value(), "이미 로드맵을 생성하였습니다.");
 
     private final int httpStatus;
     private final String message;
