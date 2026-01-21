@@ -36,6 +36,10 @@ public class RagService {
 
     @Transactional
     public void uploadPolicyDocument(List<MultipartFile> files) {
+        uploadDocument(files, policyDocumentVectorStore);
+    }
+
+    private void uploadDocument(List<MultipartFile> files, PgVectorStore targetStore) {
         File temp = null;
 
         for (MultipartFile file : files) {
@@ -57,7 +61,7 @@ public class RagService {
                     toStore.addAll(getDocuments(page.text(), pageMeta));
                 }
 
-                policyDocumentVectorStore.add(toStore);
+                targetStore.add(toStore);
 
             } catch (Exception e) {
                 throw new RagException(RagErrorCode.EMBEDDING_FAILED, e.getMessage());
@@ -129,6 +133,8 @@ public class RagService {
         }
         return toStore;
     }
+
+
 
 
 
