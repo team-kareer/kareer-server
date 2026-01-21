@@ -104,6 +104,7 @@ public class Member extends BaseEntity {
                 .provider(provider)
                 .providerId(providerId)
                 .profileImageUrl(profileImageUrl)
+                .roadmapStatus(RoadmapStatus.NOT_STARTED)
                 .build();
     }
 
