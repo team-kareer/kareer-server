@@ -6,13 +6,15 @@ import org.sopt.kareer.domain.jobposting.entity.JobPosting;
 import org.sopt.kareer.domain.jobposting.exception.JobPostingErrorCode;
 import org.sopt.kareer.domain.jobposting.exception.JobPostingException;
 import org.sopt.kareer.domain.jobposting.repository.JobPostingRepository;
-import org.sopt.kareer.global.external.ai.enums.RagType;
+import org.sopt.kareer.global.external.ai.dto.response.RequiredSection;
+import org.sopt.kareer.global.external.ai.enums.RequiredCategory;
 import org.sopt.kareer.global.external.ai.exception.RagErrorCode;
 import org.sopt.kareer.global.external.ai.exception.RagException;
 import org.sopt.kareer.global.external.ai.util.JobPostingEmbeddingTextBuilder;
+import org.sopt.kareer.global.external.ai.util.OcrTextNormalizer;
+import org.sopt.kareer.global.external.ai.util.RequiredPdfParser;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
-import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.pgvector.PgVectorStore;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,10 +23,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.util.*;
 
+import static org.sopt.kareer.global.external.ai.constant.RequiredDocumentConstant.*;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class RagService {
+public class RagEmbeddingService {
 
     private final DocumentProcessingService documentProcessingService;
 
@@ -34,9 +38,39 @@ public class RagService {
 
     private final JobPostingRepository jobPostingRepository;
 
+    private final PgVectorStore requiredDocumentVectorStore;
+
+    private final RequiredPdfParser requiredPdfParser = new RequiredPdfParser();
+
     @Transactional
     public void uploadPolicyDocument(List<MultipartFile> files) {
         uploadDocument(files, policyDocumentVectorStore);
+    }
+
+
+    @Transactional
+    public void embedJobPosting(List<Long> jobPostingIds) {
+
+        for (Long jobPostingId : jobPostingIds) {
+            JobPosting jobPosting = jobPostingRepository.findById(jobPostingId).orElseThrow(() -> new JobPostingException(JobPostingErrorCode.JOB_POSTING_NOT_FOUND));
+
+            try{
+                String embeddingText = JobPostingEmbeddingTextBuilder.buildEmbeddingText(jobPosting);
+
+                Map<String, Object> baseMeta = new HashMap<>();
+
+                baseMeta.put("jobPostingId", jobPosting.getId());
+
+                List<Document> toStore = getDocuments(embeddingText, baseMeta);
+
+                jobPostingVectorStore.add(toStore);
+
+
+            } catch (Exception e){
+                throw new RagException(RagErrorCode.EMBEDDING_FAILED, e.getMessage());
+            }
+        }
+
     }
 
     private void uploadDocument(List<MultipartFile> files, PgVectorStore targetStore) {
@@ -72,41 +106,52 @@ public class RagService {
     }
 
     @Transactional
-    public void embedJobPosting(List<Long> jobPostingIds) {
-
-        for (Long jobPostingId : jobPostingIds) {
-            JobPosting jobPosting = jobPostingRepository.findById(jobPostingId).orElseThrow(() -> new JobPostingException(JobPostingErrorCode.JOB_POSTING_NOT_FOUND));
-
-            try{
-                String embeddingText = JobPostingEmbeddingTextBuilder.buildEmbeddingText(jobPosting);
-
-                Map<String, Object> baseMeta = new HashMap<>();
-
-                baseMeta.put("jobPostingId", jobPosting.getId());
-
-                List<Document> toStore = getDocuments(embeddingText, baseMeta);
-
-                jobPostingVectorStore.add(toStore);
-
-
-            } catch (Exception e){
-                throw new RagException(RagErrorCode.EMBEDDING_FAILED, e.getMessage());
-            }
-        }
-
+    public void uploadRequiredDocument(MultipartFile file, RequiredCategory requiredCategory) {
+        uploadAndIngest(file, requiredCategory.getDescription(), requiredCategory);
     }
 
-    public List<Document> search(String query, int topK, RagType ragType) {
+    private void uploadAndIngest(MultipartFile file, String source, RequiredCategory category) {
+        if (file == null || file.isEmpty()) return;
 
-        SearchRequest request = SearchRequest.builder()
-                .query(query)
-                .topK(topK)
-                .build();
+        File temp = null;
+        try {
+            temp = File.createTempFile("upload_", ".pdf");
+            file.transferTo(temp);
 
-        return switch (ragType) {
-            case DOCUMENT -> policyDocumentVectorStore.similaritySearch(request);
-            case JOBPOSTING -> jobPostingVectorStore.similaritySearch(request);
-        };
+            var pages = documentProcessingService.extractPagesWithOcr(temp);
+            StringBuilder full = new StringBuilder();
+            for (var p : pages) {
+                full.append(p.text()).append("\n");
+            }
+            String fullText = full.toString();
+            fullText = OcrTextNormalizer.normalize(fullText);
+            fullText = OcrTextNormalizer.forceNewlines(fullText);
+
+            List<RequiredSection> sections = (category == RequiredCategory.VISA)
+                    ? requiredPdfParser.parseVisa(fullText)
+                    : requiredPdfParser.parseCareer(fullText);
+
+            List<Document> toStore = new ArrayList<>();
+            for (RequiredSection s : sections) {
+                Map<String, Object> meta = new HashMap<>();
+                meta.put(CATEGORY, s.category().name());
+                meta.put(DOMAIN, s.domain());
+                meta.put(CASE_NO, s.caseNo());
+                meta.put(LABEL, s.depth().getLabel());
+                meta.put(TITLE, s.title());
+                meta.put(SOURCE, source);
+
+                toStore.addAll(getDocuments(s.text(), meta));
+            }
+
+            requiredDocumentVectorStore.add(toStore);
+
+        } catch (Exception e) {
+            throw new RagException(RagErrorCode.EMBEDDING_FAILED, e.getMessage());
+        } finally {
+            if (temp != null && temp.exists()) temp.delete();
+        }
+
     }
 
     private List<Document> getDocuments(String text, Map<String, Object> baseMeta) {
@@ -133,10 +178,5 @@ public class RagService {
         }
         return toStore;
     }
-
-
-
-
-
 
 }
