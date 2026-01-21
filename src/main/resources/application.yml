@@ -41,7 +41,13 @@ spring:
         show_sql: true
         highlight_sql: true
     open-in-view: false
-
+  rag:
+    roadmap:
+      policy-top-k: 4
+      career-action-top-k: 4
+      career-guide-top-k: 4
+      career-todo-top-k: 6
+      candidate-pool-top-k: 30
   security:
     oauth2:
       client:
