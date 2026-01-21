@@ -32,5 +32,14 @@ public class VectorStoreConfig {
                 .build();
     }
 
+    @Bean
+    PgVectorStore requiredDocumentVectorStore(){
+        return PgVectorStore.builder(jdbcTemplate, embeddingModel)
+                .vectorTableName("required_document_vectors")
+                .initializeSchema(true)
+                .distanceType(PgVectorStore.PgDistanceType.COSINE_DISTANCE)
+                .build();
+    }
+
 
 }

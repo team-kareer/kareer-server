@@ -1,10 +1,13 @@
 package org.sopt.kareer.domain.jobposting.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import org.sopt.kareer.domain.jobposting.entity.JobPosting;
 
 import java.time.LocalDate;
+import java.util.List;
 
+@Builder
 public record JobPostingResponse(
 
         @Schema(description = "채용 공고 ID", example = "1")
@@ -26,7 +29,7 @@ public record JobPostingResponse(
         String arrangement,
 
         @Schema(description = "주소", example = "Seocho-gu, Seoul")
-        String address,
+        List<String> address,
 
         @Schema(description = "공고 url")
         String websiteUrl,
@@ -35,16 +38,28 @@ public record JobPostingResponse(
         boolean isBookmarked
 ) {
         public static JobPostingResponse from(JobPosting jobPosting, boolean isbookmarked) {
-                return new JobPostingResponse(
-                        jobPosting.getId(),
-                        jobPosting.getDeadline(),
-                        jobPosting.getImageUrl(),
-                        jobPosting.getCompany(),
-                        jobPosting.getPostTitle(),
-                        jobPosting.getArrangement(),
-                        jobPosting.getAddress(),
-                        jobPosting.getWebsiteUrl(),
-                        isbookmarked
-                );
+                return JobPostingResponse.builder()
+                        .jobPostingId(jobPosting.getId())
+                        .deadline(jobPosting.getDeadline())
+                        .imageUrl(jobPosting.getImageUrl())
+                        .company(jobPosting.getCompany())
+                        .title(jobPosting.getPostTitle())
+                        .arrangement(jobPosting.getArrangement())
+                        .address(splitAddress(jobPosting.getAddress()))
+                        .websiteUrl(jobPosting.getWebsiteUrl())
+                        .isBookmarked(isbookmarked)
+                        .build();
+        }
+
+        private static List<String> splitAddress(String address) {
+                if (address == null || address.isBlank()) {
+                        return List.of();
+                }
+
+                return List.of(address.split(","))
+                        .stream()
+                        .map(String::trim)
+                        .filter(s -> !s.isEmpty())
+                        .toList();
         }
 }

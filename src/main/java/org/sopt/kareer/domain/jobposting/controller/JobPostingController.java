@@ -1,7 +1,6 @@
 package org.sopt.kareer.domain.jobposting.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.jobposting.dto.response.JobPostingCrawlListResponse;
@@ -42,10 +41,11 @@ public class JobPostingController {
     @PostMapping(value = "recommend", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<BaseResponse<JobPostingListResponse>> recommendJobPostings(
             @AuthenticationPrincipal Long memberId,
-            @Parameter List<MultipartFile> files
-    ){
+            @RequestPart(value = "files", required = false) List<MultipartFile> files,
+            @RequestParam(value = "includeCompletedTodo", defaultValue = "false") boolean includeCompletedTodos
+            ){
         return ResponseEntity.status(HttpStatus.OK)
-                .body(BaseResponse.ok(jobPostingService.recommend(memberId, files), "채용 공고 추천에 성공하였습니다."));
+                .body(BaseResponse.ok(jobPostingService.recommend(memberId, files, includeCompletedTodos), "채용 공고 추천에 성공하였습니다."));
     }
 
     @Operation(summary = "채용 공고 북마크 추가/삭제", description = "사용자가 추천된 채용 공고를 추가하거나 삭제합니다.")

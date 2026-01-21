@@ -2,16 +2,12 @@ package org.sopt.kareer.domain.member.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.sopt.kareer.domain.member.entity.enums.Country;
-import org.sopt.kareer.domain.member.entity.enums.Degree;
-import org.sopt.kareer.domain.member.entity.enums.LanguageLevel;
-import org.sopt.kareer.domain.member.entity.enums.MemberStatus;
-import org.sopt.kareer.domain.member.entity.enums.OAuthProvider;
+import org.sopt.kareer.domain.member.entity.enums.*;
+import org.sopt.kareer.domain.member.exception.MemberErrorCode;
 import org.sopt.kareer.domain.member.exception.MemberException;
 import org.sopt.kareer.global.entity.BaseEntity;
 
 import java.time.LocalDate;
-import org.sopt.kareer.domain.member.exception.MemberErrorCode;
 
 @Table(name = "members", uniqueConstraints = {
         @UniqueConstraint(name = "uk_member_provider_provider_id", columnNames = {"provider", "provider_id"})
@@ -70,6 +66,10 @@ public class Member extends BaseEntity {
     @Column(length = 1000)
     private String targetJobSkill;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private RoadmapStatus roadmapStatus;
+
     public void updateInfo(String name,
                            LocalDate birthDate,
                            Country country,
@@ -80,7 +80,7 @@ public class Member extends BaseEntity {
                            String secondaryMajor,
                            String targetJob,
                            String targetJobSkill) {
-        assertPendingStatus();
+//        assertPendingStatus();
         this.name = name;
         this.birthDate = birthDate;
         this.country = country;
@@ -104,6 +104,7 @@ public class Member extends BaseEntity {
                 .provider(provider)
                 .providerId(providerId)
                 .profileImageUrl(profileImageUrl)
+                .roadmapStatus(RoadmapStatus.NOT_STARTED)
                 .build();
     }
 
@@ -123,4 +124,18 @@ public class Member extends BaseEntity {
             throw new MemberException(MemberErrorCode.ONBOARDING_ALREADY_COMPLETED);
         }
     }
+
+
+    public void assertCanStartRoadmap() {
+        if (roadmapStatus == RoadmapStatus.IN_PROGRESS) {
+            throw new MemberException(MemberErrorCode.ROADMAP_IN_PROGRESS);
+        }
+        if (roadmapStatus == RoadmapStatus.DONE) {
+            throw new MemberException(MemberErrorCode.ROADMAP_ALREADY_GENERATED);
+        }
+    }
+
+    public void markRoadmapInProgress() { this.roadmapStatus = RoadmapStatus.IN_PROGRESS; }
+    public void markRoadmapDone() { this.roadmapStatus = RoadmapStatus.DONE; }
+    public void markRoadmapFailed() { this.roadmapStatus = RoadmapStatus.FAILED; }
 }

@@ -1,15 +1,13 @@
-package org.sopt.kareer.domain.member.entity.enums;
+package org.sopt.kareer.global.external.ai.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum VisaType {
-    D2("D-2"),
-    D10("D-10"),
-    E7("E-7")
+public enum RequiredCategory {
+    VISA("VISA_PDF"),
+    CAREER("CAREER_PDF")
     ;
-
     private final String description;
 }
