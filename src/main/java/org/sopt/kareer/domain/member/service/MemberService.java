@@ -94,7 +94,7 @@ public class MemberService {
         Member member = getById(memberId);
 
         MemberVisa memberVisa = memberVisaRepository.findActiveByMemberId(memberId)
-                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberException(MemberErrorCode.VISA_NOT_FOUND));
 
         return MemberStatusResponse.from(member, memberVisa );
     }
