@@ -1,11 +1,11 @@
-FROM gradle:8.7-jdk17 AS builder
+FROM gradle:8.7-jdk21 AS builder
 WORKDIR /workspace
 COPY . .
 RUN chmod +x gradlew \
  && ./gradlew --no-daemon clean bootJar \
  && cp "$(find build/libs -maxdepth 1 -type f -name '*.jar' ! -name '*-plain.jar' -print -quit)" app.jar
 
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:21-jre
 RUN apt-get update \
  && apt-get install -y \
     tesseract-ocr \

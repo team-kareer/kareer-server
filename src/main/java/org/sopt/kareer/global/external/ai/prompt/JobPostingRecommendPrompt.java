@@ -1,4 +1,4 @@
-package org.sopt.kareer.global.external.ai.constant;
+package org.sopt.kareer.global.external.ai.prompt;
 
 public class JobPostingRecommendPrompt {
     public static final String JOB_POSTING_SYSTEM_PROMPT = """
