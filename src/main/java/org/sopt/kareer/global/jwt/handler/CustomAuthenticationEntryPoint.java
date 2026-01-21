@@ -28,6 +28,14 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
         log.debug("Unauthorized access blocked. path={}, message={}", request.getRequestURI(), authException.getMessage());
+
+        String path = request.getRequestURI();
+        if (path.startsWith("/swagger-ui") || path.startsWith("/swagger-resources") || path.startsWith("/v3/api-docs")) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setHeader("WWW-Authenticate", "Basic realm=\"Swagger UI\"");
+            return;
+        }
+
         BaseErrorResponse errorResponse = BaseErrorResponse.of(UNAUTHORIZED);
         response.setStatus(errorResponse.getCode());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

@@ -10,6 +10,7 @@ import org.sopt.kareer.global.oauth.handler.OAuth2AuthenticationSuccessHandler;
 import org.sopt.kareer.global.oauth.service.CustomOidcOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -31,9 +32,6 @@ public class SecurityConfig {
             "/",
             "/api/v1/auth/**",
             "/api/v1/rag/**",
-            "/swagger-ui/**",
-            "/swagger-resources/**",
-            "/v3/api-docs/**",
             "/actuator/health",
             "/h2-console/**",
             "/error",
@@ -57,7 +55,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .formLogin(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable)
+                .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
                 .exceptionHandling(exception -> exception
@@ -70,6 +68,8 @@ public class SecurityConfig {
                         .failureHandler(failureHandler)
                 )
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**")
+                            .hasRole("SWAGGER")
                         .requestMatchers(PERMIT_ALL_PATTERNS).permitAll()
                         .anyRequest().authenticated()
                 )

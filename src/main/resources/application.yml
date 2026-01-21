@@ -8,6 +8,11 @@ spring:
       prod: prod-db, prod-port, prod-cors, common
     active: ${SPRING_ACTIVE_PROFILE}
 
+swagger:
+  auth:
+    username: ${SWAGGER_USERNAME}
+    password: ${SWAGGER_PASSWORD}
+
 ---
 spring:
   config:
