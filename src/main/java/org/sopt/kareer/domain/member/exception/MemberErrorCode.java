@@ -12,8 +12,9 @@ public enum MemberErrorCode implements ErrorCode {
     ONBOARDING_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST.value(), "이미 온보딩이 완료된 회원입니다."),
     INVALID_VISA_POINT(HttpStatus.BAD_REQUEST.value(), "visaPoint는 D10 비자인 경우에만 입력할 수 있습니다."),
     INVALID_COUNTRY(HttpStatus.BAD_REQUEST.value(), "지원하지 않는 국가입니다."),
-    VISA_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "비자 정보가 존재하지 않습니다.")
-    ;
+    VISA_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "비자 정보가 존재하지 않습니다."),
+    ROADMAP_IN_PROGRESS(HttpStatus.BAD_REQUEST.value(), "로드맵이 생성 중입니다."),
+    ROADMAP_ALREADY_GENERATED(HttpStatus.CONTINUE.value(), "이미 로드맵을 생성하였습니다.");
 
     private final int httpStatus;
     private final String message;

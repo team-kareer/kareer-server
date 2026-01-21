@@ -36,6 +36,7 @@ public class RoadMapService {
 
     @Transactional
     public void createRoadmap(Long memberId){
+
         Member member = memberService.getById(memberId);
 
         var memberContext = memberContextBuilder.load(memberId);
@@ -65,6 +66,7 @@ public class RoadMapService {
 
         roadMapPersistService.saveRoadMap(member, response);
 
+        member.markRoadmapDone();
     }
 
     @Transactional
@@ -107,4 +109,9 @@ public class RoadMapService {
         return RoadmapTestResponse.of(roadmap, retrieved);
     }
 
+    @Transactional
+    public void markFailed(Long memberId) {
+        Member member = memberService.getById(memberId);
+        member.markRoadmapFailed();
+    }
 }
