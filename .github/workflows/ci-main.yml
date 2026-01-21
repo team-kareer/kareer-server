@@ -21,11 +21,11 @@ jobs:
       - name: 🔄 Code Checkout
         uses: actions/checkout@v4
 
-      # 2. JDK 17 설정
-      - name: ⛏️ Set up JDK 17
+      # 2. JDK 21 설정
+      - name: ⛏️ Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       # 3. Gradle 설정
