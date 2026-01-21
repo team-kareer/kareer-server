@@ -1,4 +1,4 @@
-package org.sopt.kareer.global.external.ai.util;
+package org.sopt.kareer.global.external.ai.builder;
 
 import org.sopt.kareer.domain.jobposting.entity.JobPosting;
 
