@@ -1,4 +1,4 @@
-package org.sopt.kareer.global.external.ai.util;
+package org.sopt.kareer.global.external.ai.builder.context;
 
 import org.sopt.kareer.global.external.ai.service.RequiredDocumentRetriever;
 import org.springframework.ai.document.Document;

@@ -1,4 +1,4 @@
-package org.sopt.kareer.global.external.ai.util;
+package org.sopt.kareer.global.external.ai.builder.context;
 
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.entity.Member;
