@@ -27,7 +27,7 @@ public enum RoadmapErrorCode implements ErrorCode {
     ACTION_ITEM_INACTIVE(HttpStatus.BAD_REQUEST.value(), "비활성화된 ActionItem입니다."),
 
     // Etc..
-    INVALID_DATE_TYPE(HttpStatus.BAD_REQUEST.value(), "올바른 날짜 형식이 아닙니다.")
+    INVALID_DATE_TYPE(HttpStatus.BAD_REQUEST.value(), "올바른 날짜 형식이 아닙니다."),
     ;
 
     private final int httpStatus;
