@@ -24,12 +24,12 @@ public class PhaseActionService {
         PhaseAction phaseAction = phaseActionRepository.findById(phaseActionId)
                 .orElseThrow(() -> new RoadMapException(RoadmapErrorCode.PHASE_ACTION_NOT_FOUND));
 
-        if(phaseAction.getAdded()){
-        throw new RoadMapException(RoadmapErrorCode.TODO_ALREADY_ADDED);
-        }
-
         if(!phaseAction.getPhase().getMember().getId().equals(memberId)){
             throw new RoadMapException(RoadmapErrorCode.PHASE_ACTION_FORBIDDEN);
+        }
+
+        if(phaseAction.getAdded()){
+            throw new RoadMapException(RoadmapErrorCode.TODO_ALREADY_ADDED);
         }
 
         List<ActionItem> actionItems = actionItemRepository.findAllByPhaseActionId(phaseActionId);
