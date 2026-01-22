@@ -26,9 +26,9 @@ public record JobPostingResponse(
         String title,
 
         @Schema(description = "근무 형태", example = "Part-time Worker")
-        String arrangement,
+        List<String> arrangement,
 
-        @Schema(description = "주소", example = "Seocho-gu, Seoul")
+        @Schema(description = "주소")
         List<String> address,
 
         @Schema(description = "공고 url")
@@ -44,19 +44,19 @@ public record JobPostingResponse(
                         .imageUrl(jobPosting.getImageUrl())
                         .company(jobPosting.getCompany())
                         .title(jobPosting.getPostTitle())
-                        .arrangement(jobPosting.getArrangement())
-                        .address(splitAddress(jobPosting.getAddress()))
+                        .arrangement(splitText(jobPosting.getArrangement()))
+                        .address(splitText(jobPosting.getAddress()))
                         .websiteUrl(jobPosting.getWebsiteUrl())
                         .isBookmarked(isbookmarked)
                         .build();
         }
 
-        private static List<String> splitAddress(String address) {
-                if (address == null || address.isBlank()) {
+        private static List<String> splitText(String text) {
+                if (text == null || text.isBlank()) {
                         return List.of();
                 }
 
-                return List.of(address.split(","))
+                return List.of(text.split(","))
                         .stream()
                         .map(String::trim)
                         .filter(s -> !s.isEmpty())
