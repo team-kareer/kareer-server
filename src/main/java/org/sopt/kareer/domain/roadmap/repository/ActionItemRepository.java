@@ -18,5 +18,5 @@ public interface ActionItemRepository extends JpaRepository<ActionItem, Long> {
 
     List<ActionItem> findAllByMemberIdAndCompletedTrue(Long memberId);
 
-    Optional<ActionItem> findByIdAndMember_Id(@Param("actionItemId") Long actionItemId, @Param("memberId") Long memberId);
+    Optional<ActionItem> findByIdAndMemberId(@Param("actionItemId") Long actionItemId, @Param("memberId") Long memberId);
 }

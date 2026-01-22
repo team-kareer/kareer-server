@@ -26,7 +26,7 @@ public class PhaseActionService {
 
     @Transactional
     public void createPhaseActionTodo(Long memberId, Long phaseActionId) {
-        PhaseAction phaseAction = phaseActionRepository.findByIdAndPhase_Member_Id(phaseActionId, memberId)
+        PhaseAction phaseAction = phaseActionRepository.findByIdAndMemberId(phaseActionId, memberId)
                 .orElseThrow(() -> new RoadMapException(RoadmapErrorCode.PHASE_ACTION_NOT_FOUND));
 
         if(phaseAction.getAdded()){
@@ -43,7 +43,7 @@ public class PhaseActionService {
     }
 
     public AiGuideResponse getAiGuide(Long memberId, Long phaseActionId) {
-        PhaseAction phaseAction = phaseActionRepository.findByIdAndPhase_Member_Id(phaseActionId, memberId)
+        PhaseAction phaseAction = phaseActionRepository.findByIdAndMemberId(phaseActionId, memberId)
                 .orElseThrow(() -> new RoadMapException(RoadmapErrorCode.PHASE_ACTION_NOT_FOUND));
 
         List<String> mistakes = mistakeRepository.findContentByPhaseActionId(phaseActionId);

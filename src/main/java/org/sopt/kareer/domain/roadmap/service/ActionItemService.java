@@ -23,7 +23,7 @@ public class ActionItemService {
 
     @Transactional
     public void toggleCompletion(Long memberId, Long actionItemId) {
-        ActionItem actionItem = actionItemRepository.findByIdAndMember_Id(actionItemId, memberId)
+        ActionItem actionItem = actionItemRepository.findByIdAndMemberId(actionItemId, memberId)
                 .orElseThrow(() -> new RoadMapException(RoadmapErrorCode.ACTION_ITEM_NOT_FOUND));
 
         if (actionItem.getStatus() == ActionItemStatus.INACTIVE) {

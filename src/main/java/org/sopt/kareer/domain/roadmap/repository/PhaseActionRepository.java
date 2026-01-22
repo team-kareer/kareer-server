@@ -20,5 +20,5 @@ public interface PhaseActionRepository extends JpaRepository<PhaseAction, Long> 
         WHERE pa.id = :phaseActionId
                 AND m.id = :memberId
         """)
-    Optional<PhaseAction> findByIdAndPhase_Member_Id(@Param("phaseActionId") Long phaseActionId, @Param("memberId") Long memberId);
+    Optional<PhaseAction> findByIdAndMemberId(@Param("phaseActionId") Long phaseActionId, @Param("memberId") Long memberId);
 }
