@@ -37,6 +37,12 @@ spring:
       embedding:
         options:
           model: text-embedding-3-small
+  clova:
+    ocr:
+      url: ${CLOVA_OCR_URL}
+      secret: ${CLOVA_OCR_SECRET}
+      timeout-ms: 15000
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -98,8 +104,6 @@ spring:
     username: ${LOCAL_DATASOURCE_USERNAME}
     password: ${LOCAL_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
-  ocr:
-    tessdataPath: ${LOCAL_TESS_PATH}
 
 ---
 spring:
@@ -127,8 +131,6 @@ spring:
     username: ${DEV_DATASOURCE_USERNAME}
     password: ${DEV_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
-  ocr:
-    tessdataPath: ${DEV_TESS_PATH}
 selenium:
   chrome:
     driver-path: ${DEV_DRIVER_PATH}
@@ -159,8 +161,6 @@ spring:
     username: ${PROD_DATASOURCE_USERNAME}
     password: ${PROD_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
-  ocr:
-    tessdataPath: ${PROD_TESS_PATH}
 
 selenium:
   chrome:
