@@ -2,15 +2,11 @@ package org.sopt.kareer.domain.roadmap.service;
 
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.roadmap.dto.response.*;
-import org.sopt.kareer.domain.roadmap.dto.response.AiGuideResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.PhaseResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.PhaseListResponse;
-import org.sopt.kareer.domain.roadmap.entity.PhaseAction;
 import org.sopt.kareer.domain.roadmap.exception.RoadMapException;
 import org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode;
 import org.sopt.kareer.domain.roadmap.repository.PhaseActionRepository;
-import org.sopt.kareer.domain.roadmap.repository.PhaseActionGuidelineRepository;
-import org.sopt.kareer.domain.roadmap.repository.PhaseActionMistakeRepository;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapPhaseDetailResponse;
 import org.sopt.kareer.domain.roadmap.repository.PhaseRepository;
 import org.springframework.stereotype.Service;
@@ -27,8 +23,6 @@ public class PhaseService {
 
     private final PhaseRepository phaseRepository;
     private final PhaseActionRepository phaseActionRepository;
-    private final PhaseActionMistakeRepository mistakeRepository;
-    private final PhaseActionGuidelineRepository guidelineRepository;
 
     public PhaseListResponse getPhases(Long memberId) {
         List<PhaseResponse> responses= phaseRepository.findPhases(memberId);
@@ -36,21 +30,10 @@ public class PhaseService {
         return PhaseListResponse.from(responses);
     }
 
-    public AiGuideResponse getAiGuide(Long phaseActionId) {
-        PhaseAction phaseAction = phaseActionRepository.findById(phaseActionId).
-                orElseThrow(() -> new RoadMapException(RoadmapErrorCode.PHASE_ACTION_NOT_FOUND));
-
-        List<String> mistakes = mistakeRepository.findContentByPhaseActionId(phaseActionId);
-        List<String> guidelines = guidelineRepository.findContentByPhaseActionId(phaseActionId);
-
-        return AiGuideResponse.from(phaseAction, mistakes, guidelines);
-    }
-
-    public RoadmapPhaseDetailResponse getRoadmapPhaseDetail(Long phaseId) {
-        if (!phaseRepository.existsById(phaseId)) {
+    public RoadmapPhaseDetailResponse getRoadmapPhaseDetail(Long memberId, Long phaseId) {
+        if (!phaseRepository.existsByIdAndMember_Id(phaseId, memberId)) {
             throw new RoadMapException(RoadmapErrorCode.PHASE_NOT_FOUND);
         }
-
         Map<String, List<RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse>> raw =
                 phaseRepository.getRoadmapPhaseDetail(phaseId);
 
@@ -74,8 +57,8 @@ public class PhaseService {
         return new RoadmapPhaseDetailResponse.ActionGroupResponse((long) items.size(), items);
     }
 
-    public HomePhaseDetailResponse getHomePhaseDetail(Long phaseId) {
-        if (!phaseRepository.existsById(phaseId)) {
+    public HomePhaseDetailResponse getHomePhaseDetail(Long memberId, Long phaseId) {
+        if (!phaseRepository.existsByIdAndMember_Id(phaseId, memberId)) {
             throw new RoadMapException(RoadmapErrorCode.PHASE_NOT_FOUND);
         }
 
