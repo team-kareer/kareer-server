@@ -38,7 +38,8 @@ public class SecurityConfig {
             "/error",
             "/oauth2/**",
             "/login/oauth2/**",
-            "/job-postings"
+            "/api/v1/job-postings/crawl",
+            "/api/v1/members/roadmap/test",
     };
 
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
