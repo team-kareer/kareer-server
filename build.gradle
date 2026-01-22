@@ -114,7 +114,7 @@ jib {
     }
 
     container {
-        ports = ['8080']
+        ports = ['8082']
         jvmFlags = [
                 '-Duser.timezone=Asia/Seoul'
         ]

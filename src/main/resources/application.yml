@@ -25,8 +25,8 @@ spring:
       password: ${REDIS_PASSWORD}
   servlet:
     multipart:
-      max-file-size: 30MB
-      max-request-size: 30MB
+      max-file-size: 40MB
+      max-request-size: 40MB
   ai:
     openai:
       api-key: ${OPENAI_API_KEY}
