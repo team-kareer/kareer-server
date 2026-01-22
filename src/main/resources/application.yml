@@ -104,8 +104,6 @@ spring:
     username: ${LOCAL_DATASOURCE_USERNAME}
     password: ${LOCAL_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
-  ocr:
-    tessdataPath: ${LOCAL_TESS_PATH}
 
 ---
 spring:
@@ -133,8 +131,6 @@ spring:
     username: ${DEV_DATASOURCE_USERNAME}
     password: ${DEV_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
-  ocr:
-    tessdataPath: ${DEV_TESS_PATH}
 selenium:
   chrome:
     driver-path: ${DEV_DRIVER_PATH}
@@ -165,8 +161,6 @@ spring:
     username: ${PROD_DATASOURCE_USERNAME}
     password: ${PROD_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
-  ocr:
-    tessdataPath: ${PROD_TESS_PATH}
 
 selenium:
   chrome:
