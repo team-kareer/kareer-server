@@ -37,6 +37,12 @@ spring:
       embedding:
         options:
           model: text-embedding-3-small
+  clova:
+    ocr:
+      url: ${CLOVA_OCR_URL}
+      secret: ${CLOVA_OCR_SECRET}
+      timeout-ms: 15000
+
   jpa:
     hibernate:
       ddl-auto: update
