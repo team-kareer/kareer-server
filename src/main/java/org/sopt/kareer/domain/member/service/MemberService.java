@@ -31,12 +31,8 @@ public class MemberService {
     }
 
     @Transactional
-    public Member upsertByOAuth(OAuthAttributes attributes) {
+    public Member findOrCreateByOAuth(OAuthAttributes attributes) {
         return memberRepository.findByProviderAndProviderId(attributes.provider(), attributes.providerId())
-                .map(existing -> {
-                    existing.updateOAuthProfile(attributes.name(), attributes.picture());
-                    return existing;
-                })
                 .orElseGet(() -> createNewMember(attributes));
     }
 
