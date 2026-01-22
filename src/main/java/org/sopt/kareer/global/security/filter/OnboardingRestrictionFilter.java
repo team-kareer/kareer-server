@@ -31,12 +31,12 @@ public class OnboardingRestrictionFilter extends OncePerRequestFilter {
             "/error",
             "/oauth2/**",
             "/login/oauth2/**",
-            "/job-postings",
+            "/api/v1/job-postings/crawl",
+            "/api/v1/members/roadmap/test",
             "/v3/api-docs/**"
     );
 
     private static final List<String> ONBOARD_ALLOWED_PATHS = List.of(
-            "/api/v1/members/onboard",
             "/api/v1/members/onboard/**"
     );
 
