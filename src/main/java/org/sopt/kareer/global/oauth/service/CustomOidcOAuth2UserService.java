@@ -29,14 +29,14 @@ public class CustomOidcOAuth2UserService extends OidcUserService {
                 attributes
         );
 
-        Member member = upsertMember(oauthAttributes);
+        Member member = findOrCreateMember(oauthAttributes);
         OidcUserInfo userInfo = oidcUser.getUserInfo();
         return new CustomOAuth2User(member, attributes, member.getStatus(), oidcUser.getIdToken(), userInfo);
     }
 
-    private Member upsertMember(OAuthAttributes oauthAttributes) {
+    private Member findOrCreateMember(OAuthAttributes oauthAttributes) {
         try {
-            return memberService.upsertByOAuth(oauthAttributes);
+            return memberService.findOrCreateByOAuth(oauthAttributes);
         } catch (DataAccessException ex) {
             throw new AuthenticationServiceException("OAuth 회원 정보를 저장하지 못했습니다.", ex);
         }
