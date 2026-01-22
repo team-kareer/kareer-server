@@ -1,13 +1,13 @@
-package org.sopt.kareer.global.external.ai.service;
+package org.sopt.kareer.global.external.clova.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.sourceforge.tess4j.Tesseract;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.sopt.kareer.global.external.ai.exception.RagErrorCode;
 import org.sopt.kareer.global.external.ai.exception.RagException;
+import org.sopt.kareer.global.external.clova.dto.response.PageText;
 import org.springframework.stereotype.Service;
 
 import java.awt.image.BufferedImage;
@@ -26,15 +26,12 @@ public class DocumentProcessingService {
     private static final double MIN_TEXT_PAGE_RATIO = 0.2;
     private static final int OCR_DPI = 300;
 
-    private final Tesseract tesseract;
+    private final ClovaOcrService clovaOcrService;
 
     public List<PageText> extractPagesWithOcr(File pdfFile) {
 
         List<PageText> textPages = extractPageFromPdf(pdfFile);
         int totalPages = getTotalPages(pdfFile);
-
-        int totalChars = textPages.stream().mapToInt(p -> p.text().length()).sum();
-        int avgChars = Math.max(1, totalChars / Math.max(1, totalPages));
 
         Map<Integer, String> pageTextMap = textPages.stream()
                 .collect(Collectors.toMap(PageText::pageNumber, PageText::text));
@@ -48,7 +45,7 @@ public class DocumentProcessingService {
 
                 if (textPages.size() < Math.max(1, (int) Math.ceil(totalPages * MIN_TEXT_PAGE_RATIO))) {
                     BufferedImage image = renderer.renderImageWithDPI(i - 1, OCR_DPI);
-                    text = sanitizeText(tesseract.doOCR(image));
+                    text = sanitizeText(clovaOcrService.doOcr(image));
                 }
 
                 if (!text.isBlank()) {
@@ -106,27 +103,4 @@ public class DocumentProcessingService {
                         .replace('\uFFFD', ' ');
     }
 
-    private List<PageText> extractTextFromImage(File pdfFile) {
-        try (PDDocument document = PDDocument.load(pdfFile)) {
-            PDFRenderer renderer = new PDFRenderer(document);
-
-            int totalPages = document.getNumberOfPages();
-            List<PageText> pages = new ArrayList<>(totalPages);
-
-            for (int i = 0; i < totalPages; i++) {
-                BufferedImage image = renderer.renderImageWithDPI(i, OCR_DPI);
-                String cleaned = sanitizeText(tesseract.doOCR(image));
-
-                if (!cleaned.isBlank()) {
-                    pages.add(new PageText(i + 1, cleaned));
-                }
-            }
-            return pages;
-
-        } catch (Exception e) {
-            throw new RagException(RagErrorCode.EXTRACT_IMAGE_FAILED, e.getMessage());
-        }
-    }
-
-    public record PageText(int pageNumber, String text) {}
 }

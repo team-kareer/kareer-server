@@ -1,8 +1,0 @@
-FROM eclipse-temurin:21-jre-jammy
-
-RUN apt-get update \
- && apt-get install -y --no-install-recommends \
-    tesseract-ocr \
-    tesseract-ocr-kor \
-    tesseract-ocr-eng \
- && rm -rf /var/lib/apt/lists/*
