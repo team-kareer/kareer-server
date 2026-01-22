@@ -1,8 +1,7 @@
-package org.sopt.kareer.global.external.ai.service;
+package org.sopt.kareer.global.external.clova.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.sourceforge.tess4j.Tesseract;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -26,7 +25,7 @@ public class DocumentProcessingService {
     private static final double MIN_TEXT_PAGE_RATIO = 0.2;
     private static final int OCR_DPI = 300;
 
-    private final Tesseract tesseract;
+    private final ClovaOcrService clovaOcrService;
 
     public List<PageText> extractPagesWithOcr(File pdfFile) {
 
@@ -48,7 +47,7 @@ public class DocumentProcessingService {
 
                 if (textPages.size() < Math.max(1, (int) Math.ceil(totalPages * MIN_TEXT_PAGE_RATIO))) {
                     BufferedImage image = renderer.renderImageWithDPI(i - 1, OCR_DPI);
-                    text = sanitizeText(tesseract.doOCR(image));
+                    text = sanitizeText(clovaOcrService.doOcr(image));
                 }
 
                 if (!text.isBlank()) {
@@ -115,7 +114,7 @@ public class DocumentProcessingService {
 
             for (int i = 0; i < totalPages; i++) {
                 BufferedImage image = renderer.renderImageWithDPI(i, OCR_DPI);
-                String cleaned = sanitizeText(tesseract.doOCR(image));
+                String cleaned = sanitizeText(clovaOcrService.doOcr(image));
 
                 if (!cleaned.isBlank()) {
                     pages.add(new PageText(i + 1, cleaned));

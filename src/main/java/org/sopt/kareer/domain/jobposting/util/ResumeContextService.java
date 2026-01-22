@@ -2,7 +2,7 @@ package org.sopt.kareer.domain.jobposting.util;
 
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.jobposting.exception.JobPostingException;
-import org.sopt.kareer.global.external.ai.service.DocumentProcessingService;
+import org.sopt.kareer.global.external.clova.service.DocumentProcessingService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
