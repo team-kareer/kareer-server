@@ -33,7 +33,10 @@ public record RoadmapPhaseDetailResponse(
                 String description,
 
                 @Schema(description = "Phase Action 마감 기한", example = "2026-01-24")
-                LocalDate deadline
+                LocalDate deadline,
+
+                @Schema(description = "Phase Action todo 추가 여부", example = "true")
+                boolean added
         ) {
             @QueryProjection
             public ActionResponse { }
