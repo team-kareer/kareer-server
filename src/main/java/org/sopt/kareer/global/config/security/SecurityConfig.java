@@ -68,8 +68,9 @@ public class SecurityConfig {
                         .failureHandler(failureHandler)
                 )
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**")
+                        .requestMatchers("/swagger-ui/**", "/swagger-resources/**")
                             .hasRole("SWAGGER")
+                        .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers(PERMIT_ALL_PATTERNS).permitAll()
                         .anyRequest().authenticated()
                 )
