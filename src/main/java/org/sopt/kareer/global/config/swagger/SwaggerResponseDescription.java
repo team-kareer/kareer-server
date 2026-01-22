@@ -60,7 +60,6 @@ public enum SwaggerResponseDescription {
     ))),
     TOGGLE_ACTION_ITEM_COMPLETION(new LinkedHashSet<>(Set.of(
             ACTION_ITEM_NOT_FOUND,
-            ACTION_ITEM_FORBIDDEN,
             ACTION_ITEM_INACTIVE,
             PHASE_ACTION_ALREADY_COMPLETED
     ))),
@@ -71,8 +70,7 @@ public enum SwaggerResponseDescription {
     CREATE_TODO(
             new LinkedHashSet<>(Set.of(
                     PHASE_ACTION_NOT_FOUND,
-                    TODO_ALREADY_ADDED,
-                    PHASE_ACTION_FORBIDDEN
+                    TODO_ALREADY_ADDED
             ))
     ),
     UPLOAD_JOBPOSTING(new LinkedHashSet<>(Set.of(

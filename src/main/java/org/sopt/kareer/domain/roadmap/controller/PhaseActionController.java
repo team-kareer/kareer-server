@@ -28,8 +28,10 @@ public class PhaseActionController {
     @PostMapping("/{phaseActionId}/todo")
     @Operation(summary = "Phase Action 기반 Todo 생성", description = "특정 Phase Action을 기반으로 Todo를 생성합니다.")
     @CustomExceptionDescription(CREATE_TODO)
-    public ResponseEntity<BaseResponse<Void>> createPhaseActionTodo(@AuthenticationPrincipal Long memberId,
-                                                                    @PathVariable Long phaseActionId) {
+    public ResponseEntity<BaseResponse<Void>> createPhaseActionTodo(
+            @AuthenticationPrincipal Long memberId,
+            @PathVariable Long phaseActionId
+    ) {
         phaseActionService.createPhaseActionTodo(memberId, phaseActionId);
         return ResponseEntity.ok(BaseResponse.ok("Phase Action 기반 Todo가 생성되었습니다."));
     }
@@ -38,9 +40,10 @@ public class PhaseActionController {
     @Operation(summary = "AI 가이드 조회", description = "AI 가이드를 조회합니다.")
     @CustomExceptionDescription(SwaggerResponseDescription.AI_GUIDE)
     public ResponseEntity<BaseResponse<AiGuideResponse>> getAiGuide(
+            @AuthenticationPrincipal Long memberId,
             @PathVariable Long phaseActionId
     ) {
-        AiGuideResponse response = phaseService.getAiGuide(phaseActionId);
+        AiGuideResponse response = phaseActionService.getAiGuide(memberId, phaseActionId);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok(response, "AI 가이드가 조회되었습니다.")
