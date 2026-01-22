@@ -8,6 +8,7 @@ import org.sopt.kareer.global.jwt.handler.CustomAuthenticationEntryPoint;
 import org.sopt.kareer.global.oauth.handler.OAuth2AuthenticationFailureHandler;
 import org.sopt.kareer.global.oauth.handler.OAuth2AuthenticationSuccessHandler;
 import org.sopt.kareer.global.oauth.service.CustomOidcOAuth2UserService;
+import org.sopt.kareer.global.security.filter.OnboardingRestrictionFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -37,7 +38,8 @@ public class SecurityConfig {
             "/error",
             "/oauth2/**",
             "/login/oauth2/**",
-            "/job-postings"
+            "/api/v1/job-postings/crawl",
+            "/api/v1/members/roadmap/test",
     };
 
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
@@ -45,6 +47,7 @@ public class SecurityConfig {
     private final CorsConfigurationSource corsConfigurationSource;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtExceptionFilter jwtExceptionFilter;
+    private final OnboardingRestrictionFilter onboardingRestrictionFilter;
     private final CustomOidcOAuth2UserService customOidcOAuth2UserService;
     private final OAuth2AuthenticationSuccessHandler successHandler;
     private final OAuth2AuthenticationFailureHandler failureHandler;
@@ -75,6 +78,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(onboardingRestrictionFilter, JwtAuthenticationFilter.class)
                 .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
 
         return http.build();
