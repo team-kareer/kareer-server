@@ -41,8 +41,11 @@ public class PhaseController {
     @GetMapping("/{phaseId}/roadmap")
     @Operation(summary = "로드맵 Phase 상세정보 조회", description = "로드맵 Phase 상세조회를 조회합니다.")
     @CustomExceptionDescription(SwaggerResponseDescription.ROADMAP_PHASE_LIST_DETAIL)
-    public ResponseEntity<BaseResponse<RoadmapPhaseDetailResponse>> getRoadmapPhaseDetail(@PathVariable Long phaseId) {
-        RoadmapPhaseDetailResponse response = phaseService.getRoadmapPhaseDetail(phaseId);
+    public ResponseEntity<BaseResponse<RoadmapPhaseDetailResponse>> getRoadmapPhaseDetail(
+            @AuthenticationPrincipal Long memberId,
+            @PathVariable Long phaseId
+    ) {
+        RoadmapPhaseDetailResponse response = phaseService.getRoadmapPhaseDetail(memberId, phaseId);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok(response, "로드맵 Phase 상세정보가 조회되었습니다.")
@@ -52,8 +55,11 @@ public class PhaseController {
     @GetMapping("/{phaseId}/home")
     @Operation(summary = "홈 Phase 상세정보 조회", description = "홈 Phase 상세조회를 조회합니다.")
     @CustomExceptionDescription(SwaggerResponseDescription.HOME_PHASE_LIST_DETAIL)
-    public ResponseEntity<BaseResponse<HomePhaseDetailResponse>> getHomePhaseDetail(@PathVariable Long phaseId) {
-        HomePhaseDetailResponse response = phaseService.getHomePhaseDetail(phaseId);
+    public ResponseEntity<BaseResponse<HomePhaseDetailResponse>> getHomePhaseDetail(
+            @AuthenticationPrincipal Long memberId,
+            @PathVariable Long phaseId
+    ) {
+        HomePhaseDetailResponse response = phaseService.getHomePhaseDetail(memberId, phaseId);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok(response, "홈 Phase 상세정보가 조회되었습니다.")
