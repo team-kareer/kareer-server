@@ -29,7 +29,8 @@ public class OAuth2AuthenticationFailureHandler implements AuthenticationFailure
                 .fromUriString(oAuthRedirectProperties.redirectUri())
                 .queryParam("error", "oauth_failure")
                 .queryParam("error_description", "Authentication failed")
-                .build(true)
+                .build()
+                .encode()
                 .toUriString();
 
         response.setStatus(HttpServletResponse.SC_FOUND);
