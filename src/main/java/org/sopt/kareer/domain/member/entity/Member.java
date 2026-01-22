@@ -113,12 +113,6 @@ public class Member extends BaseEntity {
         this.profileImageUrl = profileImageUrl;
     }
 
-    public void assertOnboarded() {
-        if (this.status == MemberStatus.PENDING) {
-            throw new MemberException(MemberErrorCode.ONBOARDING_REQUIRED);
-        }
-    }
-
     private void assertPendingStatus() {
         if (this.status == MemberStatus.ACTIVE) {
             throw new MemberException(MemberErrorCode.ONBOARDING_ALREADY_COMPLETED);
