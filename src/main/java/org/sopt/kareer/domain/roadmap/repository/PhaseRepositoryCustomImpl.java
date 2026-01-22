@@ -1,25 +1,24 @@
 package org.sopt.kareer.domain.roadmap.repository;
 
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
+
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.domain.roadmap.dto.response.QRoadmapPhaseDetailResponse_ActionGroupResponse_ActionResponse;
-import org.sopt.kareer.domain.roadmap.dto.response.RoadmapPhaseDetailResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.PhaseResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.QPhaseResponse;
+import org.sopt.kareer.domain.roadmap.dto.response.QRoadmapPhaseDetailResponse_ActionGroupResponse_ActionResponse;
+import org.sopt.kareer.domain.roadmap.dto.response.RoadmapPhaseDetailResponse;
 import org.sopt.kareer.domain.roadmap.entity.QPhase;
 import org.sopt.kareer.domain.roadmap.entity.QPhaseAction;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseActionType;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.Map;
-
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.list;
 
 @Repository
 @RequiredArgsConstructor
@@ -84,7 +83,8 @@ public class PhaseRepositoryCustomImpl implements PhaseRepositoryCustom {
                                         phaseAction.id,
                                         phaseAction.title,
                                         phaseAction.description,
-                                        phaseAction.deadline
+                                        phaseAction.deadline,
+                                        phaseAction.added
                                 ))
                         )
                 );
