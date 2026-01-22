@@ -13,6 +13,7 @@ import org.sopt.kareer.global.external.ai.exception.RagErrorCode;
 import org.sopt.kareer.global.external.ai.exception.RagException;
 import org.sopt.kareer.global.external.ai.util.OcrTextNormalizer;
 import org.sopt.kareer.global.external.ai.util.RequiredPdfParser;
+import org.sopt.kareer.global.external.clova.service.DocumentProcessingService;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.pgvector.PgVectorStore;
