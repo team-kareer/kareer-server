@@ -16,6 +16,8 @@ public class JobPostingRecommendPrompt {
 - [USER_COMPLETED_TODO]가 제공된 경우, 사용자가 최근/반복적으로 수행한 활동으로부터
   관심 직무/기술스택/업무 성향을 추론하여 공고 선택에 반영하세요.
 - 다만 Todo만 보고 과도한 추측은 하지 말고, 공고 본문에 근거가 있을 때만 강하게 연결하세요.
+- [RESUME_OR_COVER_LETTER]가 제공된 경우, 사용자의 이력서 혹은 자기소개서 내용과 사용자의 정보를 결합하여 추천 이유를 생성하세요.
+
 
 출력 JSON 스키마 (엄격):
 {
