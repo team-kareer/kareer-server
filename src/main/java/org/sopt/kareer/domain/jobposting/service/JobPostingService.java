@@ -83,7 +83,7 @@ public class JobPostingService {
 
         List<Document> retrieved = ragSearchService.search(combinedContext, 4, RagType.JOBPOSTING);
 
-        List<Long> recommendedIds = openAiService.recommendJobPosting(userContext, retrieved);
+        List<Long> recommendedIds = openAiService.recommendJobPosting(combinedContext, retrieved);
 
         List<JobPosting> jobPostings = jobPostingRepository.findAllById(recommendedIds);
 
