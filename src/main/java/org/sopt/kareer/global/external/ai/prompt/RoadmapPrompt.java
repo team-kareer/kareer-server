@@ -18,7 +18,7 @@ public class RoadmapPrompt {
             1) CURRENT
             2) NEXT
             3) FUTURE 입니다.
-            - 각 Phase는 최소 1개 이상의 phaseActions를 포함해야 합니다.
+            - 각 Phase는 최소 2개 이상의 phaseActions를 포함해야 합니다.
             - 각 Phase는 현재 날짜를 기준으로 3개월의 기간을 가집니다.
             - 각 Phase.sequence는 1,2,3의 값만 가지며, CURRENT는 1, NEXT는 2, FUTURE는 3의 값을 가집니다,
             - 각 Phase.goal은 생성된 phase의 주요 목표이며, 20자 제한입니다.
@@ -33,19 +33,19 @@ public class RoadmapPrompt {
             - actions.guideline은 해당 액션을 수행하기 위한 단계별 지침과 함께, 참고할 수 있는 구체적인 한국의 웹사이트 주소, 정부 기관 연락처, 추천 커뮤니티, 관련 서류 양식 안내, 또는 효과적인 한국어 학습 자료 등 실질적인 정보와 리소스를 포함하여 사용자가 즉시 활용할 수 있도록 합니다. 각 항목은 'OOO 웹사이트에서 최신 서류 양식 다운로드', 'OOO 이민센터에 방문하여 개인 상담 예약'과 같이 명확한 행동 지침을 제시해야 합니다.
             — commonMistakes'는 이 항목은 다음과 같은 실제 사례들을 바탕으로 작성되어야 합니다: 비자 관련: 한국에서 외국인이 비자 신청 시 흔히 하는 서류 미비, 기한 미준수, 또는 한국어 능력 부족으로 인한 의사소통 오류. 커리어 관련: 한국의 기업 문화 및 직장 예절에 대한 이해 부족, 비효율적인 구직 활동 전략(예: 포괄적인 이력서 사용, 타겟팅되지 않은 지원), 국내외 네트워킹 기회 상실, 또는 한국어 능력 개발 소홀로 인한 경쟁력 약화
             - type, actionsType 필드는 반드시 **enum 이름과 정확히 일치하는 영문 문자열**이어야 합니다.
-            - 각 phaseAction은 최소 1개 이상의 actionItems(todo list)를 포함해야 합니다.
+            - 각 phaseAction은 최소 2개 이상의 actionItems(todo list)를 포함해야 합니다.
             - 생성된 로드맵은 동적이며, 사용자의 진행 상황 또는 외부 환경(예: 정책 변화, 시장 변화)에 따라 업데이트될 수 있음을 고려해야 합니다. 각 단계는 유연성을 염두에 두고 설계되어야 합니다.
             1) [VISA_REQUIRED_CONTEXT]
             - 비자 유지, 연장, 전환과 직접적으로 관련된 **필수 요건/서류/체크리스트**입니다.
             - 이 컨텍스트가 비어있지 않다면:
             - CURRENT Phase에는 반드시 최소 1개의 VISA 타입 action을 포함해야 합니다.
-            - Required Action에 기반하여 phaseAction을 정의하고, AI Guide & Risk에 기반하여 actions.importance와 actions.guideline을 정의하고, **반드시 To-do list를 참고**하여 actionItems를 생성하세요.
+            - Required Action에 기반하여 phaseAction을 정의하고, AI Guide & Risk에 기반하여 actions.importance와 actions.guideline을 정의하고, **반드시 To-do List를 참고**하여 actionItems를 생성하세요.
             - 비자 관련 action은 **반드시 이 컨텍스트 또는 POLICY_CONTEXT에 근거**해야 합니다.
             - 일반적이거나 추측성 비자 조언을 생성하지 마세요.
             
             2) [CAREER_REQUIRED_CONTEXT]
             - 특정 직무(도메인)에 대해 정리된 Required Action / AI Guide & Risk / To-do List 입니다.
-            - Required Action에 기반하여 phaseAction을 정의하고, AI Guide & Risk에 기반하여 actions.importance와 actions.guideline을 정의하고, **반드시 To-do list를 참고**하여 actionItems를 생성하세요.
+            - Required Action에 기반하여 phaseAction을 정의하고, AI Guide & Risk에 기반하여 actions.importance와 actions.guideline을 정의하고, **반드시 To-do List를 참고**하여 actionItems를 생성하세요.
             - 커리어 관련 action은 반드시 이 컨텍스트를 우선적으로 활용하세요.
             - 동일한 직무 도메인에 해당하는 내용만 사용해야 합니다.
             
