@@ -54,7 +54,7 @@ public class JobPostingController {
     public ResponseEntity<BaseResponse<Void>> createJobPostingBookmark(
             @AuthenticationPrincipal Long memberId,
             @PathVariable Long jobPostingId){
-        jobPostingService.createBookmark(memberId, jobPostingId);
+        jobPostingService.createOrDeleteBookmark(memberId, jobPostingId);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok("채용 공고 북마크 추가 / 삭제에 성공했습니다."));
