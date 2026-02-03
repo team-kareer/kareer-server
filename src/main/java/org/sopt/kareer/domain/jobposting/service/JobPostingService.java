@@ -110,7 +110,7 @@ public class JobPostingService {
     }
 
     @Transactional
-    public void createBookmark(Long memberId, Long jobPostingId) {
+    public void createOrDeleteBookmark(Long memberId, Long jobPostingId) {
 
         JobPosting jobPosting = jobPostingRepository.findById(jobPostingId)
                 .orElseThrow(() -> new JobPostingException(JobPostingErrorCode.JOB_POSTING_NOT_FOUND));
