@@ -42,7 +42,7 @@ class JobPostingBookmarkRepositoryTest {
         JobPostingBookmark jobPostingBookmark = jobPostingBookmarkRepository.save(JobPostingBookmark.create(member, jobPosting));
 
        //when
-        boolean result = jobPostingBookmarkRepository.existsByJobPostingIdAndMemberId(jobPostingBookmark.getId(), member.getId());
+        boolean result = jobPostingBookmarkRepository.existsByJobPostingIdAndMemberId(jobPosting.getId(), member.getId());
 
         //then
         assertThat(result).isTrue();
@@ -57,10 +57,10 @@ class JobPostingBookmarkRepositoryTest {
         JobPostingBookmark jobPostingBookmark = jobPostingBookmarkRepository.save(JobPostingBookmark.create(member, jobPosting));
 
        //when
-        jobPostingBookmarkRepository.deleteByJobPostingIdAndMemberId(jobPostingBookmark.getId(), member.getId());
+        jobPostingBookmarkRepository.deleteByJobPostingIdAndMemberId(jobPosting.getId(), member.getId());
 
        //then
-        assertThat(jobPostingBookmarkRepository.existsByJobPostingIdAndMemberId(jobPostingBookmark.getId(), member.getId())).isFalse();
+        assertThat(jobPostingBookmarkRepository.existsByJobPostingIdAndMemberId(jobPosting.getId(), member.getId())).isFalse();
     }
 
     @DisplayName("memberId로 존재하는 북마크들을 조회할 수 있다.")
