@@ -123,7 +123,7 @@ cors:
   allow-credentials: false
 discord:
   webhook:
-    url: localwebhook
+    url: ""
 ---
 spring:
   config:
