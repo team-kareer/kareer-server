@@ -17,7 +17,7 @@ public class MemberOnboardRequestFixture {
                 LanguageLevel.LEVEL_4,
                 Degree.OVERSEAS_BACHELORS,
                 VisaType.D10,
-                LocalDate.of(2026, 2, 1),
+                null,
                 LocalDate.of(2024, 5, 1),
                 LocalDate.of(2026, 5, 1),
                 70,

@@ -116,7 +116,6 @@ class MemberServiceTest {
                 .secondaryMajor("Mathematics")
                 .targetJob("Backend Engineer")
                 .graduationDate(LocalDate.of(2023, 2, 1))
-                .expectedGraduationDate(LocalDate.of(2024, 2, 1))
                 .languageLevel(LanguageLevel.LEVEL_3)
                 .degree(Degree.OVERSEAS_BACHELORS)
                 .targetJobSkill("Java")
