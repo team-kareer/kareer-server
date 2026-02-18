@@ -139,7 +139,7 @@ class MemberServiceTest {
 
         assertThatThrownBy(() -> memberService.getMemberInfo(member.getId()))
                 .isInstanceOf(MemberException.class)
-                .hasMessage(MemberErrorCode.MEMBER_NOT_FOUND.getMessage());
+                .hasMessage(MemberErrorCode.VISA_NOT_FOUND.getMessage());
     }
 
     @DisplayName("회원 상태 조회 시 비자 만료 정보가 포함된다.")
