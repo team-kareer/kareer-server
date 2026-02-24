@@ -13,12 +13,16 @@ public class MemberFixture {
     public static final Country MEMBER_COUNTRY = Country.AFGHANISTAN;
 
 
-    public static Member getMember(){
+    public static Member getMember() {
+        return getMember(MEMBER_PROVIDER_ID);
+    }
+
+    public static Member getMember(String providerId){
         return Member.builder()
                 .name(MEMBER_NAME)
                 .country(MEMBER_COUNTRY)
                 .provider(MEMBER_OAUTH_PROVIDER)
-                .providerId(MEMBER_PROVIDER_ID)
+                .providerId(providerId)
                 .status(MemberStatus.ACTIVE)
                 .roadmapStatus(RoadmapStatus.NOT_STARTED)
                 .build();

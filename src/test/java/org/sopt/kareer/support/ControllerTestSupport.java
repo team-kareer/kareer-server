@@ -4,23 +4,33 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.sopt.kareer.domain.jobposting.controller.JobPostingController;
 import org.sopt.kareer.domain.jobposting.service.JobPostingCrawler;
 import org.sopt.kareer.domain.jobposting.service.JobPostingService;
+import org.sopt.kareer.domain.member.controller.MemberController;
 import org.sopt.kareer.domain.member.service.MemberService;
+import org.sopt.kareer.domain.roadmap.service.RoadMapService;
+import org.sopt.kareer.domain.roadmap.service.RoadmapAsyncService;
 import org.sopt.kareer.global.jwt.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@WebMvcTest(controllers = {JobPostingController.class},
+@WebMvcTest(controllers = {JobPostingController.class, MemberController.class},
         excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE)
         })
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
+@Import(ControllerTestSupport.TestSecurityWebMvcConfig.class)
 public abstract class ControllerTestSupport {
     @Autowired
     protected MockMvc mockMvc;
@@ -41,6 +51,19 @@ public abstract class ControllerTestSupport {
     protected MemberService memberService;
 
     @MockBean
+    protected RoadMapService roadMapService;
+
+    @MockBean
+    protected RoadmapAsyncService roadmapAsyncService;
+
+    @MockBean
     protected JpaMetamodelMappingContext mappingContext;
 
+    @TestConfiguration
+    static class TestSecurityWebMvcConfig implements WebMvcConfigurer {
+        @Override
+        public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+            resolvers.add(new AuthenticationPrincipalArgumentResolver());
+        }
+    }
 }
