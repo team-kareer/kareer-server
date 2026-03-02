@@ -94,3 +94,6 @@ swagger:
   auth:
     username: ddd
     password: dd
+discord:
+  webhook:
+    url: test-url
