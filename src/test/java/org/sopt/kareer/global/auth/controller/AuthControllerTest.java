@@ -1,5 +1,20 @@
 package org.sopt.kareer.global.auth.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.sopt.kareer.global.auth.dto.request.TokenExchangeRequest;
+import org.sopt.kareer.global.auth.dto.response.TokenExchangeResponse;
+import org.sopt.kareer.global.auth.dto.response.TokenResponse;
+import org.sopt.kareer.global.exception.customexception.GlobalException;
+import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
+import org.sopt.kareer.support.ControllerTestSupport;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -9,50 +24,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.sopt.kareer.global.auth.dto.request.TokenExchangeRequest;
-import org.sopt.kareer.global.auth.dto.response.TokenExchangeResponse;
-import org.sopt.kareer.global.auth.dto.response.TokenResponse;
-import org.sopt.kareer.global.auth.service.AuthService;
-import org.sopt.kareer.global.exception.customexception.GlobalException;
-import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
-import org.sopt.kareer.global.jwt.util.JwtTokenUtil;
-import org.sopt.kareer.domain.member.service.MemberService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
-
 @WebMvcTest(AuthController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
-class AuthControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockBean
-    private AuthService authService;
-
-    @MockBean
-    private JwtTokenUtil jwtTokenUtil;
-
-    @MockBean
-    private MemberService memberService;
-
-    @MockBean
-    private JpaMetamodelMappingContext jpaMetamodelMappingContext;
+class AuthControllerTest extends ControllerTestSupport {
 
     @DisplayName("로그인 코드를 Access Token으로 교환한다.")
     @Test

@@ -8,9 +8,10 @@ import org.sopt.kareer.domain.member.controller.MemberController;
 import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.domain.roadmap.service.RoadMapService;
 import org.sopt.kareer.domain.roadmap.service.RoadmapAsyncService;
+import org.sopt.kareer.global.auth.service.AuthService;
+import org.sopt.kareer.global.external.discord.client.DiscordClient;
 import org.sopt.kareer.global.jwt.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import java.util.List;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -24,6 +25,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 @WebMvcTest(controllers = {JobPostingController.class, MemberController.class},
         excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE)
@@ -58,6 +61,12 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected JpaMetamodelMappingContext mappingContext;
+
+    @MockBean
+    protected DiscordClient discordClient;
+
+    @MockBean
+    protected AuthService authService;
 
     @TestConfiguration
     static class TestSecurityWebMvcConfig implements WebMvcConfigurer {
