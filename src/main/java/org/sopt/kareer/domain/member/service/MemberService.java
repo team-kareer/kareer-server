@@ -6,6 +6,7 @@ import org.sopt.kareer.domain.member.dto.response.MemberInfoResponse;
 import org.sopt.kareer.domain.member.dto.response.MemberStatusResponse;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.entity.MemberVisa;
+import org.sopt.kareer.domain.member.entity.enums.MemberStatus;
 import org.sopt.kareer.domain.member.exception.MemberErrorCode;
 import org.sopt.kareer.domain.member.exception.MemberException;
 import org.sopt.kareer.domain.member.repository.MemberRepository;
@@ -55,7 +56,7 @@ public class MemberService {
     public MemberInfoResponse getMemberInfo(Long memberId) {
         Member member = getById(memberId);
         MemberVisa memberVisa = memberVisaRepository.findActiveByMemberId(memberId)
-                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberException(MemberErrorCode.VISA_NOT_FOUND));
         return MemberInfoResponse.from(member, memberVisa);
     }
 
@@ -91,6 +92,8 @@ public class MemberService {
         MemberVisa memberVisa = memberVisaRepository.findActiveByMemberId(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.VISA_NOT_FOUND));
 
-        return MemberStatusResponse.from(member, memberVisa );
+        boolean onboardingRequired = member.getStatus().equals(MemberStatus.PENDING);
+
+        return MemberStatusResponse.from(member, memberVisa, onboardingRequired);
     }
 }
