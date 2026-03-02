@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
     @Value("${discord.webhook.url}")
     private String webhookUrl;
 
-    @Value("${spring.profiles.active}")
+    @Value("${SPRING_ACTIVE_PROFILE:local}")
     private String activeProfile;
 
     @ExceptionHandler(Exception.class)
