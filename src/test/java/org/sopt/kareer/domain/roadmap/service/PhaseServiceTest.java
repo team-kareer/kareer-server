@@ -1,5 +1,6 @@
 package org.sopt.kareer.domain.roadmap.service;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.sopt.kareer.domain.member.entity.Member;
@@ -29,6 +30,12 @@ public class PhaseServiceTest {
 
     @Autowired
     private PhaseService phaseService;
+
+    @AfterEach
+    void tearDown() {
+        phaseRepository.deleteAllInBatch();
+        memberRepository.deleteAllInBatch();
+    }
 
     @DisplayName("Phase 리스트를 정상적으로 조회한다.")
     @Test
