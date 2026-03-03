@@ -13,6 +13,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.matchesPattern;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -42,7 +44,14 @@ class PhaseControllerTest extends ControllerTestSupport {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Phase 리스트가 조회되었습니다."))
+                .andExpect(jsonPath("$.data").exists())
                 .andExpect(jsonPath("$.data.phases").isArray())
                 .andExpect(jsonPath("$.data.phases.length()").value(3));
+                .andExpect(jsonPath("$.data.phases.length()").value(3))
+                .andExpect(jsonPath("$.data.phases[0].startDate").value(matchesPattern("\\d{4}-\\d{2}-\\d{2}")))
+                .andExpect(jsonPath("$.data.phases[0].endDate").value(matchesPattern("\\d{4}-\\d{2}-\\d{2}")))
+        ;
+    }
+
     }
 }
