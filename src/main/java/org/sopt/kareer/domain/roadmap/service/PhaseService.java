@@ -12,6 +12,7 @@ import org.sopt.kareer.domain.roadmap.repository.PhaseRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +55,13 @@ public class PhaseService {
             List<RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse> items
     ) {
         if (items == null) items = List.of();
-        return new RoadmapPhaseDetailResponse.ActionGroupResponse((long) items.size(), items);
+
+        List<RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse> sorted = items.stream()
+                .sorted(Comparator.comparing(RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse::deadline)
+                        .thenComparing(RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse::title))
+                .toList();
+
+        return new RoadmapPhaseDetailResponse.ActionGroupResponse((long) sorted.size(), sorted);
     }
 
     public HomePhaseDetailResponse getHomePhaseDetail(Long memberId, Long phaseId) {
