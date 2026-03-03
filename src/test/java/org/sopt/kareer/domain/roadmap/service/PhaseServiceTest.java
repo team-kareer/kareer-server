@@ -42,30 +42,10 @@ public class PhaseServiceTest {
     void getPhases_success() {
         // given
         Member member = memberRepository.save(MemberFixture.getMember());
-
-        phaseRepository.save(PhaseFixture.getPhase(
-                member,
-                1,
-                PhaseStatus.CURRENT,
-                LocalDate.of(2026, 3, 1),
-                LocalDate.of(2026, 5, 31)
-        ));
-
-        phaseRepository.save(PhaseFixture.getPhase(
-                member,
-                2,
-                PhaseStatus.NEXT,
-                LocalDate.of(2026, 6, 1),
-                LocalDate.of(2026, 8, 31)
-        ));
-
-        phaseRepository.save(PhaseFixture.getPhase(
-                member,
-                3,
-                PhaseStatus.FUTURE,
-                LocalDate.of(2026, 9, 1),
-                LocalDate.of(2026, 11, 30)
-        ));
+        Phase phase1 = PhaseFixture.getPhase(member, 1, PhaseStatus.CURRENT);
+        Phase phase2 = PhaseFixture.getPhase(member, 2, PhaseStatus.NEXT);
+        Phase phase3 = PhaseFixture.getPhase(member, 3, PhaseStatus.FUTURE);
+        phaseRepository.saveAll(List.of(phase1, phase2, phase3));
 
         // when
         PhaseListResponse response = phaseService.getPhases(member.getId());
