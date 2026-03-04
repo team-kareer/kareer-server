@@ -1,5 +1,6 @@
 package org.sopt.kareer.domain.roadmap.repository;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.sopt.kareer.domain.member.entity.Member;
@@ -36,12 +37,19 @@ public class PhaseActionRepositoryTest {
     @Autowired
     private PhaseActionRepository phaseActionRepository;
 
+    private Phase phase1;
+    private Member member1;
+
+    @BeforeEach
+    void setUp() {
+        member1 = memberRepository.save(MemberFixture.getMember("test-provider-id-1"));
+        phase1 = phaseRepository.save(PhaseFixture.getPhase(member1, 1, PhaseStatus.CURRENT));
+    }
+
     @Test
     @DisplayName("phaseId가 일치하는 phaseAction들 중 아직 완료되지 않은 phaseAction들을 반환한다. ")
     void findByPhaseIdAndCompletedIsFalse() {
         // given
-        Member member1 = memberRepository.save(MemberFixture.getMember("test-provider-id-1"));
-        Phase phase1 = phaseRepository.save(PhaseFixture.getPhase(member1, 1, PhaseStatus.CURRENT));
         Phase phase2 = phaseRepository.save(PhaseFixture.getPhase(member1, 2, PhaseStatus.NEXT));
 
         PhaseAction action1 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
@@ -66,8 +74,6 @@ public class PhaseActionRepositoryTest {
     @DisplayName("phaseActionId와 memberId가 일치하는 PhaseAction을 반환한다. ")
     void findByIdAndMemberId() {
         // given
-        Member member1 = memberRepository.save(MemberFixture.getMember("test-provider-id-1"));
-        Phase phase1 = phaseRepository.save(PhaseFixture.getPhase(member1, 1, PhaseStatus.CURRENT));
         PhaseAction action1 = phaseActionRepository.save(PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA));
 
         // when

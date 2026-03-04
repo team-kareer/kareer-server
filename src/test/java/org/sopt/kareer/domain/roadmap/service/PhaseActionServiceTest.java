@@ -1,9 +1,6 @@
 package org.sopt.kareer.domain.roadmap.service;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.fixture.MemberFixture;
 import org.sopt.kareer.domain.member.repository.MemberRepository;
@@ -53,6 +50,15 @@ public class PhaseActionServiceTest {
     @Autowired
     private PhaseActionService phaseActionService;
 
+    private Phase phase1;
+    private Member member1;
+
+    @BeforeEach
+    void setUp() {
+        member1 = memberRepository.save(MemberFixture.getMember("test-provider-id-1"));
+        phase1 = phaseRepository.save(PhaseFixture.getPhase(member1, 1, PhaseStatus.CURRENT));
+    }
+
     @AfterEach
     void tearDown() {
         phaseActionGuidelineRepository.deleteAll();
@@ -70,8 +76,6 @@ public class PhaseActionServiceTest {
         @DisplayName("AI 가이드를 성공적으로 조회한다.")
         void getAiGuide_success() {
             // given
-            Member member1 = memberRepository.save(MemberFixture.getMember("test-provider-id-1"));
-            Phase phase1 = phaseRepository.save(PhaseFixture.getPhase(member1, 1, PhaseStatus.CURRENT));
             PhaseAction phaseAction1 = phaseActionRepository.save(PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA));
 
             PhaseActionMistake mistake1 = PhaseActionMistake.create("test-content-1", phaseAction1);
@@ -97,7 +101,6 @@ public class PhaseActionServiceTest {
         @DisplayName("존재하지 않는 PhaseAction에 대한 AI 가이드를 조회할 경우 예외가 발생한다.")
         void getAiGuide_phaseActionNotFound() {
             // given
-            Member member1 = memberRepository.save(MemberFixture.getMember("test-provider-id-1"));
             Long phaseActionId = 0L;
 
             // when & then
@@ -111,7 +114,6 @@ public class PhaseActionServiceTest {
         @DisplayName("다른 회원의 PhaseAction에 대한 AI 가이드를 조회할 경우 예외가 발생한다.")
         void getAiGuide_phaseActionNotFound_notOwner() {
             // given
-            Member member1 = memberRepository.save(MemberFixture.getMember("test-provider-id-1"));
             Member member2 = memberRepository.save(MemberFixture.getMember("test-provider-id-2"));
             PhaseAction phaseAction1 = phaseActionRepository.save(PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA));
 
@@ -126,8 +128,6 @@ public class PhaseActionServiceTest {
         @DisplayName("mistake와 guideline이 없어도 빈 리스트로 반환된다.")
         void getAiGuide_emptyLists() {
             // given
-            Member member1 = memberRepository.save(MemberFixture.getMember("test-provider-id-1"));
-            Phase phase1 = phaseRepository.save(PhaseFixture.getPhase(member1, 1, PhaseStatus.CURRENT));
             PhaseAction phaseAction = phaseActionRepository.save(PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA));
 
             // when
