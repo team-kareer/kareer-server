@@ -76,13 +76,35 @@ public class PhaseServiceTest {
             // when
             PhaseListResponse response = phaseService.getPhases(member1.getId());
 
-        // then
-        assertThat(response.phases()).hasSize(3);
             // then
             assertThat(response.phases()).hasSize(3);
             assertThat(response.phases())
                     .extracting(PhaseResponse::phaseId)
                     .containsExactly(
+                            phase1.getId(),
+                            phase2.getId(),
+                            phase3.getId()
+                    );
+        }
+
+        @Test
+        @DisplayName("다른 회원의 Phase 리스트는 조회되지 않는다.")
+        void getPhases_onlyOwnData() {
+            // given
+            Member member2 = memberRepository.save(MemberFixture.getMember("test-provider-id-2"));
+            Phase phase2 = PhaseFixture.getPhase(member1, 2, PhaseStatus.NEXT);
+            Phase phase3 = PhaseFixture.getPhase(member1, 3, PhaseStatus.FUTURE);
+            Phase phase4 = PhaseFixture.getPhase(member2, 2, PhaseStatus.CURRENT);
+            phaseRepository.saveAll(List.of(phase1, phase2, phase3, phase4));
+
+            // when
+            PhaseListResponse response = phaseService.getPhases(member1.getId());
+
+            // then
+            assertThat(response.phases()).hasSize(3);
+            assertThat(response.phases())
+                    .extracting(PhaseResponse::phaseId)
+                    .containsExactlyInAnyOrder(
                             phase1.getId(),
                             phase2.getId(),
                             phase3.getId()
@@ -162,6 +184,26 @@ public class PhaseServiceTest {
         }
 
         @Test
+        @DisplayName("특정 로드맵 Phase 상세정보 조회 시, 다른 Phase의 Action은 포함되지 않는다.")
+        void getRoadmapPhaseDetail_onlyParticularPhaseData() {
+            // given
+            Member member2 = memberRepository.save(MemberFixture.getMember("test-provider-id-2"));
+            Phase phase2 = phaseRepository.save(PhaseFixture.getPhase(member2, 1, PhaseStatus.CURRENT));
+            PhaseAction phaseActionVisa1 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
+            PhaseAction phaseActionVisa2 = PhaseActionFixture.getPhaseAction(phase2, PhaseActionType.VISA);
+            phaseActionRepository.saveAll(List.of(phaseActionVisa1, phaseActionVisa2));
+
+            // when
+            RoadmapPhaseDetailResponse response = phaseService.getRoadmapPhaseDetail(member1.getId(), phase1.getId());
+
+            // then
+            assertThat(response.actions().get("Visa").items()).hasSize(1);
+            assertThat(response.actions().get("Visa").items())
+                    .extracting(RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse::phaseActionId)
+                    .containsExactly(phaseActionVisa1.getId());
+        }
+
+        @Test
         @DisplayName("존재하지 않는 로드맵 Phase 상세정보를 조회할 경우 예외가 발생한다.")
         void getRoadmapPhaseDetail_phaseNotFound() {
             // given
@@ -169,7 +211,6 @@ public class PhaseServiceTest {
 
             // when & then
             assertThrows(RoadMapException.class,
-                    () -> phaseService.getRoadmapPhaseDetail(member.getId(), phaseId));
                     () -> phaseService.getRoadmapPhaseDetail(member1.getId(), phaseId));
         }
     }

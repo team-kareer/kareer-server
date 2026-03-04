@@ -81,6 +81,10 @@ public class PhaseRepositoryTest {
 
             // then
             assertThat(response).hasSize(1);
+            assertThat(response)
+                    .extracting(PhaseResponse::phaseId)
+                    .contains(phase1.getId())
+                    .doesNotContain(phase2.getId());
         }
     }
 
