@@ -109,14 +109,14 @@ public class PhaseActionServiceTest {
 
         @Test
         @DisplayName("다른 회원의 PhaseAction에 대한 AI 가이드를 조회할 경우 예외가 발생한다.")
-        void getRoadmapPhaseDetail_phaseActionNotFound_notOwner() {
+        void getAiGuide_phaseActionNotFound_notOwner() {
             // given
             Member member1 = memberRepository.save(MemberFixture.getMember("test-provider-id-1"));
             Member member2 = memberRepository.save(MemberFixture.getMember("test-provider-id-2"));
-            Phase phase1 = phaseRepository.save(PhaseFixture.getPhase(member1, 1, PhaseStatus.CURRENT));
+            PhaseAction phaseAction1 = phaseActionRepository.save(PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA));
 
             // when & then
-            assertThatThrownBy(() -> phaseActionService.getAiGuide(member2.getId(), phase1.getId()))
+            assertThatThrownBy(() -> phaseActionService.getAiGuide(member2.getId(), phaseAction1.getId()))
                     .isInstanceOf(RoadMapException.class)
                     .extracting("errorCode")
                     .isEqualTo(RoadmapErrorCode.PHASE_ACTION_NOT_FOUND);
