@@ -1,9 +1,6 @@
 package org.sopt.kareer.domain.roadmap.repository;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.fixture.MemberFixture;
 import org.sopt.kareer.domain.member.repository.MemberRepository;
@@ -40,30 +37,29 @@ public class PhaseRepositoryTest {
     @Autowired
     private PhaseActionRepository phaseActionRepository;
 
-    @AfterEach
-    void tearDown() {
-        phaseActionRepository.deleteAll();
-        phaseRepository.deleteAll();
-        memberRepository.deleteAll();
+    private Phase phase1;
+    private Member member1;
+
+    @BeforeEach
+    void setUp() {
+        member1 = memberRepository.save(MemberFixture.getMember("test-provider-id-1"));
+        phase1 = phaseRepository.save(PhaseFixture.getPhase(member1, 1, PhaseStatus.CURRENT));
     }
 
     @Nested
-    @DisplayName("phase 리스트를 조회한다.")
+    @DisplayName("phase 리스트를 반환한다.")
     class FindPhases {
 
         @Test
-        @DisplayName("phase 리스트가 sequence 오름차순 정렬되어 조회된다.")
+        @DisplayName("phase 리스트가 sequence 오름차순 정렬되어 반환된다.")
         void findPhases_ordered() {
             // given
-            Member member = memberRepository.save((MemberFixture.getMember()));
-
-            Phase phase3 = PhaseFixture.getPhase(member, 3, PhaseStatus.FUTURE);
-            Phase phase1 = PhaseFixture.getPhase(member, 1, PhaseStatus.CURRENT);
-            Phase phase2 = PhaseFixture.getPhase(member, 2, PhaseStatus.NEXT);
-            phaseRepository.saveAll(List.of(phase1, phase2, phase3));
+            Phase phase3 = PhaseFixture.getPhase(member1, 3, PhaseStatus.FUTURE);
+            Phase phase2 = PhaseFixture.getPhase(member1, 2, PhaseStatus.NEXT);
+            phaseRepository.saveAll(List.of(phase2, phase3));
 
             // when
-            List<PhaseResponse> response = phaseRepository.findPhases(member.getId());
+            List<PhaseResponse> response = phaseRepository.findPhases(member1.getId());
 
             // then
             assertThat(response).hasSize(3);
@@ -74,16 +70,11 @@ public class PhaseRepositoryTest {
         }
 
         @Test
-        @DisplayName("다른 회원의 Phase 리스트는 조회되지 않는다.")
+        @DisplayName("다른 회원의 Phase 리스트는 반환되지 않는다.")
         void findPhases_onlyOwnData() {
             // given
-            Member member1 = memberRepository.save(MemberFixture.getMember("test-provider-id-1"));
             Member member2 = memberRepository.save(MemberFixture.getMember("test-provider-id-2"));
-
-            Phase phase1 = PhaseFixture.getPhase(member1, 1, PhaseStatus.CURRENT);
-            Phase phase2 = PhaseFixture.getPhase(member2, 1, PhaseStatus.CURRENT);
-
-            phaseRepository.saveAll(List.of(phase1, phase2));
+            Phase phase2 = phaseRepository.save(PhaseFixture.getPhase(member2, 1, PhaseStatus.CURRENT));
 
             // when
             List<PhaseResponse> response = phaseRepository.findPhases(member1.getId());
@@ -94,22 +85,19 @@ public class PhaseRepositoryTest {
     }
 
     @Nested
-    @DisplayName("로드맵 phase 상세정보를 조회한다.")
+    @DisplayName("로드맵 phase 상세정보를 반환한다.")
     class GetRoadmapPhaseDetail {
 
         @Test
         @DisplayName("PhaseAction들을 타입별로 그룹핑하어 Map으로 반환한다.")
         void getRoadmapPhaseDetail_grouped() {
             // given
-            Member member = memberRepository.save(MemberFixture.getMember());
-            Phase phase = phaseRepository.save(PhaseFixture.getPhase(member, 1, PhaseStatus.CURRENT));
-
-            PhaseAction phaseActionVisa = PhaseActionFixture.getPhaseAction(phase, PhaseActionType.VISA);
+            PhaseAction phaseActionVisa = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
             phaseActionVisa.markAdded();
 
-            PhaseAction phaseActionCareer  = PhaseActionFixture.getPhaseAction(phase, PhaseActionType.CAREER);
+            PhaseAction phaseActionCareer  = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.CAREER);
 
-            PhaseAction phaseActionDone = PhaseActionFixture.getPhaseAction(phase, PhaseActionType.VISA);
+            PhaseAction phaseActionDone = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
             phaseActionDone.markAdded();
             phaseActionDone.markCompleted();
 
@@ -117,7 +105,7 @@ public class PhaseRepositoryTest {
 
             // when
             Map<String, List<RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse>> response =
-                    phaseRepository.getRoadmapPhaseDetail(phase.getId());
+                    phaseRepository.getRoadmapPhaseDetail(phase1.getId());
 
             // then
             assertThat(response).containsKeys("Visa", "Career", "Done");
@@ -128,16 +116,11 @@ public class PhaseRepositoryTest {
         }
 
         @Test
-        @DisplayName("다른 회원의 Phase 상세정보는 조회되지 않는다.")
+        @DisplayName("다른 회원의 Phase 상세정보는 반환되지 않는다.")
         void getRoadmapPhaseDetail_onlyOwnData() {
             // given
-            Member member1 = MemberFixture.getMember("test-provider-id-1");
-            Member member2 = MemberFixture.getMember("test-provider-id-2");
-            memberRepository.saveAll(List.of(member1, member2));
-
-            Phase phase1 = PhaseFixture.getPhase(member1, 1, PhaseStatus.CURRENT);
-            Phase phase2 = PhaseFixture.getPhase(member2, 1, PhaseStatus.CURRENT);
-            phaseRepository.saveAll(List.of(phase1, phase2));
+            Member member2 = memberRepository.save(MemberFixture.getMember("test-provider-id-2"));
+            Phase phase2 = phaseRepository.save(PhaseFixture.getPhase(member2, 1, PhaseStatus.CURRENT));
 
             PhaseAction phaseActionVisa1 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
             PhaseAction phaseActionVisa2 = PhaseActionFixture.getPhaseAction(phase2, PhaseActionType.VISA);
