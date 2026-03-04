@@ -3,6 +3,7 @@ package org.sopt.kareer.domain.roadmap.controller;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.sopt.kareer.domain.roadmap.dto.response.HomePhaseDetailResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.PhaseListResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.PhaseResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapPhaseDetailResponse;
@@ -20,9 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.matchesPattern;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -111,6 +111,56 @@ class PhaseControllerTest extends ControllerTestSupport {
 
             // when & then
             mockMvc.perform(get("/api/v1/phases/{phaseId}/roadmap", phaseId))
+                    .andDo(print())
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$.message").value("존재하지 않는 Phase입니다."));
+        }
+    }
+
+    @Nested
+    @DisplayName("홈 Phase 상세정보를 조회한다.")
+    class GetHomePhaseDetail {
+
+        @Test
+        @DisplayName("홈 phase 상세정보가 정상적으로 조회된다.")
+        void getHomePhaseDetail_success() throws Exception {
+            // given
+            Long phaseId = 1L;
+
+            HomePhaseDetailResponse.HomePhaseActionResponse action = new HomePhaseDetailResponse.HomePhaseActionResponse(
+                    1L,
+                    "Visa",
+                    "test-title",
+                    LocalDate.of(2026, 3, 1)
+            );
+
+            HomePhaseDetailResponse response = new HomePhaseDetailResponse(1L, List.of(action));
+
+            given(phaseService.getHomePhaseDetail(any(), eq(phaseId)))
+                    .willReturn(response);
+
+            // when & then
+            mockMvc.perform(get("/api/v1/phases/{phaseId}/home", phaseId))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.message").value("홈 Phase 상세정보가 조회되었습니다."))
+                    .andExpect(jsonPath("$.data").exists())
+                    .andExpect(jsonPath("$.data.count").value(1))
+                    .andExpect(jsonPath("$.data.actions[0].deadline").value(matchesPattern("\\d{4}-\\d{2}-\\d{2}")))
+            ;
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 홈 Phase 상세정보 조회 시 예외가 발생한다.")
+        void getHomePhaseDetail_notFondPhase() throws Exception {
+            // given
+            Long phaseId = 0L;
+
+            given(phaseService.getHomePhaseDetail(any(), eq(phaseId)))
+                    .willThrow(new RoadMapException(RoadmapErrorCode.PHASE_NOT_FOUND));
+
+            // when & then
+            mockMvc.perform(get("/api/v1/phases/{phaseId}/home", phaseId))
                     .andDo(print())
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.message").value("존재하지 않는 Phase입니다."));
