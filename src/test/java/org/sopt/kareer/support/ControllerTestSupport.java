@@ -8,6 +8,7 @@ import org.sopt.kareer.domain.member.controller.MemberController;
 import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.domain.roadmap.controller.PhaseActionController;
 import org.sopt.kareer.domain.roadmap.controller.PhaseController;
+import org.sopt.kareer.domain.roadmap.service.PhaseActionService;
 import org.sopt.kareer.domain.roadmap.service.PhaseService;
 import org.sopt.kareer.domain.roadmap.service.RoadMapService;
 import org.sopt.kareer.domain.roadmap.service.RoadmapAsyncService;
@@ -73,6 +74,9 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected PhaseService phaseService;
+
+    @MockBean
+    protected PhaseActionService phaseActionService;
 
     @TestConfiguration
     static class TestSecurityWebMvcConfig implements WebMvcConfigurer {
