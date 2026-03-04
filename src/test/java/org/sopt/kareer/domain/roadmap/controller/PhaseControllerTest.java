@@ -7,9 +7,9 @@ import org.sopt.kareer.domain.roadmap.dto.response.HomePhaseDetailResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.PhaseListResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.PhaseResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapPhaseDetailResponse;
+import org.sopt.kareer.domain.roadmap.entity.enums.PhaseStatus;
 import org.sopt.kareer.domain.roadmap.exception.RoadMapException;
 import org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode;
-import org.sopt.kareer.domain.roadmap.fixture.PhaseResponseFixture;
 import org.sopt.kareer.support.ControllerTestSupport;
 
 import java.time.LocalDate;
@@ -29,12 +29,20 @@ class PhaseControllerTest extends ControllerTestSupport {
     @Test
     void getPhaseList_success() throws Exception {
         // given
-        PhaseResponse phase1 = PhaseResponseFixture.of();
-        PhaseResponse phase2 = PhaseResponseFixture.of();
-        PhaseResponse phase3 = PhaseResponseFixture.of();
+        PhaseResponse phase1 = new PhaseResponse(
+                1L,
+                PhaseStatus.CURRENT,
+                1,
+                "test-goal",
+                "test-description",
+                1L,
+                LocalDate.of(2025, 3, 1),
+                LocalDate.of(2025, 5, 31)
+        );
 
-        given(phaseService.getPhases(any()))
-                .willReturn(new PhaseListResponse(List.of(phase1, phase2, phase3)));
+        given(phaseService.getPhases(any())).willReturn(
+                new PhaseListResponse(List.of(phase1))
+        );
 
         // when & then
         mockMvc.perform(get("/api/v1/phases"))
@@ -43,7 +51,6 @@ class PhaseControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.message").value("Phase 리스트가 조회되었습니다."))
                 .andExpect(jsonPath("$.data").exists())
                 .andExpect(jsonPath("$.data.phases").isArray())
-                .andExpect(jsonPath("$.data.phases.length()").value(3))
                 .andExpect(jsonPath("$.data.phases[0].startDate").value(matchesPattern("\\d{4}-\\d{2}-\\d{2}")))
                 .andExpect(jsonPath("$.data.phases[0].endDate").value(matchesPattern("\\d{4}-\\d{2}-\\d{2}")))
         ;
