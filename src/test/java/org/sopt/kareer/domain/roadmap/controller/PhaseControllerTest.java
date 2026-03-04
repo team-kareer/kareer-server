@@ -10,11 +10,7 @@ import org.sopt.kareer.domain.roadmap.dto.response.RoadmapPhaseDetailResponse;
 import org.sopt.kareer.domain.roadmap.exception.RoadMapException;
 import org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode;
 import org.sopt.kareer.domain.roadmap.fixture.PhaseResponseFixture;
-import org.sopt.kareer.domain.roadmap.service.PhaseService;
 import org.sopt.kareer.support.ControllerTestSupport;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -27,12 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(PhaseController.class)
-@AutoConfigureMockMvc(addFilters = false)
 class PhaseControllerTest extends ControllerTestSupport {
-
-    @MockBean
-    protected PhaseService phaseService;
 
     @DisplayName("Phase 리스트를 성공적으로 조회한다.")
     @Test
