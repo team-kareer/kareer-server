@@ -56,7 +56,7 @@ public class PhaseActionMistakeRepositoryTest {
         phaseActionMistakeRepository.saveAll(List.of(mistake1,  mistake2, mistake3));
 
         // when
-        List<String> result = phaseActionMistakeRepository.findContentByPhaseActionId(phase1.getId());
+        List<String> result = phaseActionMistakeRepository.findContentByPhaseActionId(action1.getId());
 
         // then
         assertThat(result).hasSize(2);

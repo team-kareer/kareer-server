@@ -56,7 +56,7 @@ public class PhaseActionGuidelineRepositoryTest {
         phaseActionGuidelineRepository.saveAll(List.of(guideline1, guideline2, guideline3));
 
         // when
-        List<String> result = phaseActionGuidelineRepository.findContentByPhaseActionId(phase1.getId());
+        List<String> result = phaseActionGuidelineRepository.findContentByPhaseActionId(action1.getId());
 
         // then
         assertThat(result).hasSize(2);
