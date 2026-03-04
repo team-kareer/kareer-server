@@ -13,6 +13,7 @@ import org.sopt.kareer.domain.roadmap.entity.PhaseAction;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseActionType;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseStatus;
 import org.sopt.kareer.domain.roadmap.exception.RoadMapException;
+import org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode;
 import org.sopt.kareer.domain.roadmap.fixture.PhaseActionFixture;
 import org.sopt.kareer.domain.roadmap.fixture.PhaseFixture;
 import org.sopt.kareer.domain.roadmap.repository.PhaseActionRepository;
@@ -25,9 +26,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -187,8 +186,7 @@ public class PhaseServiceTest {
         @DisplayName("특정 로드맵 Phase 상세정보 조회 시, 다른 Phase의 Action은 포함되지 않는다.")
         void getRoadmapPhaseDetail_onlyParticularPhaseData() {
             // given
-            Member member2 = memberRepository.save(MemberFixture.getMember("test-provider-id-2"));
-            Phase phase2 = phaseRepository.save(PhaseFixture.getPhase(member2, 1, PhaseStatus.CURRENT));
+            Phase phase2 = phaseRepository.save(PhaseFixture.getPhase(member1, 1, PhaseStatus.CURRENT));
             PhaseAction phaseActionVisa1 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
             PhaseAction phaseActionVisa2 = PhaseActionFixture.getPhaseAction(phase2, PhaseActionType.VISA);
             phaseActionRepository.saveAll(List.of(phaseActionVisa1, phaseActionVisa2));
@@ -210,8 +208,23 @@ public class PhaseServiceTest {
             Long phaseId = 0L;
 
             // when & then
-            assertThrows(RoadMapException.class,
-                    () -> phaseService.getRoadmapPhaseDetail(member1.getId(), phaseId));
+            assertThatThrownBy(() -> phaseService.getRoadmapPhaseDetail(member1.getId(), phaseId))
+                    .isInstanceOf(RoadMapException.class)
+                    .extracting("errorCode")
+                    .isEqualTo(RoadmapErrorCode.PHASE_NOT_FOUND);
+        }
+
+        @Test
+        @DisplayName("다른 회원의 로드맵 Phase 상세정보를 조회할 경우 예외가 발생한다.")
+        void getRoadmapPhaseDetail_phaseNotFound_notOwner() {
+            // given
+            Member member2 = memberRepository.save(MemberFixture.getMember("test-provider-id-2"));
+
+            // when & then
+            assertThatThrownBy(() -> phaseService.getRoadmapPhaseDetail(member2.getId(), phase1.getId()))
+                    .isInstanceOf(RoadMapException.class)
+                    .extracting("errorCode")
+                    .isEqualTo(RoadmapErrorCode.PHASE_NOT_FOUND);
         }
     }
 
@@ -248,8 +261,7 @@ public class PhaseServiceTest {
         @DisplayName("특정 홈 Phase 상세정보 조회 시, 다른 Phase의 Action은 포함되지 않는다.")
         void getHomePhaseDetail_onlyParticularPhaseData() {
             // given
-            Member member2 = memberRepository.save(MemberFixture.getMember("test-provider-id-2"));
-            Phase phase2 = phaseRepository.save(PhaseFixture.getPhase(member2, 1, PhaseStatus.CURRENT));
+            Phase phase2 = phaseRepository.save(PhaseFixture.getPhase(member1, 1, PhaseStatus.CURRENT));
             PhaseAction phaseActionVisa1 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
             PhaseAction phaseActionVisa2 = PhaseActionFixture.getPhaseAction(phase2, PhaseActionType.VISA);
             phaseActionRepository.saveAll(List.of(phaseActionVisa1, phaseActionVisa2));
@@ -271,8 +283,23 @@ public class PhaseServiceTest {
             Long phaseId = 0L;
 
             // when & then
-            assertThrows(RoadMapException.class,
-                    () -> phaseService.getHomePhaseDetail(member1.getId(), phaseId));
+            assertThatThrownBy(() -> phaseService.getHomePhaseDetail(member1.getId(), phaseId))
+                    .isInstanceOf(RoadMapException.class)
+                    .extracting("errorCode")
+                    .isEqualTo(RoadmapErrorCode.PHASE_NOT_FOUND);
+        }
+
+        @Test
+        @DisplayName("다른 회원의 홈 Phase 상세정보를 조회할 경우 예외가 발생한다.")
+        void getHomePhaseDetail_phaseNotFound_notOwner() {
+            // given
+            Member member2 = memberRepository.save(MemberFixture.getMember("test-provider-id-2"));
+
+            // when & then
+            assertThatThrownBy(() -> phaseService.getHomePhaseDetail(member2.getId(), phase1.getId()))
+                    .isInstanceOf(RoadMapException.class)
+                    .extracting("errorCode")
+                    .isEqualTo(RoadmapErrorCode.PHASE_NOT_FOUND);
         }
     }
 }
