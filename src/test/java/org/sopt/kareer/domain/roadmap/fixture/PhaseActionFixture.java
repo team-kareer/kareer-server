@@ -13,30 +13,15 @@ public class PhaseActionFixture {
     public static final LocalDate DEADLINE = LocalDate.of(2026, 3, 4);
     public static final String IMPORTANCE = "test-importance";
 
-    public static PhaseAction.PhaseActionBuilder builder(Phase phase, PhaseActionType type) {
-        return PhaseAction.builder()
-                .title(TITLE)
-                .description(DESCRIPTION)
-                .type(type)
-                .deadline(DEADLINE)
-                .importance(IMPORTANCE)
-                .phase(phase);
-    }
-
     public static PhaseAction getPhaseAction(Phase phase, PhaseActionType type) {
-        return builder(phase, type).build();
+        return PhaseAction.create(TITLE, DESCRIPTION, type, DEADLINE, IMPORTANCE, phase);
     }
 
     public static PhaseAction getPhaseAction(Phase phase, PhaseActionType type, LocalDate deadline) {
-        return builder(phase, type)
-                .deadline(deadline)
-                .build();
+        return PhaseAction.create(TITLE, DESCRIPTION, type, deadline, IMPORTANCE, phase);
     }
 
     public static PhaseAction getPhaseAction(Phase phase, PhaseActionType type, String title, LocalDate deadline) {
-        return builder(phase, type)
-                .title(title)
-                .deadline(deadline)
-                .build();
+        return PhaseAction.create(title, DESCRIPTION, type, deadline, IMPORTANCE, phase);
     }
 }
