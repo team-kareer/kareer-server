@@ -214,6 +214,65 @@ public class PhaseServiceTest {
                     () -> phaseService.getRoadmapPhaseDetail(member1.getId(), phaseId));
         }
     }
+
+    @Nested
+    @DisplayName("홈 Phase 상세정보를 조회한다.")
+    class GetHomePhaseDetail {
+
+        @Test
+        @DisplayName("홈 phase 상세정보 조회 시 미완료 Actions들만 반환된다.")
+        void getHomePhaseDetail_completed() {
+            // given
+            PhaseAction phaseActionIncomplete = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
+
+            PhaseAction phaseActionComplete = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
+            phaseActionComplete.markAdded();
+            phaseActionComplete.markCompleted();
+
+            phaseActionRepository.saveAll(List.of(phaseActionIncomplete, phaseActionComplete));
+
+            // when
+            HomePhaseDetailResponse response = phaseService.getHomePhaseDetail(member1.getId(), phase1.getId());
+
+            // then
+            assertThat(response.count()).isEqualTo(1);
+            assertThat(response.actions()).hasSize(1);
+
+            assertThat(response.actions().get(0).phaseActionId()).isEqualTo(phaseActionIncomplete.getId());
+            assertThat(response.actions().get(0).type()).isEqualTo(phaseActionIncomplete.getType().getDisplayName());
+            assertThat(response.actions().get(0).title()).isEqualTo(phaseActionIncomplete.getTitle());
+            assertThat(response.actions().get(0).deadline()).isEqualTo(phaseActionIncomplete.getDeadline());
+        }
+
+        @Test
+        @DisplayName("특정 홈 Phase 상세정보 조회 시, 다른 Phase의 Action은 포함되지 않는다.")
+        void getHomePhaseDetail_onlyParticularPhaseData() {
+            // given
+            Member member2 = memberRepository.save(MemberFixture.getMember("test-provider-id-2"));
+            Phase phase2 = phaseRepository.save(PhaseFixture.getPhase(member2, 1, PhaseStatus.CURRENT));
+            PhaseAction phaseActionVisa1 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
+            PhaseAction phaseActionVisa2 = PhaseActionFixture.getPhaseAction(phase2, PhaseActionType.VISA);
+            phaseActionRepository.saveAll(List.of(phaseActionVisa1, phaseActionVisa2));
+
+            // when
+            HomePhaseDetailResponse response = phaseService.getHomePhaseDetail(member1.getId(), phase1.getId());
+
+            // then
+            assertThat(response.actions()).hasSize(1);
+            assertThat(response.actions())
+                    .extracting(HomePhaseDetailResponse.HomePhaseActionResponse::phaseActionId)
+                    .containsExactly(phaseActionVisa1.getId());
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 홈 Phase 상세정보를 조회할 경우 예외가 발생한다.")
+        void getHomePhaseDetail_phaseNotFound() {
+            // given
+            Long phaseId = 0L;
+
+            // when & then
+            assertThrows(RoadMapException.class,
+                    () -> phaseService.getHomePhaseDetail(member1.getId(), phaseId));
         }
     }
 }
