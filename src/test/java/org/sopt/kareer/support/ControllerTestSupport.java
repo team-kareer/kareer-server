@@ -6,6 +6,9 @@ import org.sopt.kareer.domain.jobposting.service.JobPostingCrawler;
 import org.sopt.kareer.domain.jobposting.service.JobPostingService;
 import org.sopt.kareer.domain.member.controller.MemberController;
 import org.sopt.kareer.domain.member.service.MemberService;
+import org.sopt.kareer.domain.roadmap.controller.PhaseActionController;
+import org.sopt.kareer.domain.roadmap.controller.PhaseController;
+import org.sopt.kareer.domain.roadmap.service.PhaseService;
 import org.sopt.kareer.domain.roadmap.service.RoadMapService;
 import org.sopt.kareer.domain.roadmap.service.RoadmapAsyncService;
 import org.sopt.kareer.global.auth.service.AuthService;
@@ -28,7 +31,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
-@WebMvcTest(controllers = {JobPostingController.class, MemberController.class},
+@WebMvcTest(controllers = {JobPostingController.class, MemberController.class, PhaseController.class, PhaseActionController.class},
         excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE)
         })
 @AutoConfigureMockMvc(addFilters = false)
@@ -67,6 +70,9 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected AuthService authService;
+
+    @MockBean
+    protected PhaseService phaseService;
 
     @TestConfiguration
     static class TestSecurityWebMvcConfig implements WebMvcConfigurer {
