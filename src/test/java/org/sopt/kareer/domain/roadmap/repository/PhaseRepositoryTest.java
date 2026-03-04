@@ -136,4 +136,57 @@ public class PhaseRepositoryTest {
             assertThat(response.get("Visa")).hasSize(1);
         }
     }
+
+    @Nested
+    @DisplayName("phaseId와 memberId가 일치하는 Phase의 존재 여부를 반환한다.")
+    class ExistsByIdAndMemberId {
+
+        @Test
+        @DisplayName("phaseId와 memberId가 일치하는 Phase가 존재하면 true을 반환한다.")
+        void existsByIdAndMemberId_true() {
+            // given
+
+            // when
+            boolean result = phaseRepository.existsByIdAndMember_Id(phase1.getId(), member1.getId());
+
+            // then
+            assertThat(result).isTrue();
+        }
+
+        @Test
+        @DisplayName("phaseId와 memberId가 일치하는 Phase가 존재하지 않으면 false을 반환한다.")
+        void existsByIdAndMemberId_false() {
+            // given
+            Member member2 = memberRepository.save(MemberFixture.getMember("test-provider-id-2"));
+            // when
+            boolean result = phaseRepository.existsByIdAndMember_Id(phase1.getId(), member2.getId());
+
+            // then
+            assertThat(result).isFalse();
+        }
+    }
+
+    @Test
+    @DisplayName("phaseId가 일치하는 phaseAction들 중 아직 완료되지 않은 phaseAction들을 반환한다. ")
+    void findByPhaseIdAndCompletedIsFalse() {
+        // given
+        Phase phase2 = phaseRepository.save(PhaseFixture.getPhase(member1, 2, PhaseStatus.NEXT));
+
+        PhaseAction action1 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
+        PhaseAction action2 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
+        action2.markCompleted();
+        PhaseAction action3 = PhaseActionFixture.getPhaseAction(phase2, PhaseActionType.VISA);
+        phaseActionRepository.saveAll(List.of(action1, action2, action3));
+
+        // when
+        List<PhaseAction> result = phaseActionRepository.findByPhaseIdAndCompletedIsFalse(phase1.getId());
+
+        // then
+        assertThat(result).hasSize(1);
+        assertThat(result)
+                .extracting(PhaseAction::getId)
+                .containsExactly(action1.getId());
+        assertThat(result.get(0).getCompleted()).isFalse();
+        assertThat(result.get(0).getPhase().getId()).isEqualTo(phase1.getId());
+    }
 }
