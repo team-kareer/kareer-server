@@ -14,14 +14,6 @@ public class PhaseFixture {
     public static final LocalDate END_DATE = LocalDate.of(2026, 8, 31);
 
     public static Phase getPhase(Member member, int sequence, PhaseStatus phaseStatus) {
-        return Phase.builder()
-                .member(member)
-                .sequence(sequence)
-                .goal(GOAL)
-                .description(DESCRIPTION)
-                .status(phaseStatus)
-                .startDate(START_DATE)
-                .endDate(END_DATE)
-                .build();
+        return Phase.create(member, sequence, GOAL, DESCRIPTION, phaseStatus, START_DATE, END_DATE);
     }
 }
