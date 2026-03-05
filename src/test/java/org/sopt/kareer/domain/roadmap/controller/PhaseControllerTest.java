@@ -111,7 +111,7 @@ class PhaseControllerTest extends ControllerTestSupport {
             mockMvc.perform(get("/api/v1/phases/{phaseId}/roadmap", phaseId))
                     .andDo(print())
                     .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.message").value("존재하지 않는 Phase입니다."));
+                    .andExpect(jsonPath("$.message").value(RoadmapErrorCode.PHASE_NOT_FOUND.getMessage()));
         }
     }
 
@@ -161,7 +161,7 @@ class PhaseControllerTest extends ControllerTestSupport {
             mockMvc.perform(get("/api/v1/phases/{phaseId}/home", phaseId))
                     .andDo(print())
                     .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.message").value("존재하지 않는 Phase입니다."));
+                    .andExpect(jsonPath("$.message").value(RoadmapErrorCode.PHASE_NOT_FOUND.getMessage()));
         }
     }
 }

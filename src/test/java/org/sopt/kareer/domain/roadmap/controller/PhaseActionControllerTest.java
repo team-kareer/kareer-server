@@ -65,7 +65,7 @@ class PhaseActionControllerTest extends ControllerTestSupport {
             mockMvc.perform(get("/api/v1/phase-actions/{phaseActionId}/guide", phaseActionId))
                     .andDo(print())
                     .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.message").value("존재하지 않는 PhaseAction입니다."));
+                    .andExpect(jsonPath("$.message").value(RoadmapErrorCode.PHASE_ACTION_NOT_FOUND.getMessage()));
         }
     }
 }
