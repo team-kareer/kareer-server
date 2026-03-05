@@ -54,7 +54,7 @@ class PhaseActionControllerTest extends ControllerTestSupport {
 
         @Test
         @DisplayName("존재하지 않는 PhaseAction에 대한 AI 가이드 조회 시 예외가 발생한다.")
-        void getAiGuide_notFondPhaseAction() throws Exception {
+        void getAiGuide_notFoundPhaseAction() throws Exception {
             // given
             Long phaseActionId = 0L;
 

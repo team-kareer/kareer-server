@@ -100,7 +100,7 @@ class PhaseControllerTest extends ControllerTestSupport {
 
         @Test
         @DisplayName("존재하지 않는 로드맵 Phase 상세정보 조회 시 예외가 발생한다.")
-        void getRoadmapPhaseDetail_notFondPhase() throws Exception {
+        void getRoadmapPhaseDetail_notFoundPhase() throws Exception {
             // given
             Long phaseId = 0L;
 
@@ -150,7 +150,7 @@ class PhaseControllerTest extends ControllerTestSupport {
 
         @Test
         @DisplayName("존재하지 않는 홈 Phase 상세정보 조회 시 예외가 발생한다.")
-        void getHomePhaseDetail_notFondPhase() throws Exception {
+        void getHomePhaseDetail_notFoundPhase() throws Exception {
             // given
             Long phaseId = 0L;
 
