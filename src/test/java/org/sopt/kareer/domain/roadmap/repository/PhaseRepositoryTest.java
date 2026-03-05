@@ -127,13 +127,15 @@ public class PhaseRepositoryTest {
             Phase phase2 = phaseRepository.save(PhaseFixture.getPhase(member2, 1, PhaseStatus.CURRENT));
 
             PhaseAction phaseActionVisa1 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
-            PhaseAction phaseActionVisa2 = PhaseActionFixture.getPhaseAction(phase2, PhaseActionType.VISA);
-            phaseActionRepository.saveAll(List.of(phaseActionVisa1, phaseActionVisa2));
+            PhaseAction phaseActionVisaOfOtherMember = PhaseActionFixture.getPhaseAction(phase2, PhaseActionType.CAREER);
+            phaseActionRepository.saveAll(List.of(phaseActionVisa1, phaseActionVisaOfOtherMember));
 
             // when
             Map<String, List<RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse>> response = phaseRepository.getRoadmapPhaseDetail(phase1.getId());
+
             // then
             assertThat(response.get("Visa")).hasSize(1);
+            assertThat(response).containsOnlyKeys("Visa");
         }
     }
 
