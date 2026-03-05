@@ -93,7 +93,7 @@ public class PhaseRepositoryTest {
     class GetRoadmapPhaseDetail {
 
         @Test
-        @DisplayName("PhaseAction들을 타입별로 그룹핑하어 Map으로 반환한다.")
+        @DisplayName("PhaseAction들을 타입별로 그룹핑하여 Map으로 반환한다.")
         void getRoadmapPhaseDetail_grouped() {
             // given
             PhaseAction phaseActionVisa = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
@@ -127,13 +127,15 @@ public class PhaseRepositoryTest {
             Phase phase2 = phaseRepository.save(PhaseFixture.getPhase(member2, 1, PhaseStatus.CURRENT));
 
             PhaseAction phaseActionVisa1 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
-            PhaseAction phaseActionVisa2 = PhaseActionFixture.getPhaseAction(phase2, PhaseActionType.VISA);
-            phaseActionRepository.saveAll(List.of(phaseActionVisa1, phaseActionVisa2));
+            PhaseAction phaseActionVisaOfOtherMember = PhaseActionFixture.getPhaseAction(phase2, PhaseActionType.CAREER);
+            phaseActionRepository.saveAll(List.of(phaseActionVisa1, phaseActionVisaOfOtherMember));
 
             // when
             Map<String, List<RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse>> response = phaseRepository.getRoadmapPhaseDetail(phase1.getId());
+
             // then
             assertThat(response.get("Visa")).hasSize(1);
+            assertThat(response).containsOnlyKeys("Visa");
         }
     }
 
@@ -142,7 +144,7 @@ public class PhaseRepositoryTest {
     class ExistsByIdAndMemberId {
 
         @Test
-        @DisplayName("phaseId와 memberId가 일치하는 Phase가 존재하면 true을 반환한다.")
+        @DisplayName("phaseId와 memberId가 일치하는 Phase가 존재하면 true를 반환한다.")
         void existsByIdAndMemberId_true() {
             // given
 
@@ -154,7 +156,7 @@ public class PhaseRepositoryTest {
         }
 
         @Test
-        @DisplayName("phaseId와 memberId가 일치하는 Phase가 존재하지 않으면 false을 반환한다.")
+        @DisplayName("phaseId와 memberId가 일치하는 Phase가 존재하지 않으면 false를 반환한다.")
         void existsByIdAndMemberId_false() {
             // given
             Member member2 = memberRepository.save(MemberFixture.getMember("test-provider-id-2"));
