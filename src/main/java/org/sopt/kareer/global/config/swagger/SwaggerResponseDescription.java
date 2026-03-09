@@ -91,6 +91,10 @@ public enum SwaggerResponseDescription {
     USER_STATUS(new LinkedHashSet<>(Set.of(
             MEMBER_NOT_FOUND,
             VISA_NOT_FOUND
+    ))),
+    GET_MYPAGE(new LinkedHashSet<>(Set.of(
+            MEMBER_NOT_FOUND,
+            VISA_NOT_FOUND
     )))
     ;
 
