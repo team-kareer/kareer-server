@@ -1,26 +1,15 @@
 package org.sopt.kareer.domain.member.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
 import org.sopt.kareer.domain.member.dto.response.MemberInfoResponse;
 import org.sopt.kareer.domain.member.dto.response.MemberStatusResponse;
+import org.sopt.kareer.domain.member.dto.response.MypageResponse;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.entity.MemberVisa;
-import org.sopt.kareer.domain.member.entity.enums.Country;
-import org.sopt.kareer.domain.member.entity.enums.Degree;
-import org.sopt.kareer.domain.member.entity.enums.LanguageLevel;
-import org.sopt.kareer.domain.member.entity.enums.MemberStatus;
-import org.sopt.kareer.domain.member.entity.enums.OAuthProvider;
-import org.sopt.kareer.domain.member.entity.enums.RoadmapStatus;
+import org.sopt.kareer.domain.member.entity.enums.*;
 import org.sopt.kareer.domain.member.exception.MemberErrorCode;
 import org.sopt.kareer.domain.member.exception.MemberException;
 import org.sopt.kareer.domain.member.fixture.MemberFixture;
@@ -32,6 +21,14 @@ import org.sopt.kareer.global.oauth.dto.OAuthAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -173,6 +170,43 @@ class MemberServiceTest {
                 .hasMessage(MemberErrorCode.VISA_NOT_FOUND.getMessage());
     }
 
+    @DisplayName("마이페이지에서 유저 정보를 조회한다.")
+    @Test
+    void getMyPage(){
+       //given
+        Member member = memberRepository.save(MemberFixture.getMember());
+        MemberVisa memberVisa = memberVisaRepository.save(MemberVisaFixture.activeD2(member));
+       //when
+        MypageResponse response = memberService.getMypage(member.getId());
+
+        //then
+        assertThat(response.name()).isEqualTo(member.getName());
+        assertThat(response.country()).isEqualTo(member.getCountry().getCountryName());
+    }
+
+    @DisplayName("존재하지 않는 회원의 마이페이지 조회 시 예외가 발생한다.")
+    @Test
+    void getMyPageWithoutMember(){
+
+        assertThatThrownBy(() -> memberService.getMypage(1L))
+                .isInstanceOf(MemberException.class)
+                .hasMessage(MemberErrorCode.MEMBER_NOT_FOUND.getMessage());
+
+    }
+
+    @DisplayName("비자정보가 존재하지 않는 경우 마이페이지 조회 시 예외가 발생한다.")
+    @Test
+    void getMypageWithoutMemberVisa(){
+       //given
+        Member member = memberRepository.save(MemberFixture.getMember());
+
+       //when && then
+        assertThatThrownBy(() -> memberService.getMypage(member.getId()))
+                .isInstanceOf(MemberException.class)
+                .hasMessage(MemberErrorCode.VISA_NOT_FOUND.getMessage());
+    }
+
+
     private OAuthAttributes createOAuthAttributes() {
         String providerId = UUID.randomUUID().toString();
         return new OAuthAttributes(
@@ -185,4 +219,6 @@ class MemberServiceTest {
                 Map.of()
         );
     }
+
+
 }

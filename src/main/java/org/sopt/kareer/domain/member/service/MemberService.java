@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
 import org.sopt.kareer.domain.member.dto.response.MemberInfoResponse;
 import org.sopt.kareer.domain.member.dto.response.MemberStatusResponse;
+import org.sopt.kareer.domain.member.dto.response.MypageResponse;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.entity.MemberVisa;
 import org.sopt.kareer.domain.member.entity.enums.MemberStatus;
@@ -95,5 +96,12 @@ public class MemberService {
         boolean onboardingRequired = member.getStatus().equals(MemberStatus.PENDING);
 
         return MemberStatusResponse.from(member, memberVisa, onboardingRequired);
+    }
+
+    public MypageResponse getMypage(Long memberId) {
+        Member member = getById(memberId);
+        MemberVisa memberVisa = memberVisaRepository.findActiveByMemberId(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.VISA_NOT_FOUND));
+        return MypageResponse.from(member, memberVisa);
     }
 }
