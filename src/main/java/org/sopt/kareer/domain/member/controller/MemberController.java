@@ -84,7 +84,7 @@ public class MemberController {
     public ResponseEntity<BaseResponse<Void>> generateRoadmap(
             @AuthenticationPrincipal Long memberId){
 
-        roadmapAsyncService.generateRoadmapAsync(memberId);
+        roadMapService.createRoadmap(memberId);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok("AI 로드맵 생성에 성공하였습니다."));
