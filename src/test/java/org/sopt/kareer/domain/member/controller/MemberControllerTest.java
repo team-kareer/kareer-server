@@ -127,7 +127,7 @@ class MemberControllerTest extends ControllerTestSupport {
 
         MypageResponse response = MypageResponse.from(member, memberVisa);
 
-        given(memberService.getMypage(member.getId())).willReturn(response);
+        given(memberService.getMypage(any())).willReturn(response);
 
        //when && then
         mockMvc.perform(get("/api/v1/members/mypage")
