@@ -1,13 +1,14 @@
 package org.sopt.kareer.domain.member.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
 import lombok.*;
 import org.sopt.kareer.domain.member.entity.enums.VisaStatus;
 import org.sopt.kareer.domain.member.entity.enums.VisaType;
+import org.sopt.kareer.domain.member.exception.MemberErrorCode;
 import org.sopt.kareer.domain.member.exception.MemberException;
 import org.sopt.kareer.global.entity.BaseEntity;
-import org.sopt.kareer.domain.member.exception.MemberErrorCode;
+
+import java.time.LocalDate;
 
 @Table(name = "member_visas")
 @Entity
@@ -77,4 +78,13 @@ public class MemberVisa extends BaseEntity {
             throw new MemberException(MemberErrorCode.INVALID_VISA_POINT);
         }
     }
+
+    public void updateVisa(
+            VisaType visaType,
+            LocalDate visaExpiredAt
+    ){
+        this.visaType = visaType;
+        this.visaExpiredAt = visaExpiredAt;
+    }
+
 }
