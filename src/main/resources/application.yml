@@ -94,6 +94,8 @@ auth:
       name: ${AUTH_REFRESH_TOKEN_COOKIE_NAME}
       secure: ${AUTH_REFRESH_TOKEN_COOKIE_SECURE}
       same-site: ${AUTH_REFRESH_TOKEN_COOKIE_SAMESITE}
+  token-blacklist:
+    redis-prefix: ${AUTH_TOKEN_BLACKLIST_REDIS_PREFIX}
 ---
 spring:
   config:
