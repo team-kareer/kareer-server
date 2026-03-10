@@ -115,7 +115,7 @@ public class MemberController {
     @Operation(summary = "마이페이지 수정", description = "마이페이지에서 유저 프로필을 수정합니다.")
     @CustomExceptionDescription(UPDATE_MYPAGE)
     @PutMapping("mypage")
-    public ResponseEntity<BaseResponse<Void>> updateMypage(@AuthenticationPrincipal Long memberId, @RequestBody MypageRequest request){
+    public ResponseEntity<BaseResponse<Void>> updateMypage(@AuthenticationPrincipal Long memberId, @Valid @RequestBody MypageRequest request){
         memberService.updateMypage(memberId, request.toCommand());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok("마이페이지 수정에 성공하였습니다."));
