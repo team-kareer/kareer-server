@@ -6,10 +6,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.exception.MemberException;
 import org.sopt.kareer.domain.member.service.MemberService;
+import org.sopt.kareer.global.auth.service.TokenBlacklistService;
 import org.sopt.kareer.global.exception.customexception.GlobalException;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
 import org.sopt.kareer.global.jwt.dto.TokenType;
@@ -31,6 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;
     private final MemberService memberService;
+    private final Optional<TokenBlacklistService> tokenBlacklistService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -38,6 +41,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         String token = resolveToken(request);
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            tokenBlacklistService.ifPresent(service -> {
+                if (service.contains(token)) {
+                    throw new GlobalException(GlobalErrorCode.JWT_INVALID);
+                }
+            });
             try {
                 Long memberId = jwtTokenUtil.extractMemberId(token, TokenType.ACCESS);
                 Member member = memberService.getById(memberId);
