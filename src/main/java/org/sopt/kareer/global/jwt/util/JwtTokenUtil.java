@@ -42,7 +42,10 @@ public class JwtTokenUtil {
     public Optional<String> resolveToken(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith(BEARER_PREFIX)) {
-            return Optional.of(authorizationHeader.substring(BEARER_PREFIX.length()));
+            String token = authorizationHeader.substring(BEARER_PREFIX.length());
+            if (StringUtils.hasText(token)) {
+                return Optional.of(token);
+            }
         }
         return Optional.empty();
     }
