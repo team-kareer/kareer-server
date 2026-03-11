@@ -36,8 +36,15 @@ public class AuthService {
         refreshTokenCookieManager.delete(response);
         String accessToken = jwtTokenUtil.resolveToken(request)
                 .orElseThrow(() -> new GlobalException(GlobalErrorCode.UNAUTHORIZED));
-        long remainingSeconds = jwtTokenUtil.extractRemainingValiditySeconds(accessToken, TokenType.ACCESS);
-        tokenBlacklistService.register(accessToken, remainingSeconds);
+
+        try {
+            long remainingSeconds = jwtTokenUtil.extractRemainingValiditySeconds(accessToken, TokenType.ACCESS);
+            tokenBlacklistService.register(accessToken, remainingSeconds);
+        } catch (GlobalException ex) {
+            if (ex.getErrorCode() != GlobalErrorCode.JWT_EXPIRED) {
+                throw ex;
+            }
+        }
     }
 
     public TokenResponse reissue(HttpServletRequest request, HttpServletResponse response) {
