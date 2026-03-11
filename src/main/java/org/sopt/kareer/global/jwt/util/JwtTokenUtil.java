@@ -89,7 +89,7 @@ public class JwtTokenUtil {
         if (remainingMillis <= 0) {
             throw new GlobalException(GlobalErrorCode.JWT_EXPIRED);
         }
-        long remainingSeconds = remainingMillis / 1000;
+        long remainingSeconds = (remainingMillis + 999L) / 1000L;
         return Math.max(remainingSeconds, 1L);
     }
 }
