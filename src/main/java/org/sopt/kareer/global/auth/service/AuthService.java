@@ -17,10 +17,8 @@ import org.sopt.kareer.global.jwt.JwtTokenProvider;
 import org.sopt.kareer.global.jwt.dto.JwtTokenDTO;
 import org.sopt.kareer.global.jwt.dto.TokenType;
 import org.sopt.kareer.global.jwt.util.JwtTokenUtil;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -34,11 +32,10 @@ public class AuthService {
     private final RefreshTokenCookieManager refreshTokenCookieManager;
     private final TokenBlacklistService tokenBlacklistService;
 
-    private static final String BEARER_PREFIX = "Bearer ";
-
     public void signOut(HttpServletRequest request, HttpServletResponse response) {
         refreshTokenCookieManager.delete(response);
-        String accessToken = resolveAccessToken(request);
+        String accessToken = jwtTokenUtil.resolveToken(request)
+                .orElseThrow(() -> new GlobalException(GlobalErrorCode.UNAUTHORIZED));
         long remainingSeconds = jwtTokenUtil.extractRemainingValiditySeconds(accessToken, TokenType.ACCESS);
         tokenBlacklistService.register(accessToken, remainingSeconds);
     }
@@ -71,11 +68,4 @@ public class AuthService {
         }
     }
 
-    private String resolveAccessToken(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith(BEARER_PREFIX)) {
-            return authorizationHeader.substring(BEARER_PREFIX.length());
-        }
-        throw new GlobalException(GlobalErrorCode.UNAUTHORIZED);
-    }
 }

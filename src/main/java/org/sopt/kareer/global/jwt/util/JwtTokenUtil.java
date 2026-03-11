@@ -5,19 +5,24 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Date;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.global.config.jwt.JwtProperties;
 import org.sopt.kareer.global.exception.customexception.GlobalException;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
 import org.sopt.kareer.global.jwt.dto.TokenType;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component
 @RequiredArgsConstructor
 public class JwtTokenUtil {
 
+    public static final String BEARER_PREFIX = "Bearer ";
     private static final String TOKEN_TYPE_CLAIM = "tokenType";
 
     private final JwtProperties jwtProperties;
@@ -32,6 +37,14 @@ public class JwtTokenUtil {
         Claims claims = parseClaims(token);
         validateTokenType(claims, expectedType);
         return calculateRemainingSeconds(claims.getExpiration());
+    }
+
+    public Optional<String> resolveToken(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith(BEARER_PREFIX)) {
+            return Optional.of(authorizationHeader.substring(BEARER_PREFIX.length()));
+        }
+        return Optional.empty();
     }
 
     private Claims parseClaims(String token) {
