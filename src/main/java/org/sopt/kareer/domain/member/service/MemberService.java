@@ -44,7 +44,8 @@ public class MemberService {
                 attributes.name(),
                 attributes.provider(),
                 attributes.providerId(),
-                attributes.picture()
+                attributes.picture(),
+                attributes.email()
         );
         try {
             return memberRepository.save(member);
