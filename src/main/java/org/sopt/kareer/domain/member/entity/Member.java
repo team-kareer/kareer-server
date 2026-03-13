@@ -57,6 +57,11 @@ public class Member extends BaseEntity {
 
     private String personalBackground;
 
+    private String university;
+
+    @Enumerated(EnumType.STRING)
+    private EnglishLevel englishLevel;
+
     @Enumerated(EnumType.STRING)
     private LanguageLevel languageLevel;
 
@@ -132,4 +137,26 @@ public class Member extends BaseEntity {
     public void markRoadmapInProgress() { this.roadmapStatus = RoadmapStatus.IN_PROGRESS; }
     public void markRoadmapDone() { this.roadmapStatus = RoadmapStatus.DONE; }
     public void markRoadmapFailed() { this.roadmapStatus = RoadmapStatus.FAILED; }
+
+    public void updateProfile(
+            String targetJob,
+            LocalDate birthDate,
+            Country country,
+            Degree degree,
+            String university,
+            String primaryMajor,
+            String secondaryMajor,
+            LanguageLevel languageLevel,
+            EnglishLevel englishLevel
+    ) {
+        this.targetJob = targetJob;
+        this.birthDate = birthDate;
+        this.country = country;
+        this.degree = degree;
+        this.university = university;
+        this.primaryMajor = primaryMajor;
+        this.secondaryMajor = secondaryMajor;
+        this.languageLevel = languageLevel;
+        this.englishLevel = englishLevel;
+    }
 }

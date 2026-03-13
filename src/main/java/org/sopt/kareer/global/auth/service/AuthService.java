@@ -30,6 +30,22 @@ public class AuthService {
     private final MemberService memberService;
     private final LoginCodeService loginCodeService;
     private final RefreshTokenCookieManager refreshTokenCookieManager;
+    private final TokenBlacklistService tokenBlacklistService;
+
+    public void signOut(HttpServletRequest request, HttpServletResponse response) {
+        refreshTokenCookieManager.delete(response);
+        String accessToken = jwtTokenUtil.resolveToken(request)
+                .orElseThrow(() -> new GlobalException(GlobalErrorCode.UNAUTHORIZED));
+
+        try {
+            long remainingSeconds = jwtTokenUtil.extractRemainingValiditySeconds(accessToken, TokenType.ACCESS);
+            tokenBlacklistService.register(accessToken, remainingSeconds);
+        } catch (GlobalException ex) {
+            if (ex.getErrorCode() != GlobalErrorCode.JWT_EXPIRED) {
+                throw ex;
+            }
+        }
+    }
 
     public TokenResponse reissue(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = refreshTokenCookieManager.read(request)
@@ -58,4 +74,5 @@ public class AuthService {
             throw new GlobalException(GlobalErrorCode.UNAUTHORIZED);
         }
     }
+
 }

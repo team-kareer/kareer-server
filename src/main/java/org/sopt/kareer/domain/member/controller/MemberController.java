@@ -6,10 +6,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
-import org.sopt.kareer.domain.member.dto.response.MemberInfoResponse;
-import org.sopt.kareer.domain.member.dto.response.MemberStatusResponse;
-import org.sopt.kareer.domain.member.dto.response.OnboardCountriesResponse;
-import org.sopt.kareer.domain.member.dto.response.OnboardMajorsResponse;
+import org.sopt.kareer.domain.member.dto.request.MypageRequest;
+import org.sopt.kareer.domain.member.dto.response.*;
 import org.sopt.kareer.domain.member.entity.constants.Major;
 import org.sopt.kareer.domain.member.entity.enums.Country;
 import org.sopt.kareer.domain.member.service.MemberService;
@@ -24,8 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.CREATE_ROADMAP;
-import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.USER_STATUS;
+import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -84,7 +81,7 @@ public class MemberController {
     public ResponseEntity<BaseResponse<Void>> generateRoadmap(
             @AuthenticationPrincipal Long memberId){
 
-        roadmapAsyncService.generateRoadmapAsync(memberId);
+        roadMapService.createRoadmap(memberId);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok("AI 로드맵 생성에 성공하였습니다."));
@@ -107,4 +104,21 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok(memberService.getMemberStatus(memberId), "My status 조회에 성공하였습니다."));
     }
+
+    @Operation(summary = "마이페이지 조회", description = "마이페이지에서 유저 정보를 조회합니다.")
+    @CustomExceptionDescription(GET_MYPAGE)
+    @GetMapping("mypage")
+    public ResponseEntity<BaseResponse<MypageResponse>> getMypage(@AuthenticationPrincipal Long memberId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.ok(memberService.getMypage(memberId), "마이페이지 조회에 성공하였습니다."));
+    }
+    @Operation(summary = "마이페이지 수정", description = "마이페이지에서 유저 프로필을 수정합니다.")
+    @CustomExceptionDescription(UPDATE_MYPAGE)
+    @PutMapping("mypage")
+    public ResponseEntity<BaseResponse<Void>> updateMypage(@AuthenticationPrincipal Long memberId, @Valid @RequestBody MypageRequest request){
+        memberService.updateMypage(memberId, request.toCommand());
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.ok("마이페이지 수정에 성공하였습니다."));
+    }
+
 }

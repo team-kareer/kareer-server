@@ -76,7 +76,6 @@ public class PhaseRepositoryCustomImpl implements PhaseRepositoryCustom {
         return query
                 .from(phaseAction)
                 .where(phaseAction.phase.id.eq(phaseId))
-                .orderBy(phaseAction.deadline.asc(), phaseAction.title.asc()) // deadline 가까운 순으로 정렬, deadline이 같다면
                 .transform(
                         groupBy(typeLabel).as(
                                 list(new QRoadmapPhaseDetailResponse_ActionGroupResponse_ActionResponse(

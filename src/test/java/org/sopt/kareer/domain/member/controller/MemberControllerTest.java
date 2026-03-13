@@ -1,5 +1,25 @@
 package org.sopt.kareer.domain.member.controller;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
+import org.sopt.kareer.domain.member.dto.response.MemberInfoResponse;
+import org.sopt.kareer.domain.member.dto.response.MemberStatusResponse;
+import org.sopt.kareer.domain.member.dto.response.MypageResponse;
+import org.sopt.kareer.domain.member.entity.Member;
+import org.sopt.kareer.domain.member.entity.MemberVisa;
+import org.sopt.kareer.domain.member.entity.enums.Country;
+import org.sopt.kareer.domain.member.entity.enums.LanguageLevel;
+import org.sopt.kareer.domain.member.entity.enums.VisaType;
+import org.sopt.kareer.domain.member.fixture.MemberFixture;
+import org.sopt.kareer.domain.member.fixture.MemberOnboardRequestFixture;
+import org.sopt.kareer.domain.member.fixture.MemberVisaFixture;
+import org.sopt.kareer.support.ControllerTestSupport;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+
+import java.time.LocalDate;
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
@@ -10,20 +30,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.time.LocalDate;
-import java.util.List;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
-import org.sopt.kareer.domain.member.dto.response.MemberInfoResponse;
-import org.sopt.kareer.domain.member.dto.response.MemberStatusResponse;
-import org.sopt.kareer.domain.member.entity.enums.Country;
-import org.sopt.kareer.domain.member.entity.enums.LanguageLevel;
-import org.sopt.kareer.domain.member.entity.enums.VisaType;
-import org.sopt.kareer.domain.member.fixture.MemberOnboardRequestFixture;
-import org.sopt.kareer.support.ControllerTestSupport;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 class MemberControllerTest extends ControllerTestSupport {
 
@@ -110,5 +116,25 @@ class MemberControllerTest extends ControllerTestSupport {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.visaType").value("D2"));
+    }
+
+    @DisplayName("마이페이지를 조회한다.")
+    @Test
+    void getMyPage() throws Exception {
+       //given
+        Member member = MemberFixture.getMember();
+        MemberVisa memberVisa = MemberVisaFixture.activeD2(member);
+
+        MypageResponse response = MypageResponse.from(member, memberVisa);
+
+        given(memberService.getMypage(any())).willReturn(response);
+
+       //when && then
+        mockMvc.perform(get("/api/v1/members/mypage")
+                .with(authentication(authenticatedMember())))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.name").value(member.getName()));
+
     }
 }
