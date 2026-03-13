@@ -5,18 +5,24 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import java.security.Key;
+import java.util.Date;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.global.config.jwt.JwtProperties;
 import org.sopt.kareer.global.exception.customexception.GlobalException;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
 import org.sopt.kareer.global.jwt.dto.TokenType;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component
 @RequiredArgsConstructor
 public class JwtTokenUtil {
 
+    public static final String BEARER_PREFIX = "Bearer ";
     private static final String TOKEN_TYPE_CLAIM = "tokenType";
 
     private final JwtProperties jwtProperties;
@@ -25,6 +31,23 @@ public class JwtTokenUtil {
         Claims claims = parseClaims(token);
         validateTokenType(claims, expectedType);
         return parseMemberId(claims);
+    }
+
+    public long extractRemainingValiditySeconds(String token, TokenType expectedType) {
+        Claims claims = parseClaims(token);
+        validateTokenType(claims, expectedType);
+        return calculateRemainingSeconds(claims.getExpiration());
+    }
+
+    public Optional<String> resolveToken(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith(BEARER_PREFIX)) {
+            String token = authorizationHeader.substring(BEARER_PREFIX.length());
+            if (StringUtils.hasText(token)) {
+                return Optional.of(token);
+            }
+        }
+        return Optional.empty();
     }
 
     private Claims parseClaims(String token) {
@@ -59,5 +82,14 @@ public class JwtTokenUtil {
         } catch (NumberFormatException ex) {
             throw new GlobalException(GlobalErrorCode.JWT_INVALID);
         }
+    }
+
+    private long calculateRemainingSeconds(Date expiration) {
+        long remainingMillis = expiration.getTime() - System.currentTimeMillis();
+        if (remainingMillis <= 0) {
+            throw new GlobalException(GlobalErrorCode.JWT_EXPIRED);
+        }
+        long remainingSeconds = (remainingMillis + 999L) / 1000L;
+        return Math.max(remainingSeconds, 1L);
     }
 }

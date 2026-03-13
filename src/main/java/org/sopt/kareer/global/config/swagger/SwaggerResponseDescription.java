@@ -38,6 +38,7 @@ public enum SwaggerResponseDescription {
             LOGIN_CODE_ALREADY_USED
     ))),
     AUTH_REISSUE(new LinkedHashSet<>(Set.of())),
+    AUTH_SIGN_OUT(new LinkedHashSet<>(Set.of())),
     CREATE_ROADMAP(new LinkedHashSet<>(Set.of(
             LLM_JSON_PARSING_FAILED,
             DOCUMENTS_RETRIEVED_EMPTY,

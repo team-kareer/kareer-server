@@ -47,4 +47,14 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok(tokenResponse, "토큰이 재발급되었습니다."));
     }
+
+    @PostMapping("/sign-out")
+    @Operation(summary = "로그아웃", description = "Refresh Token 쿠키를 삭제하고 Access Token을 블랙리스트에 등록합니다.")
+    @CustomExceptionDescription(SwaggerResponseDescription.AUTH_SIGN_OUT)
+    public ResponseEntity<BaseResponse<Void>> signOut(HttpServletRequest request,
+                                                      HttpServletResponse response) {
+        authService.signOut(request, response);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.ok("로그아웃되었습니다."));
+    }
 }
