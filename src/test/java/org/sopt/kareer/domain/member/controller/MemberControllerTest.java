@@ -43,6 +43,7 @@ class MemberControllerTest extends ControllerTestSupport {
         MemberInfoResponse response = new MemberInfoResponse(
                 1L,
                 "test-user",
+                "test-user@example.com",
                 "profile-image-url",
                 LocalDate.of(2000, 4, 1),
                 Country.UNITED_STATES,

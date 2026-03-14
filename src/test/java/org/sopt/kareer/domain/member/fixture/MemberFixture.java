@@ -9,6 +9,7 @@ public class MemberFixture {
     public static final String MEMBER_NAME = "test-user-name";
     public static final OAuthProvider MEMBER_OAUTH_PROVIDER = OAuthProvider.GOOGLE;
     public static final String MEMBER_PROVIDER_ID = "test-provider-id";
+    public static final String MEMBER_EMAIL = "member@example.com";
     public static final Country MEMBER_COUNTRY = Country.AFGHANISTAN;
     public static final Degree MEMBER_DEGREE = Degree.DOMESTIC_ASSOCIATE;
     public static final String MEMBER_UNIVERSITY = "University";
@@ -23,6 +24,7 @@ public class MemberFixture {
     public static Member getMember(String providerId){
         return Member.builder()
                 .name(MEMBER_NAME)
+                .email(MEMBER_EMAIL)
                 .country(MEMBER_COUNTRY)
                 .provider(MEMBER_OAUTH_PROVIDER)
                 .providerId(providerId)
@@ -37,6 +39,7 @@ public class MemberFixture {
     public static Member getMember(LocalDate birthDate){
         return Member.builder()
                 .name(MEMBER_NAME)
+                .email(MEMBER_EMAIL)
                 .country(MEMBER_COUNTRY)
                 .provider(MEMBER_OAUTH_PROVIDER)
                 .providerId(MEMBER_PROVIDER_ID)
