@@ -79,7 +79,8 @@ class MemberServiceTest {
                 "test-user",
                 OAuthProvider.GOOGLE,
                 UUID.randomUUID().toString(),
-                "test_image_url"
+                "test_image_url",
+                "test-user@example.com"
         ));
         MemberOnboardRequest request = MemberOnboardRequestFixture.create();
 
@@ -105,6 +106,7 @@ class MemberServiceTest {
     void getMemberInfo() {
         Member member = memberRepository.save(Member.builder()
                 .name("tester")
+                .email("tester@example.com")
                 .status(MemberStatus.ACTIVE)
                 .provider(OAuthProvider.GOOGLE)
                 .providerId(UUID.randomUUID().toString())
@@ -144,6 +146,7 @@ class MemberServiceTest {
     void getMemberStatus() {
         Member member = memberRepository.save(Member.builder()
                 .name("tester")
+                .email("tester-status@example.com")
                 .status(MemberStatus.ACTIVE)
                 .provider(OAuthProvider.GOOGLE)
                 .providerId(UUID.randomUUID().toString())

@@ -3,11 +3,9 @@ package org.sopt.kareer.domain.member.dto.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import org.sopt.kareer.domain.member.entity.Member;
-import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.entity.MemberVisa;
 import org.sopt.kareer.domain.member.entity.enums.Country;
 import org.sopt.kareer.domain.member.entity.enums.LanguageLevel;
-import org.sopt.kareer.domain.member.entity.enums.VisaStatus;
 import org.sopt.kareer.domain.member.entity.enums.VisaType;
 
 @Schema(description = "회원 정보 응답")
@@ -17,6 +15,9 @@ public record MemberInfoResponse(
 
         @Schema(description = "회원 이름", example = "홍길동")
         String name,
+
+        @Schema(description = "회원 이메일", example = "test@example.com")
+        String email,
 
         @Schema(description = "프로필 이미지 URL", example = "https://cdn.example.com/profile.png")
         String profileImageUrl,
@@ -58,6 +59,7 @@ public record MemberInfoResponse(
         return new MemberInfoResponse(
                 member.getId(),
                 member.getName(),
+                member.getEmail(),
                 member.getProfileImageUrl(),
                 member.getBirthDate(),
                 member.getCountry(),

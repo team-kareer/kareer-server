@@ -27,6 +27,9 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
+    @Column(length = 320)
+    private String email;
+
     private String profileImageUrl;
 
     @Column(nullable = false)
@@ -102,9 +105,11 @@ public class Member extends BaseEntity {
     public static Member createOAuthMember(String name,
                                            OAuthProvider provider,
                                            String providerId,
-                                           String profileImageUrl) {
+                                           String profileImageUrl,
+                                           String email) {
         return Member.builder()
                 .name(name)
+                .email(email)
                 .status(MemberStatus.PENDING)
                 .provider(provider)
                 .providerId(providerId)
