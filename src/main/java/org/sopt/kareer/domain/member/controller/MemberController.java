@@ -1,8 +1,12 @@
 package org.sopt.kareer.domain.member.controller;
 
 
+import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.*;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
@@ -15,14 +19,13 @@ import org.sopt.kareer.domain.roadmap.dto.response.RoadmapTestResponse;
 import org.sopt.kareer.domain.roadmap.service.RoadMapService;
 import org.sopt.kareer.domain.roadmap.service.RoadmapAsyncService;
 import org.sopt.kareer.global.annotation.CustomExceptionDescription;
+import org.sopt.kareer.global.auth.service.AuthService;
 import org.sopt.kareer.global.config.swagger.SwaggerResponseDescription;
 import org.sopt.kareer.global.response.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,10 +34,9 @@ import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.*
 public class MemberController {
 
     private final MemberService memberService;
-
     private final RoadMapService roadMapService;
-
     private final RoadmapAsyncService roadmapAsyncService;
+    private final AuthService authService;
 
     @GetMapping("/me")
     @Operation(summary = "회원 정보 조회", description = "로그인한 회원의 정보를 조회합니다.")
@@ -119,6 +121,18 @@ public class MemberController {
         memberService.updateMypage(memberId, request.toCommand());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok("마이페이지 수정에 성공하였습니다."));
+    }
+
+    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴를 진행합니다.")
+    @CustomExceptionDescription(MEMBER_DELETE)
+    @DeleteMapping("/me")
+    public ResponseEntity<BaseResponse<Void>> deleteMember(@AuthenticationPrincipal Long memberId,
+                                                          HttpServletRequest request,
+                                                          HttpServletResponse response) {
+        memberService.deleteMember(memberId);
+        authService.signOut(request, response);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.ok("회원 탈퇴에 성공하였습니다."));
     }
 
 }
