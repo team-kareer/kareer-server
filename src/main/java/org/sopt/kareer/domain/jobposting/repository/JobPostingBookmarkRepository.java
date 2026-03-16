@@ -27,4 +27,6 @@ public interface JobPostingBookmarkRepository extends JpaRepository<JobPostingBo
             Long memberId,
             List<Long> jobPostingIds
     );
+
+    void deleteAllByMemberId(Long memberId);
 }
