@@ -16,4 +16,6 @@ public interface PhaseActionMistakeRepository extends JpaRepository<PhaseActionM
         ORDER BY pam.id ASC
     """)
     List<String> findContentByPhaseActionId(@Param("phaseActionId") Long phaseActionId);
+
+    void deleteAllByPhaseAction_Phase_Member_Id(Long memberId);
 }

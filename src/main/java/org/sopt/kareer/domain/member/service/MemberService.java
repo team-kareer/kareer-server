@@ -27,6 +27,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final MemberVisaRepository memberVisaRepository;
+    private final MemberDeletionService memberDeletionService;
 
     public Member getById(Long memberId) {
         return memberRepository.findById(memberId)
@@ -126,5 +127,11 @@ public class MemberService {
         );
         memberVisa.updateVisa(command.visaType(), command.visaExpiredAt());
 
+    }
+
+    @Transactional
+    public void deleteMember(Long memberId) {
+        Member member = getById(memberId);
+        memberDeletionService.deleteMember(member);
     }
 }
