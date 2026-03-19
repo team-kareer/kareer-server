@@ -37,7 +37,8 @@ public class OnboardingRestrictionFilter extends OncePerRequestFilter {
     );
 
     private static final List<String> ONBOARD_ALLOWED_PATHS = List.of(
-            "/api/v1/members/onboard/**"
+            "/api/v1/members/onboard/**",
+            "/api/v2/members/onboard/**"
     );
 
     private final MemberService memberService;
