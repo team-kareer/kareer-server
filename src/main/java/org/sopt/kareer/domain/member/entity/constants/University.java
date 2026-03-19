@@ -108,7 +108,7 @@ public class University {
             "Chongshin University",
             "Chodang University",
             "Cheongju University",
-            "Chongjunationaluniversityofeducation",
+            "Chongju National University Of Education",
             "Chungwoon University",
             "Changshin University",
             "CHA University",
