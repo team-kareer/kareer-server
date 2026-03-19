@@ -74,6 +74,10 @@ public class Member extends BaseEntity {
     @Column(length = 1000)
     private String targetJobSkill;
 
+    private String preparationStatus;
+
+    private String fieldsOfInterest;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RoadmapStatus roadmapStatus;
@@ -81,6 +85,10 @@ public class Member extends BaseEntity {
     public void updateInfo(String name,
                            LocalDate birthDate,
                            Country country,
+                           String university,
+                           EnglishLevel englishLevel,
+                           String fieldsOfInterests,
+                           String preparationStatuses,
                            LanguageLevel languageLevel,
                            Degree degree,
                            LocalDate expectedGraduationDate,
