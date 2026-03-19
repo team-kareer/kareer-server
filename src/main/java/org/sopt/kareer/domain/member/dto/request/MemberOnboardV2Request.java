@@ -48,7 +48,8 @@ public record MemberOnboardV2Request(
 
         String secondaryMajor,
 
-        @NotNull(message = "관심 분야는 필수 입력값입니다. (최소 1개, 최대 5개)")
+        @NotNull(message = "관심 분야는 필수 입력값입니다.")
+        @Size(min = 1, max = 5, message = "관심 분야는 최소 1개, 최대 5개까지 선택할 수 있습니다.")
         List<String> fieldsOfInterests,
 
         List<String> preparationStatuses,
