@@ -96,6 +96,17 @@ auth:
       same-site: ${AUTH_REFRESH_TOKEN_COOKIE_SAMESITE}
   token-blacklist:
     redis-prefix: ${AUTH_TOKEN_BLACKLIST_REDIS_PREFIX}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+    health:
+      show-details: always
 ---
 spring:
   config:
