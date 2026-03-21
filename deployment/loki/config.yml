@@ -4,17 +4,18 @@ server:
   http_listen_port: 3100  # Loki가 HTTP로 요청 받을 포트 (Promtail, Grafana에서 접근)
 
 storage_config:
-  boltdb:
-    directory: /loki/index  # 인덱스 저장 위치. Preometheus-style 로그 검색을 위한 메타데이터 저장
+  tsdb_shipper:
+    active_index_directory: /loki/tsdb-index
+    cache_location: /loki/tsdb-cache
   filesystem:
     directory: /loki/chunks  # 로그 청크 데이터 저장 위치. Loki는 로그를 청크 단위로 저장
 
 schema_config:  # Loki 내부 스키마 설정
   configs:
     - from: 2026-03-20
-      store: boltdb
+      store: tsdb
       object_store: filesystem
-      schema: v11
+      schema: v13
       index:
         prefix: index_
         period: 24h  # 하루 단위로 인덱스 파일 생성

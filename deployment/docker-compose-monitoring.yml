@@ -6,7 +6,7 @@ networks:
 
 services:
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:3.5.1
     container_name: prometheus
     networks:
       - monitoring
@@ -20,7 +20,7 @@ services:
     restart: unless-stopped
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:12.4.1
     container_name: grafana
     networks:
       - monitoring
@@ -34,7 +34,7 @@ services:
     restart: unless-stopped
 
   loki:
-    image: grafana/loki:latest
+    image: grafana/loki:3.5.12
     container_name: loki
     networks:
       - monitoring
