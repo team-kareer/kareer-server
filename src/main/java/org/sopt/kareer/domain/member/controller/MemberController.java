@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
 import org.sopt.kareer.domain.member.dto.request.MypageRequest;
 import org.sopt.kareer.domain.member.dto.response.*;
-import org.sopt.kareer.domain.member.entity.constants.Major;
+import org.sopt.kareer.domain.member.entity.constants.*;
 import org.sopt.kareer.domain.member.entity.enums.Country;
 import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapTestResponse;
@@ -58,6 +58,15 @@ public class MemberController {
                 .body(BaseResponse.ok("회원 온보딩이 완료되었습니다."));
     }
 
+    @GetMapping("/onboard/universities")
+    @Operation(summary = "온보딩 대학교 목록 조회", description = "회원 온보딩 시 선택할 수 있는 대학교 목록을 조회합니다.")
+    public ResponseEntity<BaseResponse<OnboardUniversitiesResponse>> getOnboardUniversities() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(BaseResponse.ok(OnboardUniversitiesResponse.from(University.UNIVERSITY_LIST),
+                        "온보딩 대학교 목록 조회에 성공하였습니다."));
+    }
+
     @GetMapping("/onboard/countries")
     @Operation(summary = "온보딩 국가 목록 조회", description = "회원 온보딩 시 선택할 수 있는 국가 목록을 조회합니다.")
     public ResponseEntity<BaseResponse<OnboardCountriesResponse>> getOnboardCountries() {
@@ -77,11 +86,20 @@ public class MemberController {
                 );
     }
 
+    @GetMapping("/onboard/fields")
+    @Operation(summary = "온보딩 관심 분야 목록 조회", description = "회원 온보딩 시 선택할 수 있는 관심 분야 목록을 조회합니다.")
+    public ResponseEntity<BaseResponse<OnboardFieldsResponse>> getOnboardFields() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(BaseResponse.ok(OnboardFieldsResponse.from(Field.FIELD_LIST), "온보딩 관심 분야 목록 조회에 성공하였습니다.")
+                );
+    }
+
     @Operation(summary = "AI 로드맵 생성 API", description = "사용자가 온보딩에 입력한 정보를 통해 로드맵을 생성합니다.")
     @CustomExceptionDescription(CREATE_ROADMAP)
     @PostMapping("roadmap")
     public ResponseEntity<BaseResponse<Void>> generateRoadmap(
-            @AuthenticationPrincipal Long memberId){
+            @AuthenticationPrincipal Long memberId) {
 
         roadMapService.createRoadmap(memberId);
 
@@ -93,7 +111,7 @@ public class MemberController {
     @CustomExceptionDescription(CREATE_ROADMAP)
     @PostMapping("roadmap/test")
     public ResponseEntity<BaseResponse<RoadmapTestResponse>> generateRoadmapForTest(
-            @AuthenticationPrincipal Long memberId){
+            @AuthenticationPrincipal Long memberId) {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok(roadMapService.createRoadmapTest(memberId), "AI 로드맵 생성에 성공하였습니다."));
@@ -114,10 +132,12 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok(memberService.getMypage(memberId), "마이페이지 조회에 성공하였습니다."));
     }
+
     @Operation(summary = "마이페이지 수정", description = "마이페이지에서 유저 프로필을 수정합니다.")
     @CustomExceptionDescription(UPDATE_MYPAGE)
     @PutMapping("mypage")
-    public ResponseEntity<BaseResponse<Void>> updateMypage(@AuthenticationPrincipal Long memberId, @Valid @RequestBody MypageRequest request){
+    public ResponseEntity<BaseResponse<Void>> updateMypage(@AuthenticationPrincipal Long memberId,
+                                                           @Valid @RequestBody MypageRequest request) {
         memberService.updateMypage(memberId, request.toCommand());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok("마이페이지 수정에 성공하였습니다."));
@@ -127,8 +147,8 @@ public class MemberController {
     @CustomExceptionDescription(MEMBER_DELETE)
     @DeleteMapping("/me")
     public ResponseEntity<BaseResponse<Void>> deleteMember(@AuthenticationPrincipal Long memberId,
-                                                          HttpServletRequest request,
-                                                          HttpServletResponse response) {
+                                                           HttpServletRequest request,
+                                                           HttpServletResponse response) {
         memberService.deleteMember(memberId);
         authService.signOut(request, response);
         return ResponseEntity.status(HttpStatus.OK)

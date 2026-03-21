@@ -1,17 +1,12 @@
 package org.sopt.kareer.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
-import org.sopt.kareer.domain.member.dto.response.MemberInfoResponse;
-import org.sopt.kareer.domain.member.dto.response.MemberStatusResponse;
-import org.sopt.kareer.domain.member.dto.response.MypageResponse;
-import org.sopt.kareer.domain.member.entity.Member;
-import org.sopt.kareer.domain.member.entity.MemberVisa;
+import org.sopt.kareer.domain.member.dto.request.*;
+import org.sopt.kareer.domain.member.dto.response.*;
+import org.sopt.kareer.domain.member.entity.*;
 import org.sopt.kareer.domain.member.entity.enums.MemberStatus;
-import org.sopt.kareer.domain.member.exception.MemberErrorCode;
-import org.sopt.kareer.domain.member.exception.MemberException;
-import org.sopt.kareer.domain.member.repository.MemberRepository;
-import org.sopt.kareer.domain.member.repository.MemberVisaRepository;
+import org.sopt.kareer.domain.member.exception.*;
+import org.sopt.kareer.domain.member.repository.*;
 import org.sopt.kareer.domain.member.service.dto.request.MypageCommand;
 import org.sopt.kareer.global.exception.customexception.GlobalException;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
@@ -71,6 +66,43 @@ public class MemberService {
                 request.name(),
                 request.birthDate(),
                 request.country(),
+                null,
+                null,
+                null,
+                null,
+                request.languageLevel(),
+                request.degree(),
+                request.expectedGraduationDate(),
+                request.primaryMajor(),
+                request.secondaryMajor(),
+                request.targetJob(),
+                request.targetJobSkill()
+        );
+
+        MemberVisa memberVisa = MemberVisa.createMemberVisa(
+                member,
+                request.visaType(),
+                request.visaExpiredAt(),
+                request.visaPoint(),
+                request.visaStartDate()
+        );
+        memberVisaRepository.save(memberVisa);
+    }
+
+    @Transactional
+    public void onboardMemberV2(MemberOnboardV2Request request, Long memberId) {
+        Member member = getById(memberId);
+        String fieldOfInterest = String.join(",", request.fieldsOfInterests());
+        String preparationStatus = String.join(",", request.preparationStatuses());
+
+        member.updateInfo(
+                request.name(),
+                request.birthDate(),
+                request.country(),
+                request.university(),
+                request.englishLevel(),
+                fieldOfInterest,
+                preparationStatus,
                 request.languageLevel(),
                 request.degree(),
                 request.expectedGraduationDate(),
