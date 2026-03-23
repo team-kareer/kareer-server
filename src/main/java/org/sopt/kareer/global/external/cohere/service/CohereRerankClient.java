@@ -64,8 +64,6 @@ public class CohereRerankClient {
             for (CohereRerankResponse.Result result : response.results()) {
                 reranked.add(documents.get(result.index()));
             }
-            log.info("Cohere rerank results: {}", reranked);
-
             return reranked;
 
         } catch (Exception e) {
