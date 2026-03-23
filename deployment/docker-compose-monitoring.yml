@@ -1,0 +1,54 @@
+version: "3.8"
+
+networks:
+  monitoring:
+    driver: bridge
+
+services:
+  prometheus:
+    image: prom/prometheus:v3.5.1
+    container_name: prometheus
+    networks:
+      - monitoring
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus  # 디스크에 데이터 저장
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:12.4
+    container_name: grafana
+    networks:
+      - monitoring
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+      - loki
+    restart: unless-stopped
+
+  loki:
+    image: grafana/loki:3.5.12
+    container_name: loki
+    networks:
+      - monitoring
+    ports:
+      - "3100:3100"
+    command: "-config.file=/etc/loki/config.yml"
+    volumes:
+      # Loki 설정 파일 컨테이너에 삽입 (read-only)
+      - ./loki/config.yml:/etc/loki/config.yml:ro
+      # 로그 데이터 디스크에 남김
+      - loki_data:/loki
+    restart: unless-stopped
+
+volumes:
+  prometheus_data:
+  grafana_data:
+  loki_data:

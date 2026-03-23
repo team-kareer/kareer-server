@@ -21,4 +21,6 @@ public interface PhaseActionRepository extends JpaRepository<PhaseAction, Long> 
                 AND m.id = :memberId
         """)
     Optional<PhaseAction> findByIdAndMemberId(@Param("phaseActionId") Long phaseActionId, @Param("memberId") Long memberId);
+
+    void deleteAllByPhase_Member_Id(Long memberId);
 }

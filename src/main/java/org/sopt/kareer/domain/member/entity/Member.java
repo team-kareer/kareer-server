@@ -27,6 +27,9 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
+    @Column(length = 320)
+    private String email;
+
     private String profileImageUrl;
 
     @Column(nullable = false)
@@ -57,6 +60,11 @@ public class Member extends BaseEntity {
 
     private String personalBackground;
 
+    private String university;
+
+    @Enumerated(EnumType.STRING)
+    private EnglishLevel englishLevel;
+
     @Enumerated(EnumType.STRING)
     private LanguageLevel languageLevel;
 
@@ -66,6 +74,10 @@ public class Member extends BaseEntity {
     @Column(length = 1000)
     private String targetJobSkill;
 
+    private String preparationStatus;
+
+    private String fieldsOfInterest;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RoadmapStatus roadmapStatus;
@@ -73,6 +85,10 @@ public class Member extends BaseEntity {
     public void updateInfo(String name,
                            LocalDate birthDate,
                            Country country,
+                           String university,
+                           EnglishLevel englishLevel,
+                           String fieldsOfInterests,
+                           String preparationStatuses,
                            LanguageLevel languageLevel,
                            Degree degree,
                            LocalDate expectedGraduationDate,
@@ -97,9 +113,11 @@ public class Member extends BaseEntity {
     public static Member createOAuthMember(String name,
                                            OAuthProvider provider,
                                            String providerId,
-                                           String profileImageUrl) {
+                                           String profileImageUrl,
+                                           String email) {
         return Member.builder()
                 .name(name)
+                .email(email)
                 .status(MemberStatus.PENDING)
                 .provider(provider)
                 .providerId(providerId)
@@ -132,4 +150,26 @@ public class Member extends BaseEntity {
     public void markRoadmapInProgress() { this.roadmapStatus = RoadmapStatus.IN_PROGRESS; }
     public void markRoadmapDone() { this.roadmapStatus = RoadmapStatus.DONE; }
     public void markRoadmapFailed() { this.roadmapStatus = RoadmapStatus.FAILED; }
+
+    public void updateProfile(
+            String targetJob,
+            LocalDate birthDate,
+            Country country,
+            Degree degree,
+            String university,
+            String primaryMajor,
+            String secondaryMajor,
+            LanguageLevel languageLevel,
+            EnglishLevel englishLevel
+    ) {
+        this.targetJob = targetJob;
+        this.birthDate = birthDate;
+        this.country = country;
+        this.degree = degree;
+        this.university = university;
+        this.primaryMajor = primaryMajor;
+        this.secondaryMajor = secondaryMajor;
+        this.languageLevel = languageLevel;
+        this.englishLevel = englishLevel;
+    }
 }

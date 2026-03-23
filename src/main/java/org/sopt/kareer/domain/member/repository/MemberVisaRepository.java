@@ -15,4 +15,6 @@ public interface MemberVisaRepository extends JpaRepository<MemberVisa, Long> {
         select mv from MemberVisa mv where mv.member.id = :memberId and mv.visaStatus = 'ACTIVE'
         """)
     Optional<MemberVisa> findActiveByMemberId(Long memberId);
+
+    void deleteAllByMemberId(Long memberId);
 }

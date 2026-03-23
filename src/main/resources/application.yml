@@ -94,6 +94,19 @@ auth:
       name: ${AUTH_REFRESH_TOKEN_COOKIE_NAME}
       secure: ${AUTH_REFRESH_TOKEN_COOKIE_SECURE}
       same-site: ${AUTH_REFRESH_TOKEN_COOKIE_SAMESITE}
+  token-blacklist:
+    redis-prefix: ${AUTH_TOKEN_BLACKLIST_REDIS_PREFIX}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+    health:
+      show-details: always
 ---
 spring:
   config:
@@ -121,6 +134,9 @@ spring:
 cors:
   allowed-origins: ${LOCAL_CORS_ALLOWED_ORIGINS}
   allow-credentials: false
+discord:
+  webhook:
+    url: ""
 ---
 spring:
   config:
@@ -151,6 +167,10 @@ spring:
 cors:
   allowed-origins: ${DEV_CORS_ALLOWED_ORIGINS}
   allow-credentials: false
+discord:
+  webhook:
+    url: ${DEV_DISCORD_WEBHOOK_URL}
+
 ---
 spring:
   config:
@@ -182,3 +202,6 @@ spring:
 cors:
   allowed-origins: ${PROD_CORS_ALLOWED_ORIGINS}
   allow-credentials: true
+discord:
+  webhook:
+    url: ${PROD_DISCORD_WEBHOOK_URL}

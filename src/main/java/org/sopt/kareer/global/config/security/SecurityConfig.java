@@ -40,6 +40,7 @@ public class SecurityConfig {
             "/login/oauth2/**",
             "/api/v1/job-postings/crawl",
             "/api/v1/members/roadmap/test",
+            "/actuator/prometheus",
     };
 
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;

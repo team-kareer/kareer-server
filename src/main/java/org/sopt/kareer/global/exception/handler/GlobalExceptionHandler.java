@@ -1,9 +1,15 @@
 package org.sopt.kareer.global.exception.handler;
 
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.kareer.global.exception.customexception.CustomException;
+import org.sopt.kareer.global.external.discord.client.DiscordClient;
+import org.sopt.kareer.global.external.discord.dto.DiscordEmbedMessage;
+import org.sopt.kareer.global.external.discord.util.DiscordEmbedMessageBuilder;
 import org.sopt.kareer.global.response.BaseErrorResponse;
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -25,7 +31,16 @@ import static org.sopt.kareer.global.exception.errorcode.GlobalErrorCode.*;
 
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
+
+    private final DiscordClient discordClient;
+
+    @Value("${discord.webhook.url}")
+    private String webhookUrl;
+
+    @Value("${SPRING_ACTIVE_PROFILE:local}")
+    private String activeProfile;
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -58,7 +73,13 @@ public class GlobalExceptionHandler {
 
     //커스텀 예외
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<BaseErrorResponse> handleCustomException(CustomException e) {
+    public ResponseEntity<BaseErrorResponse> handleCustomException(CustomException e, HttpServletRequest request) {
+
+        if(e.getErrorCode().getHttpStatus() >= 500){
+            DiscordEmbedMessage message = DiscordEmbedMessageBuilder.buildDiscordEmbedMessage(e, request, activeProfile);
+            discordClient.send(webhookUrl, message);
+        }
+
         return ResponseEntity
                 .status(e.getErrorCode().getHttpStatus())
                 .body(BaseErrorResponse.of(
