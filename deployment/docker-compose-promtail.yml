@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      MONITORING_HOST: ${MONITORING_HOST}
+    volumes:
+      # 메인(애플리케이션) 서버 로그 폴더를 컨테이너 경로로 마운트
+      - ./logs/blue/info:/app/logs/blue/info
+      - ./logs/blue/warn:/app/logs/blue/warn
+      - ./logs/blue/error:/app/logs/blue/error
+
+      - ./logs/green/info:/app/logs/green/info
+      - ./logs/green/warn:/app/logs/green/warn
+      - ./logs/green/error:/app/logs/green/error
+
+      # Promtail 설정 파일
+      - ./promtail/promtail-config.yml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml

@@ -12,6 +12,7 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=
+      - LOG_BASE=./logs/blue
     env_file:
       - .env
     networks:
@@ -19,6 +20,10 @@ services:
     depends_on:
       - redis
     restart: always
+    volumes:
+      - ./logs/blue/info:/app/logs/info
+      - ./logs/blue/warn:/app/logs/warn
+      - ./logs/blue/error:/app/logs/error
 
   kareer-green:
     image: ${ECR_REGISTRY}/kareer-server:${IMAGE_TAG}
@@ -31,6 +36,7 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=
+      - LOG_BASE=./logs/green
     env_file:
       - .env
     networks:
@@ -38,6 +44,10 @@ services:
     depends_on:
       - redis
     restart: always
+    volumes:
+      - ./logs/green/info:/app/logs/info
+      - ./logs/green/warn:/app/logs/warn
+      - ./logs/green/error:/app/logs/error
 
   redis:
     image: redis:7.2-alpine
