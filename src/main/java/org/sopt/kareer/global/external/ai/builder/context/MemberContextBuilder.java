@@ -45,7 +45,6 @@ public class MemberContextBuilder {
         appendLine(sb, "degree", member.getDegree() != null ? member.getDegree().name() : "");
         appendLine(sb, "graduationDate", member.getGraduationDate());
         appendLine(sb, "expectedGraduationDate", member.getExpectedGraduationDate());
-        appendLine(sb, "preparationStatus",  member.getPreparationStatus());
 
         sb.append("Visa Info\n");
         for (MemberVisa v : visas) {
