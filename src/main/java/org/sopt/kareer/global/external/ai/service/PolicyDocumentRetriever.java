@@ -31,7 +31,12 @@ public class PolicyDocumentRetriever {
                         .build()
         );
 
-        return cohereRerankClient.rerank(query, candidates, props.policyTopK());
+        List<Document> reranked = cohereRerankClient.rerank(query, candidates, props.policyTopK());
+        if(reranked.size() > props.policyTopK()) {
+            return reranked.subList(0, props.policyTopK());
+        }
+        return reranked;
+
     }
 
 }
