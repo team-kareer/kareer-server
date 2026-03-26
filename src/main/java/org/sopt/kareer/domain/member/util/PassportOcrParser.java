@@ -178,7 +178,7 @@ public class PassportOcrParser {
 
             if (!birth.matches("\\d{6}")) return null;
 
-            return DocumentDateUtils.parseYYMMDD(birth);
+            return DocumentDateUtils.parseLocalDate(birth);
 
         } catch (Exception e) {
             return null;

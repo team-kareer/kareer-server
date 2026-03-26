@@ -47,15 +47,20 @@ public class DocumentDateUtils {
         return null;
     }
 
-    public static LocalDate parseYYMMDD(String value) {
+    public static LocalDate parseLocalDate(String value) {
         try {
-            int year = Integer.parseInt(value.substring(0, 2));
+            int yy = Integer.parseInt(value.substring(0, 2));
             int month = Integer.parseInt(value.substring(2, 4));
             int day = Integer.parseInt(value.substring(4, 6));
 
-            year += (year >= 50 ? 1900 : 2000);
+            int year = 2000 + yy;
+            LocalDate date = LocalDate.of(year, month, day);
 
-            return LocalDate.of(year, month, day);
+            if (date.isAfter(LocalDate.now())) {
+                date = date.minusYears(100);
+            }
+
+            return date;
         } catch (Exception e) {
             return null;
         }

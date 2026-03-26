@@ -138,7 +138,7 @@ public class VisaOcrParser {
         Matcher matcher = mrzPattern.matcher(text);
 
         while (matcher.find()) {
-            LocalDate parsed = DocumentDateUtils.parseYYMMDD(matcher.group(1));
+            LocalDate parsed = DocumentDateUtils.parseLocalDate(matcher.group(1));
             if (parsed != null) {
                 return parsed;
             }
