@@ -1,19 +1,29 @@
 package org.sopt.kareer.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.domain.member.dto.request.*;
+import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
+import org.sopt.kareer.domain.member.dto.request.MemberOnboardV2Request;
 import org.sopt.kareer.domain.member.dto.response.*;
-import org.sopt.kareer.domain.member.entity.*;
+import org.sopt.kareer.domain.member.entity.Member;
+import org.sopt.kareer.domain.member.entity.MemberVisa;
 import org.sopt.kareer.domain.member.entity.enums.MemberStatus;
-import org.sopt.kareer.domain.member.exception.*;
-import org.sopt.kareer.domain.member.repository.*;
+import org.sopt.kareer.domain.member.exception.MemberErrorCode;
+import org.sopt.kareer.domain.member.exception.MemberException;
+import org.sopt.kareer.domain.member.repository.MemberRepository;
+import org.sopt.kareer.domain.member.repository.MemberVisaRepository;
 import org.sopt.kareer.domain.member.service.dto.request.MypageCommand;
+import org.sopt.kareer.domain.member.util.PassportOcrParser;
+import org.sopt.kareer.domain.member.util.VisaOcrParser;
+import org.sopt.kareer.global.document.exception.DocumentErrorCode;
+import org.sopt.kareer.global.document.exception.DocumentException;
+import org.sopt.kareer.global.document.service.DocumentProcessingService;
 import org.sopt.kareer.global.exception.customexception.GlobalException;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
 import org.sopt.kareer.global.oauth.dto.OAuthAttributes;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +33,9 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberVisaRepository memberVisaRepository;
     private final MemberDeletionService memberDeletionService;
+    private final DocumentProcessingService documentProcessingService;
+    private final VisaOcrParser visaOcrParser;
+    private final PassportOcrParser passportOcrParser;
 
     public Member getById(Long memberId) {
         return memberRepository.findById(memberId)
@@ -76,7 +89,8 @@ public class MemberService {
                 request.primaryMajor(),
                 request.secondaryMajor(),
                 request.targetJob(),
-                request.targetJobSkill()
+                request.targetJobSkill(),
+                request.personalBackground()
         );
 
         MemberVisa memberVisa = MemberVisa.createMemberVisa(
@@ -109,7 +123,8 @@ public class MemberService {
                 request.primaryMajor(),
                 request.secondaryMajor(),
                 request.targetJob(),
-                request.targetJobSkill()
+                request.targetJobSkill(),
+                request.personalBackground()
         );
 
         MemberVisa memberVisa = MemberVisa.createMemberVisa(
@@ -165,5 +180,36 @@ public class MemberService {
     public void deleteMember(Long memberId) {
         Member member = getById(memberId);
         memberDeletionService.deleteMember(member);
+    }
+
+
+    public OcrVisaResponse getVisaOcr(MultipartFile file){
+        try {
+            String text = documentProcessingService.extractText(file);
+            VisaOcrParser.VisaInfo visaInfo = visaOcrParser.parse(text);
+
+            return OcrVisaResponse.from(visaInfo);
+        } catch (DocumentException e) {
+            throw e;
+        } catch(Exception e) {
+            throw new DocumentException(
+                    DocumentErrorCode.OCR_PROCESSING_FAILED
+            );
+        }
+    }
+
+    public OcrPassportResponse getPassportOcr(MultipartFile file) {
+        try {
+            String text = documentProcessingService.extractText(file);
+            PassportOcrParser.PassportInfo passportInfo = passportOcrParser.parse(text);
+
+            return OcrPassportResponse.from(passportInfo);
+        } catch (DocumentException e) {
+            throw e;
+        } catch(Exception e) {
+            throw new DocumentException(
+                    DocumentErrorCode.OCR_PROCESSING_FAILED
+            );
+        }
     }
 }
