@@ -1,8 +1,6 @@
 package org.sopt.kareer.domain.member.controller;
 
 
-import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.*;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
 import org.sopt.kareer.domain.member.dto.request.MypageRequest;
 import org.sopt.kareer.domain.member.dto.response.*;
-import org.sopt.kareer.domain.member.entity.constants.*;
+import org.sopt.kareer.domain.member.entity.constants.Field;
+import org.sopt.kareer.domain.member.entity.constants.Major;
+import org.sopt.kareer.domain.member.entity.constants.University;
 import org.sopt.kareer.domain.member.entity.enums.Country;
 import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapTestResponse;
@@ -23,9 +23,13 @@ import org.sopt.kareer.global.auth.service.AuthService;
 import org.sopt.kareer.global.config.swagger.SwaggerResponseDescription;
 import org.sopt.kareer.global.response.BaseResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -153,6 +157,14 @@ public class MemberController {
         authService.signOut(request, response);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok("회원 탈퇴에 성공하였습니다."));
+    }
+
+    @Operation(summary = "온보딩 비자 OCR API", description = "온보딩 과정에서 유저의 비자 문서를 분석하여 정보를 추출합니다.")
+    @PostMapping(value = "/onboard/ocr/visa", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<BaseResponse<OcrVisaResponse>> getVisaInfo(
+            @RequestPart("file")MultipartFile file){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.ok(memberService.getVisaOcr(file), "사용자 비자 정보 추출에 성공했습니다."));
     }
 
 }

@@ -1,19 +1,29 @@
 package org.sopt.kareer.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.domain.member.dto.request.*;
-import org.sopt.kareer.domain.member.dto.response.*;
-import org.sopt.kareer.domain.member.entity.*;
+import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
+import org.sopt.kareer.domain.member.dto.request.MemberOnboardV2Request;
+import org.sopt.kareer.domain.member.dto.response.MemberInfoResponse;
+import org.sopt.kareer.domain.member.dto.response.MemberStatusResponse;
+import org.sopt.kareer.domain.member.dto.response.MypageResponse;
+import org.sopt.kareer.domain.member.dto.response.OcrVisaResponse;
+import org.sopt.kareer.domain.member.entity.Member;
+import org.sopt.kareer.domain.member.entity.MemberVisa;
 import org.sopt.kareer.domain.member.entity.enums.MemberStatus;
-import org.sopt.kareer.domain.member.exception.*;
-import org.sopt.kareer.domain.member.repository.*;
+import org.sopt.kareer.domain.member.exception.MemberErrorCode;
+import org.sopt.kareer.domain.member.exception.MemberException;
+import org.sopt.kareer.domain.member.repository.MemberRepository;
+import org.sopt.kareer.domain.member.repository.MemberVisaRepository;
 import org.sopt.kareer.domain.member.service.dto.request.MypageCommand;
+import org.sopt.kareer.domain.member.util.VisaOcrParser;
+import org.sopt.kareer.global.document.service.DocumentProcessingService;
 import org.sopt.kareer.global.exception.customexception.GlobalException;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
 import org.sopt.kareer.global.oauth.dto.OAuthAttributes;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +33,8 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberVisaRepository memberVisaRepository;
     private final MemberDeletionService memberDeletionService;
+    private final DocumentProcessingService documentProcessingService;
+    private final VisaOcrParser visaOcrParser;
 
     public Member getById(Long memberId) {
         return memberRepository.findById(memberId)
@@ -165,5 +177,13 @@ public class MemberService {
     public void deleteMember(Long memberId) {
         Member member = getById(memberId);
         memberDeletionService.deleteMember(member);
+    }
+
+
+    public OcrVisaResponse getVisaOcr(MultipartFile file) {
+        String text = documentProcessingService.extractText(file);
+        VisaOcrParser.VisaInfo visaInfo = visaOcrParser.parse(text);
+
+        return OcrVisaResponse.from(visaInfo);
     }
 }
