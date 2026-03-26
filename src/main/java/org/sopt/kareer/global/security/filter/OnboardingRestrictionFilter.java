@@ -34,6 +34,7 @@ public class OnboardingRestrictionFilter extends OncePerRequestFilter {
             "/api/v1/job-postings/crawl",
             "/api/v1/members/roadmap/test",
             "/api/v1/terms",
+            "/api/v1/members/term-agreements",
             "/v3/api-docs/**"
     );
 

@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
+import org.sopt.kareer.domain.member.dto.request.MemberTermsRequest;
 import org.sopt.kareer.domain.member.dto.request.MypageRequest;
 import org.sopt.kareer.domain.member.dto.response.*;
 import org.sopt.kareer.domain.member.entity.constants.*;
@@ -18,6 +19,7 @@ import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapTestResponse;
 import org.sopt.kareer.domain.roadmap.service.RoadMapService;
 import org.sopt.kareer.domain.roadmap.service.RoadmapAsyncService;
+import org.sopt.kareer.domain.term.service.TermService;
 import org.sopt.kareer.global.annotation.CustomExceptionDescription;
 import org.sopt.kareer.global.auth.service.AuthService;
 import org.sopt.kareer.global.config.swagger.SwaggerResponseDescription;
@@ -37,6 +39,7 @@ public class MemberController {
     private final RoadMapService roadMapService;
     private final RoadmapAsyncService roadmapAsyncService;
     private final AuthService authService;
+    private final TermService termService;
 
     @GetMapping("/me")
     @Operation(summary = "회원 정보 조회", description = "로그인한 회원의 정보를 조회합니다.")
@@ -155,4 +158,14 @@ public class MemberController {
                 .body(BaseResponse.ok("회원 탈퇴에 성공하였습니다."));
     }
 
+    @Operation(summary = "약관 동의", description = "약관에 동의합니다.")
+    @PostMapping("/term-agreements")
+    public ResponseEntity<BaseResponse<Void>> agreeTerms(
+            @AuthenticationPrincipal Long memberId,
+            @RequestBody @Valid MemberTermsRequest request
+    ) {
+        termService.agreeTerms(memberId, request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.ok("약관 동의 저장에 성공했습니다."));
+    }
 }
