@@ -2,14 +2,14 @@ package org.sopt.kareer.domain.member.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.kareer.domain.member.entity.enums.VisaType;
+import org.sopt.kareer.global.document.util.DocumentDateUtils;
+import org.sopt.kareer.global.document.util.DocumentTextUtils;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,7 +38,7 @@ public class VisaOcrParser {
     );
 
     public VisaInfo parse(String rawText) {
-        String text = normalize(rawText);
+        String text = DocumentTextUtils.normalize(rawText);
         log.info("rawText: {}", text);
 
         VisaType visaType = extractVisaType(text);
@@ -62,10 +62,6 @@ public class VisaOcrParser {
         return new VisaInfo(visaType, visaStartDate, visaExpiredAt);
     }
 
-    private String normalize(String text) {
-        return text == null ? "" : text.replaceAll("\\s+", " ").trim();
-    }
-
     private VisaType extractVisaType(String text) {
         Matcher matcher = SUPPORTED_VISA_PATTERN.matcher(text);
         if (matcher.find()) {
@@ -77,7 +73,7 @@ public class VisaOcrParser {
     private LocalDate extractVisaStartDate(String text) {
         Matcher matcher = START_DATE_PATTERN.matcher(text);
         if (matcher.find()) {
-            return parseDate(matcher.group(2));
+            return DocumentDateUtils.parseDate(matcher.group(2));
         }
         return null;
     }
@@ -85,7 +81,7 @@ public class VisaOcrParser {
     private LocalDate extractVisaExpiredAt(String text) {
         Matcher matcher = EXPIRE_DATE_PATTERN.matcher(text);
         if (matcher.find()) {
-            return parseDate(matcher.group(2));
+            return DocumentDateUtils.parseDate(matcher.group(2));
         }
         return null;
     }
@@ -95,7 +91,7 @@ public class VisaOcrParser {
         Matcher matcher = DATE_PATTERN.matcher(text);
 
         while (matcher.find()) {
-            LocalDate parsed = parseDate(matcher.group(1));
+            LocalDate parsed = DocumentDateUtils.parseDate(matcher.group(1));
             if (parsed != null) {
                 dates.add(parsed);
             }
@@ -143,55 +139,13 @@ public class VisaOcrParser {
         Matcher matcher = mrzPattern.matcher(text);
 
         while (matcher.find()) {
-            LocalDate parsed = parseYYMMDD(matcher.group(1));
+            LocalDate parsed = DocumentDateUtils.parseYYMMDD(matcher.group(1));
             if (parsed != null) {
                 return parsed;
             }
         }
 
         return null;
-    }
-
-    private LocalDate parseDate(String raw) {
-        if (raw == null || raw.isBlank()) {
-            return null;
-        }
-
-        String value = raw.trim().toUpperCase(Locale.ROOT).replaceAll("\\s+", " ");
-
-        DateTimeFormatter[] formatters = new DateTimeFormatter[]{
-                DateTimeFormatter.ofPattern("yyyy-MM-dd"),
-                DateTimeFormatter.ofPattern("yyyy.MM.dd"),
-                DateTimeFormatter.ofPattern("yyyy/MM/dd"),
-                DateTimeFormatter.ofPattern("dd-MM-yyyy"),
-                DateTimeFormatter.ofPattern("dd.MM.yyyy"),
-                DateTimeFormatter.ofPattern("dd/MM/yyyy"),
-                DateTimeFormatter.ofPattern("d MMM yyyy", Locale.ENGLISH),
-                DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.ENGLISH)
-        };
-
-        for (DateTimeFormatter formatter : formatters) {
-            try {
-                return LocalDate.parse(value, formatter);
-            } catch (Exception ignored) {
-            }
-        }
-
-        return null;
-    }
-
-    private LocalDate parseYYMMDD(String value) {
-        try {
-            int year = Integer.parseInt(value.substring(0, 2));
-            int month = Integer.parseInt(value.substring(2, 4));
-            int day = Integer.parseInt(value.substring(4, 6));
-
-            year += (year >= 50 ? 1900 : 2000);
-
-            return LocalDate.of(year, month, day);
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     public record VisaInfo(
