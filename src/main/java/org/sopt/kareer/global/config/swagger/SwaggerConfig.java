@@ -8,6 +8,8 @@ import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
@@ -38,6 +40,7 @@ import static java.util.stream.Collectors.groupingBy;
 
 @Configuration
 public class SwaggerConfig {
+    private static final String HEADER_LANGUAGE = "X-Preferred-Language";
     private final String securitySchemaName = "JWT";
 
     @Bean
@@ -70,6 +73,8 @@ public class SwaggerConfig {
     public OperationCustomizer customize() {
         return (Operation operation, HandlerMethod handlerMethod) -> {
 
+            addLanguageHeader(operation);
+
             CustomExceptionDescription customExceptionDescription = handlerMethod.getMethodAnnotation(
                     CustomExceptionDescription.class);
 
@@ -80,6 +85,24 @@ public class SwaggerConfig {
 
             return operation;
         };
+    }
+
+    private void addLanguageHeader(Operation operation) {
+        boolean exists = operation.getParameters() != null &&
+                operation.getParameters().stream()
+                        .anyMatch(parameter -> HEADER_LANGUAGE.equalsIgnoreCase(parameter.getName()));
+        if (exists) {
+            return;
+        }
+
+        Parameter parameter = new Parameter()
+                .in("header")
+                .name(HEADER_LANGUAGE)
+                .required(false)
+                .description("Preferred language code (e.g., en, ko, zh-CN, vi)")
+                .schema(new StringSchema()._default("en"));
+
+        operation.addParametersItem(parameter);
     }
 
     private void generateErrorCodeResponseExample(

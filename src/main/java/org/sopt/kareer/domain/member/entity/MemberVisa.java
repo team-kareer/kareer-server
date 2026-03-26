@@ -1,14 +1,10 @@
 package org.sopt.kareer.domain.member.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-import org.sopt.kareer.domain.member.entity.enums.VisaStatus;
-import org.sopt.kareer.domain.member.entity.enums.VisaType;
-import org.sopt.kareer.domain.member.exception.MemberErrorCode;
-import org.sopt.kareer.domain.member.exception.MemberException;
-import org.sopt.kareer.global.entity.BaseEntity;
-
 import java.time.LocalDate;
+import lombok.*;
+import org.sopt.kareer.domain.member.entity.enums.*;
+import org.sopt.kareer.global.entity.BaseEntity;
 
 @Table(name = "member_visas")
 @Entity
@@ -38,8 +34,6 @@ public class MemberVisa extends BaseEntity {
     @Column(nullable = false)
     private LocalDate visaExpiredAt;
 
-    private Integer visaPoint;
-
     @Column(nullable = false)
     private LocalDate visaStartDate;
 
@@ -47,7 +41,6 @@ public class MemberVisa extends BaseEntity {
             Member member,
             VisaType visaType,
             LocalDate visaExpiredAt,
-            Integer visaPoint,
             LocalDate visaStartDate
     ) {
         return MemberVisa.builder()
@@ -55,28 +48,8 @@ public class MemberVisa extends BaseEntity {
                 .visaType(visaType)
                 .visaStatus(VisaStatus.ACTIVE)
                 .visaExpiredAt(visaExpiredAt)
-                .visaPoint(visaPoint)
                 .visaStartDate(visaStartDate)
                 .build();
-    }
-
-    @PrePersist
-    @PreUpdate
-    private void validateVisaPoint() {
-        if (visaType == null) {
-            return;
-        }
-
-        if (visaType == VisaType.D10) {
-            if (visaPoint == null) {
-                throw new MemberException(MemberErrorCode.INVALID_VISA_POINT);
-            }
-            return;
-        }
-
-        if (visaPoint != null) {
-            throw new MemberException(MemberErrorCode.INVALID_VISA_POINT);
-        }
     }
 
     public void updateVisa(

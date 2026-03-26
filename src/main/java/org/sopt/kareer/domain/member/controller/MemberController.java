@@ -1,36 +1,28 @@
 package org.sopt.kareer.domain.member.controller;
 
 
+import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.*;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
 import org.sopt.kareer.domain.member.dto.request.MemberTermsRequest;
 import org.sopt.kareer.domain.member.dto.request.MypageRequest;
 import org.sopt.kareer.domain.member.dto.response.*;
-import org.sopt.kareer.domain.member.entity.constants.Field;
-import org.sopt.kareer.domain.member.entity.constants.Major;
-import org.sopt.kareer.domain.member.entity.constants.University;
-import org.sopt.kareer.domain.member.entity.enums.Country;
-import org.sopt.kareer.domain.member.service.MemberService;
+import org.sopt.kareer.domain.member.service.*;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapTestResponse;
-import org.sopt.kareer.domain.roadmap.service.RoadMapService;
-import org.sopt.kareer.domain.roadmap.service.RoadmapAsyncService;
+import org.sopt.kareer.domain.roadmap.service.*;
 import org.sopt.kareer.global.annotation.CustomExceptionDescription;
 import org.sopt.kareer.global.auth.service.AuthService;
 import org.sopt.kareer.global.config.swagger.SwaggerResponseDescription;
 import org.sopt.kareer.global.response.BaseResponse;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,6 +34,7 @@ public class MemberController {
     private final RoadMapService roadMapService;
     private final RoadmapAsyncService roadmapAsyncService;
     private final AuthService authService;
+    private final LocalizedOnboardQueryService localizedOnboardQueryService;
 
     @GetMapping("/me")
     @Operation(summary = "회원 정보 조회", description = "로그인한 회원의 정보를 조회합니다.")
@@ -68,7 +61,7 @@ public class MemberController {
     public ResponseEntity<BaseResponse<OnboardUniversitiesResponse>> getOnboardUniversities() {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(BaseResponse.ok(OnboardUniversitiesResponse.from(University.UNIVERSITY_LIST),
+                .body(BaseResponse.ok(localizedOnboardQueryService.getUniversities(),
                         "온보딩 대학교 목록 조회에 성공하였습니다."));
     }
 
@@ -78,7 +71,7 @@ public class MemberController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(BaseResponse.ok(
-                        OnboardCountriesResponse.from(Country.getCountries()),
+                        localizedOnboardQueryService.getCountries(),
                         "온보딩 국가 목록 조회에 성공하였습니다."));
     }
 
@@ -87,8 +80,7 @@ public class MemberController {
     public ResponseEntity<BaseResponse<OnboardMajorsResponse>> getOnboardMajors() {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(BaseResponse.ok(OnboardMajorsResponse.from(Major.MAJOR_LIST), "온보딩 전공 목록 조회에 성공하였습니다.")
-                );
+                .body(BaseResponse.ok(localizedOnboardQueryService.getMajors(), "온보딩 전공 목록 조회에 성공하였습니다."));
     }
 
     @GetMapping("/onboard/fields")
@@ -96,8 +88,7 @@ public class MemberController {
     public ResponseEntity<BaseResponse<OnboardFieldsResponse>> getOnboardFields() {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(BaseResponse.ok(OnboardFieldsResponse.from(Field.FIELD_LIST), "온보딩 관심 분야 목록 조회에 성공하였습니다.")
-                );
+                .body(BaseResponse.ok(localizedOnboardQueryService.getFields(), "온보딩 관심 분야 목록 조회에 성공하였습니다."));
     }
 
     @Operation(summary = "AI 로드맵 생성 API", description = "사용자가 온보딩에 입력한 정보를 통해 로드맵을 생성합니다.")

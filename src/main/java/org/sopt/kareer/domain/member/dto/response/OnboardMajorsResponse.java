@@ -3,9 +3,9 @@ package org.sopt.kareer.domain.member.dto.response;
 import java.util.List;
 
 public record OnboardMajorsResponse(
-        List<String> majors
+        List<LocalizedItemResponse> majors
 ) {
-    public static OnboardMajorsResponse from(List<String> majorList) {
+    public static OnboardMajorsResponse of(List<LocalizedItemResponse> majorList) {
         return new OnboardMajorsResponse(majorList);
     }
 }

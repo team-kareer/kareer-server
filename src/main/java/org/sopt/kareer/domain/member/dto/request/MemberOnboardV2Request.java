@@ -13,11 +13,11 @@ public record MemberOnboardV2Request(
         @NotNull(message = "생년월일은 필수 입력값입니다.")
         LocalDate birthDate,
 
-        @NotNull(message = "대학교는 필수 입력값입니다.")
-        String university,
+        @NotNull(message = "대학교 코드는 필수 입력값입니다.")
+        String universityCode,
 
-        @NotNull(message = "국가는 필수 입력값입니다.")
-        Country country,
+        @NotNull(message = "국가 코드는 필수 입력값입니다.")
+        String countryCode,
 
         @NotNull(message = "언어 능력은 필수 입력값입니다.")
         LanguageLevel languageLevel,
@@ -40,11 +40,8 @@ public record MemberOnboardV2Request(
         @NotNull(message = "비자 만료일은 필수 입력값입니다.")
         LocalDate visaExpiredAt,
 
-        @Schema(description = "비자 점수, D10 비자인 경우만", example = "50")
-        Integer visaPoint,
-
-        @NotBlank(message = "제1전공은 필수 입력값입니다.")
-        String primaryMajor,
+        @NotBlank(message = "제1전공 코드는 필수 입력값입니다.")
+        String primaryMajorCode,
 
         String secondaryMajor,
 
@@ -63,15 +60,4 @@ public record MemberOnboardV2Request(
         @Size(max = 1000, message = "개인 배경은 최대 1000자까지 입력할 수 있습니다.")
         String personalBackground
 ) {
-    @AssertTrue(message = "visaPoint는 D10 비자인 경우에만 입력할 수 있습니다.")
-    @Schema(hidden = true)
-    public boolean isVisaPointValid() {
-        if (visaType == null) {
-            return visaPoint == null;
-        }
-        if (visaType == VisaType.D10) {
-            return visaPoint != null;
-        }
-        return visaPoint == null;
-    }
 }
