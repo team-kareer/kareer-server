@@ -95,11 +95,16 @@ public class Member extends BaseEntity {
                            String primaryMajor,
                            String secondaryMajor,
                            String targetJob,
-                           String targetJobSkill) {
+                           String targetJobSkill,
+                           String personalBackground) {
         assertPendingStatus();
         this.name = name;
         this.birthDate = birthDate;
         this.country = country;
+        this.university = university;
+        this.englishLevel = englishLevel;
+        this.fieldsOfInterest = fieldsOfInterests;
+        this.preparationStatus = preparationStatuses;
         this.languageLevel = languageLevel;
         this.degree = degree;
         this.expectedGraduationDate = expectedGraduationDate;
@@ -108,6 +113,7 @@ public class Member extends BaseEntity {
         this.targetJob = targetJob;
         this.targetJobSkill = targetJobSkill;
         this.status = MemberStatus.ACTIVE;
+        this.personalBackground = personalBackground;
     }
 
     public static Member createOAuthMember(String name,
