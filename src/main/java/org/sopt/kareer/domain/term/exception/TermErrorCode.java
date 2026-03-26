@@ -13,7 +13,8 @@ public enum TermErrorCode implements ErrorCode {
     DUPLICATE_TERM(HttpStatus.BAD_REQUEST.value(), "중복된 약관 ID가 존재합니다."),
     REQUIRED_TERM_NOT_AGREED(HttpStatus.BAD_REQUEST.value(), "필수 약관에 동의해야 합니다."),
     MISSING_TERM(HttpStatus.BAD_REQUEST.value(), "누락된 약관 동의가 존재합니다."),
-    INVALID_ARGUMENT(HttpStatus.BAD_REQUEST.value(), "잘못된 요청 파라미터입니다.")
+    INVALID_ARGUMENT(HttpStatus.BAD_REQUEST.value(), "잘못된 요청 파라미터입니다."),
+    ALREADY_AGREED_TERMS(HttpStatus.CONFLICT.value(), "이미 약관 동의가 완료되었습니다.")
     ;
 
     private final int httpStatus;

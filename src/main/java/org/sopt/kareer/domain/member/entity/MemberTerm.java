@@ -5,7 +5,15 @@ import lombok.*;
 import org.sopt.kareer.domain.term.entity.Term;
 import org.sopt.kareer.global.entity.BaseEntity;
 
-@Table(name = "member_terms")
+@Table(
+        name = "member_terms",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_member_term",
+                        columnNames = {"member_id", "term_id"}
+                )
+        }
+)
 @Entity
 @Getter
 @Builder

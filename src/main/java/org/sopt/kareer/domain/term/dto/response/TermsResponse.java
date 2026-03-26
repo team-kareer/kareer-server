@@ -24,7 +24,7 @@ public record TermsResponse(
             @Schema(description = "약관 내용", example="1. Purpose ~")
             String content,
 
-            @Schema(description = "필수 여부", example="1. Purpose ~")
+            @Schema(description = "필수 여부", example="true")
             boolean required
     ) {
         public static TermResponse from(Term term) {

@@ -229,6 +229,10 @@ public class MemberService {
 
     @Transactional
     public void agreeTerms(Long memberId, MemberTermsRequest request) {
+        if (memberTermRepository.existsByMemberId(memberId)) {
+            throw new TermException(TermErrorCode.ALREADY_AGREED_TERMS);
+        }
+
         Member member = getById(memberId);
         List<MemberTermsRequest.TermAgreement> agreements = request.agreements();
 
