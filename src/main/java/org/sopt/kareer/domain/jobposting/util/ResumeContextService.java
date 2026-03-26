@@ -6,7 +6,6 @@ import org.sopt.kareer.global.document.service.DocumentProcessingService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.List;
 
 import static org.sopt.kareer.domain.jobposting.exception.JobPostingErrorCode.RESUME_CONTEXT_FAILED;
@@ -32,13 +31,8 @@ public class ResumeContextService {
         sb.append("[RESUME_COVER_LETTER]\n");
 
         for (MultipartFile file : files) {
-            File temp = null;
-
             try {
-                temp = File.createTempFile("resume_", ".pdf");
-                file.transferTo(temp);
-
-                String text = documentProcessingService.extractTextWithOcr(temp);
+                String text = documentProcessingService.extractText(file);
 
                 sb.append("----- FILE START -----\n");
                 sb.append(text).append("\n");
@@ -46,10 +40,6 @@ public class ResumeContextService {
 
             } catch (Exception e) {
                 throw new JobPostingException(RESUME_CONTEXT_FAILED, e.getMessage());
-            } finally {
-                if (temp != null && temp.exists()) {
-                    temp.delete();
-                }
             }
         }
 

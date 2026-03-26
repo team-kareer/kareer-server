@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.*;
 
 import static org.sopt.kareer.global.external.ai.constant.RequiredDocumentConstant.*;
@@ -75,18 +74,13 @@ public class RagEmbeddingService {
     }
 
     private void uploadDocument(List<MultipartFile> files, PgVectorStore targetStore) {
-        File temp = null;
-
         for (MultipartFile file : files) {
             try {
-                temp = File.createTempFile("upload_", ".pdf");
-                file.transferTo(temp);
-
                 Map<String, Object> baseMeta = new HashMap<>();
                 baseMeta.put("originalFilename", Objects.toString(file.getOriginalFilename(), ""));
                 baseMeta.put("uploadedAt", System.currentTimeMillis());
 
-                var pages = documentProcessingService.extractPagesWithOcr(temp);
+                var pages = documentProcessingService.extractPagesWithOcr(file);
 
                 List<Document> toStore = new ArrayList<>();
                 for (var page : pages) {
@@ -100,8 +94,6 @@ public class RagEmbeddingService {
 
             } catch (Exception e) {
                 throw new RagException(RagErrorCode.EMBEDDING_FAILED, e.getMessage());
-            } finally {
-                if (temp != null && temp.exists()) temp.delete();
             }
         }
     }
@@ -112,14 +104,8 @@ public class RagEmbeddingService {
     }
 
     private void uploadAndIngest(MultipartFile file, String source, RequiredCategory category) {
-        if (file == null || file.isEmpty()) return;
-
-        File temp = null;
         try {
-            temp = File.createTempFile("upload_", ".pdf");
-            file.transferTo(temp);
-
-            var pages = documentProcessingService.extractPagesWithOcr(temp);
+            var pages = documentProcessingService.extractPagesWithOcr(file);
             StringBuilder full = new StringBuilder();
             for (var p : pages) {
                 full.append(p.text()).append("\n");
@@ -149,8 +135,6 @@ public class RagEmbeddingService {
 
         } catch (Exception e) {
             throw new RagException(RagErrorCode.EMBEDDING_FAILED, e.getMessage());
-        } finally {
-            if (temp != null && temp.exists()) temp.delete();
         }
 
     }
