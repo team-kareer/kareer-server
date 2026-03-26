@@ -9,6 +9,9 @@ import jakarta.servlet.http.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.dto.request.*;
+import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
+import org.sopt.kareer.domain.member.dto.request.MemberTermsRequest;
+import org.sopt.kareer.domain.member.dto.request.MypageRequest;
 import org.sopt.kareer.domain.member.dto.response.*;
 import org.sopt.kareer.domain.member.service.*;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapTestResponse;
@@ -165,4 +168,16 @@ public class MemberController {
                 .body(BaseResponse.ok(memberService.getPassportOcr(file), "사용자 여권 정보 추출에 성공했습니다."));
     }
 
+
+    @Operation(summary = "약관 동의", description = "약관에 동의합니다.")
+    @CustomExceptionDescription(TERM_AGREE)
+    @PostMapping("/term-agreements")
+    public ResponseEntity<BaseResponse<Void>> agreeTerms(
+            @AuthenticationPrincipal Long memberId,
+            @RequestBody @Valid MemberTermsRequest request
+    ) {
+        memberService.agreeTerms(memberId, request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.ok("약관 동의 저장에 성공했습니다."));
+    }
 }
