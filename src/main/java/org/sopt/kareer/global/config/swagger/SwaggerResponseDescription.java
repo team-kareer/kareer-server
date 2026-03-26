@@ -21,6 +21,7 @@ import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.PHASE_NO
 import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.PHASE_STATUS_BLANK;
 import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.PHASE_STATUS_INVALID;
 import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.TODO_ALREADY_ADDED;
+import static org.sopt.kareer.domain.term.exception.TermErrorCode.*;
 import static org.sopt.kareer.global.auth.exception.AuthErrorCode.LOGIN_CODE_ALREADY_USED;
 import static org.sopt.kareer.global.auth.exception.AuthErrorCode.LOGIN_CODE_NOT_FOUND;
 import static org.sopt.kareer.global.external.ai.exception.LlmErrorCode.LLM_JSON_PARSING_FAILED;
@@ -122,7 +123,13 @@ public enum SwaggerResponseDescription {
     ))),
     MEMBER_DELETE(new LinkedHashSet<>(Set.of(
             MEMBER_NOT_FOUND
-    )));
+    ))),
+    TERM_AGREE(new LinkedHashSet<>(Set.of(
+            DUPLICATE_TERM,
+            MISSING_TERM,
+            REQUIRED_TERM_NOT_AGREED
+    )))
+    ;
 
     private final Set<ErrorCode> errorCodeList;
 

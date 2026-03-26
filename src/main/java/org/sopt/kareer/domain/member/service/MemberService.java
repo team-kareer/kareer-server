@@ -3,17 +3,24 @@ package org.sopt.kareer.domain.member.service;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardV2Request;
+import org.sopt.kareer.domain.member.dto.request.MemberTermsRequest;
 import org.sopt.kareer.domain.member.dto.response.*;
 import org.sopt.kareer.domain.member.entity.Member;
+import org.sopt.kareer.domain.member.entity.MemberTerm;
 import org.sopt.kareer.domain.member.entity.MemberVisa;
 import org.sopt.kareer.domain.member.entity.enums.MemberStatus;
 import org.sopt.kareer.domain.member.exception.MemberErrorCode;
 import org.sopt.kareer.domain.member.exception.MemberException;
 import org.sopt.kareer.domain.member.repository.MemberRepository;
+import org.sopt.kareer.domain.member.repository.MemberTermRepository;
 import org.sopt.kareer.domain.member.repository.MemberVisaRepository;
 import org.sopt.kareer.domain.member.service.dto.request.MypageCommand;
 import org.sopt.kareer.domain.member.util.PassportOcrParser;
 import org.sopt.kareer.domain.member.util.VisaOcrParser;
+import org.sopt.kareer.domain.term.entity.Term;
+import org.sopt.kareer.domain.term.exception.TermErrorCode;
+import org.sopt.kareer.domain.term.exception.TermException;
+import org.sopt.kareer.domain.term.service.TermService;
 import org.sopt.kareer.global.document.exception.DocumentErrorCode;
 import org.sopt.kareer.global.document.exception.DocumentException;
 import org.sopt.kareer.global.document.service.DocumentProcessingService;
@@ -25,6 +32,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -32,6 +44,8 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final MemberVisaRepository memberVisaRepository;
+    private final TermService termService;
+    private final MemberTermRepository memberTermRepository;
     private final MemberDeletionService memberDeletionService;
     private final DocumentProcessingService documentProcessingService;
     private final VisaOcrParser visaOcrParser;
@@ -211,5 +225,53 @@ public class MemberService {
                     DocumentErrorCode.OCR_PROCESSING_FAILED
             );
         }
+    }
+
+    @Transactional
+    public void agreeTerms(Long memberId, MemberTermsRequest request) {
+        if (memberTermRepository.existsByMemberId(memberId)) {
+            throw new TermException(TermErrorCode.ALREADY_AGREED_TERMS);
+        }
+
+        Member member = getById(memberId);
+        List<MemberTermsRequest.TermAgreement> agreements = request.agreements();
+
+        Map<Long, Boolean> agreementMap = agreements.stream()
+                .collect(Collectors.toMap(
+                        MemberTermsRequest.TermAgreement::termId,
+                        MemberTermsRequest.TermAgreement::agreed,
+
+                        // 중복된 term이 있는지 체크
+                        (existing, replacement) -> {
+                            throw new TermException(TermErrorCode.DUPLICATE_TERM);
+                        }
+                ));
+
+        // 받아야하는 약관들 리스트
+        List<Term> activeTerms = termService.getActiveTerms();
+
+        // 필요한 약관들에 대해 잘 요청됐는지 검증
+        Set<Long> activeTermIds = activeTerms.stream()
+                .map(Term::getId)
+                .collect(Collectors.toSet());
+
+        if (!activeTermIds.equals(agreementMap.keySet())) {
+            throw new TermException(TermErrorCode.MISSING_TERM);
+        }
+
+        List<MemberTerm> memberTerms = activeTerms.stream()
+                .map(term -> {
+                    Boolean agreed = agreementMap.get(term.getId());
+
+                    // 필수 약관인데 동의하지 않은 경우
+                    if (term.isRequired() && !Boolean.TRUE.equals(agreed)) {
+                        throw new TermException(TermErrorCode.REQUIRED_TERM_NOT_AGREED);
+                    }
+
+                    return MemberTerm.create(agreed, member, term);
+                })
+                .toList();
+
+        memberTermRepository.saveAll(memberTerms);
     }
 }
