@@ -16,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,7 +44,7 @@ public class DocumentProcessingService {
             return extractPagesFromPdf(file);
         }
 
-        if (isImage(contentType)) {
+        if (isImage(contentType, filename)) {
             return extractPagesFromImage(file);
         }
 
@@ -113,8 +114,19 @@ public class DocumentProcessingService {
                || (filename != null && filename.toLowerCase().endsWith(".pdf"));
     }
 
-    private boolean isImage(String contentType) {
-        return contentType != null && contentType.startsWith("image/");
+    private boolean isImage(String contentType, String filename) {
+        if (contentType != null && contentType.startsWith("image/")) {
+            return true;
+        }
+
+        if (filename == null) {
+            return false;
+        }
+
+        String lower = filename.toLowerCase(Locale.ROOT);
+        return lower.endsWith(".jpg")
+               || lower.endsWith(".jpeg")
+               || lower.endsWith(".png");
     }
 
     private static String sanitizeText(String s) {
