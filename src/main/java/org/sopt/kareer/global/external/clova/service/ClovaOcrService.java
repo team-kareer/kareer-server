@@ -1,10 +1,10 @@
 package org.sopt.kareer.global.external.clova.service;
 
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.global.external.ai.exception.RagErrorCode;
-import org.sopt.kareer.global.external.ai.exception.RagException;
 import org.sopt.kareer.global.external.clova.dto.request.ClovaOcrRequest;
 import org.sopt.kareer.global.external.clova.dto.response.ClovaOcrResponse;
+import org.sopt.kareer.global.external.clova.exception.ClovaErrorCode;
+import org.sopt.kareer.global.external.clova.exception.ClovaException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -59,8 +59,8 @@ public class ClovaOcrService {
                     .collect(Collectors.joining(" "));
 
         } catch (Exception e) {
-            throw new RagException(
-                    RagErrorCode.EXTRACT_IMAGE_FAILED,
+            throw new ClovaException(
+                    ClovaErrorCode.EXTRACT_IMAGE_FAILED,
                     "CLOVA OCR failed: " + e.getMessage()
             );
         }
@@ -71,7 +71,7 @@ public class ClovaOcrService {
             ImageIO.write(image, "jpg", baos);
             return baos.toByteArray();
         } catch (Exception e) {
-            throw new RagException(RagErrorCode.EXTRACT_IMAGE_FAILED, "Image encoding failed: " + e.getMessage());
+            throw new ClovaException(ClovaErrorCode.EXTRACT_IMAGE_FAILED, "Image encoding failed: " + e.getMessage());
         }
     }
 }
