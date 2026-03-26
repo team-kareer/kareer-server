@@ -6,9 +6,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum EnglishLevel {
-    BEGINNER("Beginner"),
-    INTERMEDIATE("Intermediate"),
-    ADVANCED("Advanced")
+    BEGINNER("beginner"),
+    INTERMEDIATE("intermediate"),
+    ADVANCED("advanced")
     ;
 
     private final String description;

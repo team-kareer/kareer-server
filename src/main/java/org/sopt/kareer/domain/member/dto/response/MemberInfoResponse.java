@@ -2,11 +2,8 @@ package org.sopt.kareer.domain.member.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
-import org.sopt.kareer.domain.member.entity.Member;
-import org.sopt.kareer.domain.member.entity.MemberVisa;
-import org.sopt.kareer.domain.member.entity.enums.Country;
-import org.sopt.kareer.domain.member.entity.enums.LanguageLevel;
-import org.sopt.kareer.domain.member.entity.enums.VisaType;
+import org.sopt.kareer.domain.member.entity.*;
+import org.sopt.kareer.domain.member.entity.enums.*;
 
 @Schema(description = "회원 정보 응답")
 public record MemberInfoResponse(
@@ -26,7 +23,7 @@ public record MemberInfoResponse(
         LocalDate birthDate,
 
         @Schema(description = "거주 국가")
-        Country country,
+        String country,
 
         @Schema(description = "주 전공", example = "Computer Science")
         String primaryMajor,
@@ -36,6 +33,9 @@ public record MemberInfoResponse(
 
         @Schema(description = "타겟 직무", example = "Backend Engineer")
         String targetJob,
+
+        @Schema(description = "대학교", example = "Seoul National University")
+        String university,
 
         @Schema(description = "졸업일", example = "2026-02-11")
         LocalDate graduationDate,
@@ -49,27 +49,37 @@ public record MemberInfoResponse(
         @Schema(description = "학위", example = "Bachelor")
         String degree,
 
+        @Schema(description = "영어 수준", example = "Upper Intermediate")
+        String englishLevel,
+
         @Schema(description = "타겟 직무 스킬", example = "Java, Spring")
         String targetJobSkill,
 
         @Schema(description = "비자 유형")
         VisaType visaType
 ) {
-    public static MemberInfoResponse from(Member member, MemberVisa memberVisa) {
+    public static MemberInfoResponse of(Member member, MemberVisa memberVisa,
+                                        String countryLabel,
+                                        String primaryMajorLabel,
+                                        String universityLabel,
+                                        String degreeLabel,
+                                        String englishLevelLabel) {
         return new MemberInfoResponse(
                 member.getId(),
                 member.getName(),
                 member.getEmail(),
                 member.getProfileImageUrl(),
                 member.getBirthDate(),
-                member.getCountry(),
-                member.getPrimaryMajor(),
+                countryLabel,
+                primaryMajorLabel,
                 member.getSecondaryMajor(),
                 member.getTargetJob(),
+                universityLabel,
                 member.getGraduationDate(),
                 member.getExpectedGraduationDate(),
                 member.getLanguageLevel(),
-                member.getDegree().getDescription(),
+                degreeLabel,
+                englishLevelLabel,
                 member.getTargetJobSkill(),
                 memberVisa.getVisaType()
         );

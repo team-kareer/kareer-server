@@ -45,10 +45,9 @@ public class Member extends BaseEntity {
 
     private LocalDate birthDate;
 
-    @Enumerated(EnumType.STRING)
-    private Country country;
+    private String countryCode;
 
-    private String primaryMajor;
+    private String primaryMajorCode;
 
     private String secondaryMajor;
 
@@ -60,16 +59,14 @@ public class Member extends BaseEntity {
 
     private String personalBackground;
 
-    private String university;
+    private String universityCode;
 
-    @Enumerated(EnumType.STRING)
-    private EnglishLevel englishLevel;
+    private String englishLevelCode;
 
     @Enumerated(EnumType.STRING)
     private LanguageLevel languageLevel;
 
-    @Enumerated(EnumType.STRING)
-    private Degree degree;
+    private String degreeCode;
 
     @Column(length = 1000)
     private String targetJobSkill;
@@ -82,6 +79,7 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private RoadmapStatus roadmapStatus;
 
+    // 프론트 온보딩 구현 완료 후 삭제 예정
     public void updateInfo(String name,
                            LocalDate birthDate,
                            Country country,
@@ -100,15 +98,49 @@ public class Member extends BaseEntity {
         assertPendingStatus();
         this.name = name;
         this.birthDate = birthDate;
-        this.country = country;
-        this.university = university;
-        this.englishLevel = englishLevel;
+        this.countryCode = country.getCountryName();
+        this.universityCode = university;
+        this.englishLevelCode = englishLevel.getDescription();
         this.fieldsOfInterest = fieldsOfInterests;
         this.preparationStatus = preparationStatuses;
         this.languageLevel = languageLevel;
-        this.degree = degree;
+        this.degreeCode = degree.getDescription();
         this.expectedGraduationDate = expectedGraduationDate;
-        this.primaryMajor = primaryMajor;
+        this.primaryMajorCode = primaryMajor;
+        this.secondaryMajor = secondaryMajor;
+        this.targetJob = targetJob;
+        this.targetJobSkill = targetJobSkill;
+        this.status = MemberStatus.ACTIVE;
+        this.personalBackground = personalBackground;
+    }
+
+    public void updateInfoV2(String name,
+                           LocalDate birthDate,
+                           String countryCode,
+                           String universityCode,
+                           String englishLevelCode,
+                           String fieldsOfInterests,
+                           String preparationStatuses,
+                           LanguageLevel languageLevel,
+                           String degreeCode,
+                           LocalDate expectedGraduationDate,
+                           String primaryMajorCode,
+                           String secondaryMajor,
+                           String targetJob,
+                           String targetJobSkill,
+                           String personalBackground) {
+        assertPendingStatus();
+        this.name = name;
+        this.birthDate = birthDate;
+        this.countryCode = countryCode;
+        this.universityCode = universityCode;
+        this.englishLevelCode = englishLevelCode;
+        this.fieldsOfInterest = fieldsOfInterests;
+        this.preparationStatus = preparationStatuses;
+        this.languageLevel = languageLevel;
+        this.degreeCode = degreeCode;
+        this.expectedGraduationDate = expectedGraduationDate;
+        this.primaryMajorCode = primaryMajorCode;
         this.secondaryMajor = secondaryMajor;
         this.targetJob = targetJob;
         this.targetJobSkill = targetJobSkill;
@@ -160,22 +192,22 @@ public class Member extends BaseEntity {
     public void updateProfile(
             String targetJob,
             LocalDate birthDate,
-            Country country,
+            String countryCode,
             Degree degree,
-            String university,
-            String primaryMajor,
+            String universityCode,
+            String primaryMajorCode,
             String secondaryMajor,
             LanguageLevel languageLevel,
             EnglishLevel englishLevel
     ) {
         this.targetJob = targetJob;
         this.birthDate = birthDate;
-        this.country = country;
-        this.degree = degree;
-        this.university = university;
-        this.primaryMajor = primaryMajor;
+        this.countryCode = countryCode;
+        this.degreeCode = degree.getDescription();
+        this.universityCode = universityCode;
+        this.primaryMajorCode = primaryMajorCode;
         this.secondaryMajor = secondaryMajor;
         this.languageLevel = languageLevel;
-        this.englishLevel = englishLevel;
+        this.englishLevelCode = englishLevel.getDescription();
     }
 }

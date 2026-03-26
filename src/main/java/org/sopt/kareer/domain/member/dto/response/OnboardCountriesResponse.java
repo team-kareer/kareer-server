@@ -3,9 +3,9 @@ package org.sopt.kareer.domain.member.dto.response;
 import java.util.List;
 
 public record OnboardCountriesResponse(
-        List<String> countries
+        List<LocalizedItemResponse> countries
 ) {
-    public static OnboardCountriesResponse from(List<String> countries) {
+    public static OnboardCountriesResponse of(List<LocalizedItemResponse> countries) {
         return new OnboardCountriesResponse(countries);
     }
 }
