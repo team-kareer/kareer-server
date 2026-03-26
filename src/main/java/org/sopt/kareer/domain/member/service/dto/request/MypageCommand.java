@@ -9,13 +9,13 @@ public record MypageCommand(
 
         LocalDate birthDate,
 
-        Country country,
+        String countryCode,
 
         Degree degree,
 
-        String university,
+        String universityCode,
 
-        String primaryMajor,
+        String primaryMajorCode,
 
         String secondaryMajor,
 

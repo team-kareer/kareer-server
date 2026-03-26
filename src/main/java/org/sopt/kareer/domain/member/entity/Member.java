@@ -192,20 +192,20 @@ public class Member extends BaseEntity {
     public void updateProfile(
             String targetJob,
             LocalDate birthDate,
-            Country country,
+            String countryCode,
             Degree degree,
-            String university,
-            String primaryMajor,
+            String universityCode,
+            String primaryMajorCode,
             String secondaryMajor,
             LanguageLevel languageLevel,
             EnglishLevel englishLevel
     ) {
         this.targetJob = targetJob;
         this.birthDate = birthDate;
-        this.countryCode = country.getCountryName();
+        this.countryCode = countryCode;
         this.degreeCode = degree.getDescription();
-        this.universityCode = university;
-        this.primaryMajorCode = primaryMajor;
+        this.universityCode = universityCode;
+        this.primaryMajorCode = primaryMajorCode;
         this.secondaryMajor = secondaryMajor;
         this.languageLevel = languageLevel;
         this.englishLevelCode = englishLevel.getDescription();

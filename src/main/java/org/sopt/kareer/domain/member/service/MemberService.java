@@ -190,10 +190,10 @@ public class MemberService {
         member.updateProfile(
                 command.targetJob(),
                 command.birthDate(),
-                command.country(),
+                command.countryCode(),
                 command.degree(),
-                command.university(),
-                command.primaryMajor(),
+                command.universityCode(),
+                command.primaryMajorCode(),
                 command.secondaryMajor(),
                 command.languageLevel(),
                 command.englishLevel()
