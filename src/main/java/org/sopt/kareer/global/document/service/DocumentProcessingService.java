@@ -27,33 +27,27 @@ public class DocumentProcessingService {
 
     private final ClovaOcrService clovaOcrService;
 
-    public String extractText(MultipartFile file) {
+    public String extractText(MultipartFile file) throws IOException {
         return extractPagesWithOcr(file).stream()
                 .map(PageText::text)
                 .collect(Collectors.joining("\n"));
     }
 
-    public List<PageText> extractPagesWithOcr(MultipartFile file) {
+    public List<PageText> extractPagesWithOcr(MultipartFile file) throws IOException {
         validate(file);
 
         String contentType = file.getContentType();
         String filename = file.getOriginalFilename();
 
-        try {
-            if (isPdf(contentType, filename)) {
-                return extractPagesFromPdf(file);
-            }
-
-            if (isImage(contentType)) {
-                return extractPagesFromImage(file);
-            }
-
-            throw new DocumentException(DocumentErrorCode.UNSUPPORTED_FILE_TYPE);
-        } catch (DocumentException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new DocumentException(DocumentErrorCode.EXTRACT_TEXT_FAILED, e.getMessage());
+        if (isPdf(contentType, filename)) {
+            return extractPagesFromPdf(file);
         }
+
+        if (isImage(contentType)) {
+            return extractPagesFromImage(file);
+        }
+
+        throw new DocumentException(DocumentErrorCode.UNSUPPORTED_FILE_TYPE);
     }
 
     private List<PageText> extractPagesFromPdf(MultipartFile file) throws IOException {
@@ -84,19 +78,28 @@ public class DocumentProcessingService {
         }
     }
 
-    private List<PageText> extractPagesFromImage(MultipartFile file) throws IOException {
-        BufferedImage image = ImageIO.read(file.getInputStream());
-        if (image == null) {
-            throw new DocumentException(DocumentErrorCode.INVALID_IMAGE_FILE);
+    private List<PageText> extractPagesFromImage(MultipartFile file) {
+        try {
+            BufferedImage image = ImageIO.read(file.getInputStream());
+
+            if (image == null) {
+                throw new DocumentException(DocumentErrorCode.INVALID_IMAGE_FILE, "유효하지 않은 이미지 파일입니다.");
+            }
+
+            String text = sanitizeText(clovaOcrService.doOcr(image));
+
+            if (text.isBlank()) {
+                return List.of();
+            }
+
+            return List.of(new PageText(1, text));
+        } catch (DocumentException e) {
+            throw e;
+        } catch (IOException e) {
+            throw new DocumentException(DocumentErrorCode.INVALID_IMAGE_FILE, e.getMessage());
+        } catch (Exception e) {
+            throw new DocumentException(DocumentErrorCode.EXTRACT_IMAGE_FAILED, e.getMessage());
         }
-
-        String text = sanitizeText(clovaOcrService.doOcr(image));
-
-        if (text.isBlank()) {
-            return List.of();
-        }
-
-        return List.of(new PageText(1, text));
     }
 
     private void validate(MultipartFile file) {
