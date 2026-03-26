@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
+import org.sopt.kareer.domain.member.dto.request.MemberTermsRequest;
 import org.sopt.kareer.domain.member.dto.request.MypageRequest;
 import org.sopt.kareer.domain.member.dto.response.*;
 import org.sopt.kareer.domain.member.entity.constants.Field;
@@ -176,4 +177,15 @@ public class MemberController {
     }
 
 
+    @Operation(summary = "약관 동의", description = "약관에 동의합니다.")
+    @CustomExceptionDescription(TERM_AGREE)
+    @PostMapping("/term-agreements")
+    public ResponseEntity<BaseResponse<Void>> agreeTerms(
+            @AuthenticationPrincipal Long memberId,
+            @RequestBody @Valid MemberTermsRequest request
+    ) {
+        memberService.agreeTerms(memberId, request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.ok("약관 동의 저장에 성공했습니다."));
+    }
 }
