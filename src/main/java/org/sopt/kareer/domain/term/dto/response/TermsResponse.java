@@ -22,13 +22,17 @@ public record TermsResponse(
             String title,
 
             @Schema(description = "약관 내용", example="1. Purpose ~")
-            String content
+            String content,
+
+            @Schema(description = "필수 여부", example="1. Purpose ~")
+            boolean required
     ) {
         public static TermResponse from(Term term) {
             return new TermResponse(
                     term.getId(),
                     term.getTitle(),
-                    term.getContent()
+                    term.getContent(),
+                    term.isRequired()
             );
         }
     }
