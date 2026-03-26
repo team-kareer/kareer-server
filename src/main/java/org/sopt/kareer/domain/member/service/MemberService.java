@@ -89,7 +89,8 @@ public class MemberService {
                 request.primaryMajor(),
                 request.secondaryMajor(),
                 request.targetJob(),
-                request.targetJobSkill()
+                request.targetJobSkill(),
+                request.personalBackground()
         );
 
         MemberVisa memberVisa = MemberVisa.createMemberVisa(
@@ -122,7 +123,8 @@ public class MemberService {
                 request.primaryMajor(),
                 request.secondaryMajor(),
                 request.targetJob(),
-                request.targetJobSkill()
+                request.targetJobSkill(),
+                request.personalBackground()
         );
 
         MemberVisa memberVisa = MemberVisa.createMemberVisa(
