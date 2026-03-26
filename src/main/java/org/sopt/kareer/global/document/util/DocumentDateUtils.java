@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.List;
 import java.util.Locale;
 
@@ -17,8 +18,14 @@ public class DocumentDateUtils {
             DateTimeFormatter.ofPattern("dd-MM-yyyy"),
             DateTimeFormatter.ofPattern("dd.MM.yyyy"),
             DateTimeFormatter.ofPattern("dd/MM/yyyy"),
-            DateTimeFormatter.ofPattern("d MMM yyyy", Locale.ENGLISH),
-            DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.ENGLISH)
+            new DateTimeFormatterBuilder()
+                    .parseCaseInsensitive()
+                    .appendPattern("d MMM yyyy")
+                    .toFormatter(Locale.ENGLISH),
+            new DateTimeFormatterBuilder()
+                    .parseCaseInsensitive()
+                    .appendPattern("dd MMM yyyy")
+                    .toFormatter(Locale.ENGLISH)
     );
 
     public static LocalDate parseDate(String raw) {
