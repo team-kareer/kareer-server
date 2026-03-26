@@ -24,16 +24,12 @@ public class PassportOcrParser {
     private final CountryResolver countryResolver;
 
     public PassportInfo parse(String rawText) {
-        log.info("passport rawText: {}", rawText);
-
         String text = DocumentTextUtils.normalize(rawText);
         Mrz mrz = extractMrz(text);
 
         if (mrz == null) {
             return new PassportInfo(null, null, null);
         }
-
-        log.info("mrz line1={}, line2={}", mrz.line1(), mrz.line2());
 
         String fullName = extractName(mrz.line1());
         Country country = extractCountry(mrz.line1(), mrz.line2());

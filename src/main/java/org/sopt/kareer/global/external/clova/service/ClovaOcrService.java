@@ -40,8 +40,6 @@ public class ClovaOcrService {
             byte[] imageBytes = toOcrBytes(image);
             String base64 = Base64.getEncoder().encodeToString(imageBytes);
 
-            log.info("CLOVA OCR request image size: {} bytes", imageBytes.length);
-
             ClovaOcrRequest body = new ClovaOcrRequest(
                     "V2",
                     UUID.randomUUID().toString(),

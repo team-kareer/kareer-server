@@ -39,7 +39,6 @@ public class VisaOcrParser {
 
     public VisaInfo parse(String rawText) {
         String text = DocumentTextUtils.normalize(rawText);
-        log.info("rawText: {}", text);
 
         VisaType visaType = extractVisaType(text);
         LocalDate visaStartDate = extractVisaStartDate(text);
