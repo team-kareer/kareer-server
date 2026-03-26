@@ -12,4 +12,25 @@ public enum VisaType {
     ;
 
     private final String description;
+
+    public static VisaType from(String originalText) {
+        if (originalText == null || originalText.isBlank()) {
+            return null;
+        }
+
+        String normalized = normalize(originalText);
+
+        for (VisaType visaType : values()) {
+            if (normalize(visaType.name()).equals(normalized)
+                || normalize(visaType.description).equals(normalized)) {
+                return visaType;
+            }
+        }
+
+        return null;
+    }
+
+    private static String normalize(String value) {
+        return value.replaceAll("[^A-Za-z0-9]", "").toUpperCase();
+    }
 }
