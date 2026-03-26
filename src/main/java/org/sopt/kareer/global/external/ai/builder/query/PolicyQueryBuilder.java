@@ -10,7 +10,7 @@ public class PolicyQueryBuilder {
                 "Korea visa policy and employment rules",
                 "visaType=" + (visa == null ? "" : visa.getVisaType().name()),
                 "targetJob=" + nullSafe(member.getTargetJob()),
-                "degree=" + (member.getDegree() == null ? "" : member.getDegree().name()),
+                "degree=" + (member.getDegreeCode() == null ? "" : member.getDegreeCode()),
                 "graduation=" + (member.getExpectedGraduationDate() == null ? "" : member.getExpectedGraduationDate().toString())
         );
     }

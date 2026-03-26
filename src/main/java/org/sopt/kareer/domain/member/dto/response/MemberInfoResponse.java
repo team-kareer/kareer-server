@@ -49,6 +49,9 @@ public record MemberInfoResponse(
         @Schema(description = "학위", example = "Bachelor")
         String degree,
 
+        @Schema(description = "영어 수준", example = "Upper Intermediate")
+        String englishLevel,
+
         @Schema(description = "타겟 직무 스킬", example = "Java, Spring")
         String targetJobSkill,
 
@@ -58,7 +61,9 @@ public record MemberInfoResponse(
     public static MemberInfoResponse of(Member member, MemberVisa memberVisa,
                                         String countryLabel,
                                         String primaryMajorLabel,
-                                        String universityLabel) {
+                                        String universityLabel,
+                                        String degreeLabel,
+                                        String englishLevelLabel) {
         return new MemberInfoResponse(
                 member.getId(),
                 member.getName(),
@@ -73,7 +78,8 @@ public record MemberInfoResponse(
                 member.getGraduationDate(),
                 member.getExpectedGraduationDate(),
                 member.getLanguageLevel(),
-                member.getDegree().getDescription(),
+                degreeLabel,
+                englishLevelLabel,
                 member.getTargetJobSkill(),
                 memberVisa.getVisaType()
         );

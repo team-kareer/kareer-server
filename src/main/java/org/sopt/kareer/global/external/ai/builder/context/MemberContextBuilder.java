@@ -38,8 +38,8 @@ public class MemberContextBuilder {
         appendLine(sb, "preparationStatus", member.getPreparationStatus());
         appendLine(sb, "personalBackground", member.getPersonalBackground());
         appendLine(sb, "languageLevel", member.getLanguageLevel() != null ? member.getLanguageLevel().name() : "");
-        appendLine(sb, "englishLevel", member.getEnglishLevel() != null ? member.getEnglishLevel().name() : "");
-        appendLine(sb, "degree", member.getDegree() != null ? member.getDegree().name() : "");
+        appendLine(sb, "englishLevel", member.getEnglishLevelCode() != null ? member.getEnglishLevelCode() : "");
+        appendLine(sb, "degree", member.getDegreeCode() != null ? member.getDegreeCode() : "");
         appendLine(sb, "graduationDate", member.getGraduationDate());
         appendLine(sb, "expectedGraduationDate", member.getExpectedGraduationDate());
 

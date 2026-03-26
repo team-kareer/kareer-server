@@ -1,22 +1,15 @@
 package org.sopt.kareer.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
-import org.sopt.kareer.domain.member.dto.request.MemberOnboardV2Request;
+import org.sopt.kareer.domain.member.dto.request.*;
 import org.sopt.kareer.domain.member.dto.response.*;
-import org.sopt.kareer.domain.member.entity.Member;
-import org.sopt.kareer.domain.member.entity.MemberVisa;
-import org.sopt.kareer.domain.member.entity.enums.MemberStatus;
-import org.sopt.kareer.domain.member.entity.enums.LocalizedOnboardCategoryType;
-import org.sopt.kareer.domain.member.exception.MemberErrorCode;
-import org.sopt.kareer.domain.member.exception.MemberException;
-import org.sopt.kareer.domain.member.repository.MemberRepository;
-import org.sopt.kareer.domain.member.repository.MemberVisaRepository;
+import org.sopt.kareer.domain.member.entity.*;
+import org.sopt.kareer.domain.member.entity.enums.*;
+import org.sopt.kareer.domain.member.exception.*;
+import org.sopt.kareer.domain.member.repository.*;
 import org.sopt.kareer.domain.member.service.dto.request.MypageCommand;
-import org.sopt.kareer.domain.member.util.PassportOcrParser;
-import org.sopt.kareer.domain.member.util.VisaOcrParser;
-import org.sopt.kareer.global.document.exception.DocumentErrorCode;
-import org.sopt.kareer.global.document.exception.DocumentException;
+import org.sopt.kareer.domain.member.util.*;
+import org.sopt.kareer.global.document.exception.*;
 import org.sopt.kareer.global.document.service.DocumentProcessingService;
 import org.sopt.kareer.global.exception.customexception.GlobalException;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
@@ -71,19 +64,29 @@ public class MemberService {
         Member member = getById(memberId);
         MemberVisa memberVisa = memberVisaRepository.findActiveByMemberId(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.VISA_NOT_FOUND));
-        String countryLabel = localizedOnboardQueryService.resolveLabelByCode(LocalizedOnboardCategoryType.COUNTRY, member.getCountryCode());
-        String primaryMajorLabel = localizedOnboardQueryService.resolveLabelByCode(LocalizedOnboardCategoryType.MAJOR, member.getPrimaryMajorCode());
-        String universityLabel = localizedOnboardQueryService.resolveLabelByCode(LocalizedOnboardCategoryType.UNIVERSITY, member.getUniversityCode());
+        String countryLabel = localizedOnboardQueryService.resolveLabelByCode(LocalizedOnboardCategoryType.COUNTRY,
+                member.getCountryCode());
+        String primaryMajorLabel = localizedOnboardQueryService.resolveLabelByCode(LocalizedOnboardCategoryType.MAJOR,
+                member.getPrimaryMajorCode());
+        String universityLabel = localizedOnboardQueryService.resolveLabelByCode(
+                LocalizedOnboardCategoryType.UNIVERSITY, member.getUniversityCode());
+        String degreeLabel = localizedOnboardQueryService.resolveLabelByCode(LocalizedOnboardCategoryType.DEGREE,
+                member.getDegreeCode());
+        String englishLevelLabel = localizedOnboardQueryService.resolveLabelByCode(
+                LocalizedOnboardCategoryType.ENGLISH_LEVEL, member.getEnglishLevelCode());
 
         return MemberInfoResponse.of(
                 member,
                 memberVisa,
                 countryLabel,
                 primaryMajorLabel,
-                universityLabel
+                universityLabel,
+                degreeLabel,
+                englishLevelLabel
         );
     }
 
+    // 프론트 온보딩 구현 완료 후 삭제 예정
     @Transactional
     public void onboardMember(MemberOnboardRequest request, Long memberId) {
         Member member = getById(memberId);
@@ -125,11 +128,11 @@ public class MemberService {
                 request.birthDate(),
                 request.countryCode(),
                 request.universityCode(),
-                request.englishLevel(),
+                request.englishLevel().getDescription(),
                 fieldOfInterest,
                 preparationStatus,
                 request.languageLevel(),
-                request.degree(),
+                request.degree().getDescription(),
                 request.expectedGraduationDate(),
                 request.primaryMajorCode(),
                 request.secondaryMajor(),
@@ -162,11 +165,20 @@ public class MemberService {
         Member member = getById(memberId);
         MemberVisa memberVisa = memberVisaRepository.findActiveByMemberId(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.VISA_NOT_FOUND));
-        String countryLabel = localizedOnboardQueryService.resolveLabelByCode(LocalizedOnboardCategoryType.COUNTRY, member.getCountryCode());
-        String primaryMajorLabel = localizedOnboardQueryService.resolveLabelByCode(LocalizedOnboardCategoryType.MAJOR, member.getPrimaryMajorCode());
-        String universityLabel = localizedOnboardQueryService.resolveLabelByCode(LocalizedOnboardCategoryType.UNIVERSITY, member.getUniversityCode());
+        String countryLabel = localizedOnboardQueryService.resolveLabelByCode(LocalizedOnboardCategoryType.COUNTRY,
+                member.getCountryCode());
+        String primaryMajorLabel = localizedOnboardQueryService.resolveLabelByCode(LocalizedOnboardCategoryType.MAJOR,
+                member.getPrimaryMajorCode());
+        String universityLabel = localizedOnboardQueryService.resolveLabelByCode(
+                LocalizedOnboardCategoryType.UNIVERSITY, member.getUniversityCode());
+        String degreeLabel = localizedOnboardQueryService.resolveLabelByCode(LocalizedOnboardCategoryType.DEGREE,
+                member.getDegreeCode());
+        String englishLevelLabel = localizedOnboardQueryService.resolveLabelByCode(
+                LocalizedOnboardCategoryType.ENGLISH_LEVEL, member.getEnglishLevelCode());
 
-        return MypageResponse.of(member, memberVisa, countryLabel, primaryMajorLabel, universityLabel);
+        return MypageResponse.of(member, memberVisa, countryLabel, primaryMajorLabel, universityLabel, degreeLabel,
+                englishLevelLabel);
+
     }
 
     @Transactional
@@ -197,7 +209,7 @@ public class MemberService {
     }
 
 
-    public OcrVisaResponse getVisaOcr(MultipartFile file){
+    public OcrVisaResponse getVisaOcr(MultipartFile file) {
         try {
             String text = documentProcessingService.extractText(file);
             VisaOcrParser.VisaInfo visaInfo = visaOcrParser.parse(text);
@@ -205,7 +217,7 @@ public class MemberService {
             return OcrVisaResponse.from(visaInfo);
         } catch (DocumentException e) {
             throw e;
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new DocumentException(
                     DocumentErrorCode.OCR_PROCESSING_FAILED
             );
@@ -220,10 +232,11 @@ public class MemberService {
             return OcrPassportResponse.from(passportInfo);
         } catch (DocumentException e) {
             throw e;
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new DocumentException(
                     DocumentErrorCode.OCR_PROCESSING_FAILED
             );
         }
     }
+
 }

@@ -4,5 +4,7 @@ public enum LocalizedOnboardCategoryType {
     FIELD,
     MAJOR,
     UNIVERSITY,
-    COUNTRY
+    COUNTRY,
+    DEGREE,
+    ENGLISH_LEVEL
 }
