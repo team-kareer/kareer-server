@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -16,32 +17,29 @@ import java.util.regex.Pattern;
 @Component
 public class VisaOcrParser {
 
+    private static final String DATE_REGEX =
+            "(\\d{4}[./-]\\d{1,2}[./-]\\d{1,2}|\\d{1,2}[./-]\\d{1,2}[./-]\\d{4}|\\d{1,2}\\s+[A-Z]{3}\\s+\\d{4})";
+
     private static final Pattern DATE_PATTERN = Pattern.compile(
-            "\\b(" +
-            "\\d{4}[./-]\\d{1,2}[./-]\\d{1,2}" +
-            "|" +
-            "\\d{1,2}[./-]\\d{1,2}[./-]\\d{4}" +
-            "|" +
-            "\\d{1,2}\\s+[A-Z]{3}\\s+\\d{4}" +
-            ")\\b",
+            "\\b" + DATE_REGEX + "\\b",
             Pattern.CASE_INSENSITIVE
     );
 
-    // 비자유형 파싱용
-    private static final Pattern STATUS_PATTERN = Pattern.compile(
-            "(?i)(status|체류자격)\\s*[:：]?\\s*([A-Z]\\s*-?\\s*\\d{1,2})"
+    private static final Pattern SUPPORTED_VISA_PATTERN = Pattern.compile(
+            "(?i)\\b(D\\s*-?\\s*2|D\\s*-?\\s*10|E\\s*-?\\s*7)\\b"
     );
 
     private static final Pattern START_DATE_PATTERN = Pattern.compile(
-            "(?i)(issue\\s*date|date\\s*of\\s*issue|grant\\s*date|issued\\s*on|발급일)\\s*[:：]?\\s*([0-9./\\- ]{8,20}|\\d{1,2}\\s+[A-Z]{3}\\s+\\d{4})"
+            "(?i)(issue\\s*date|date\\s*of\\s*issue|grant\\s*date|발급일)\\s*[/|:]?\\s*" + DATE_REGEX
     );
 
     private static final Pattern EXPIRE_DATE_PATTERN = Pattern.compile(
-            "(?i)(final\\s*entry\\s*date|expiry\\s*date|expiration\\s*date|valid\\s*until|until|만료일)\\s*[:：]?\\s*([0-9./\\- ]{8,20}|\\d{1,2}\\s+[A-Z]{3}\\s+\\d{4})"
+            "(?i)(final\\s*entry\\s*date|expiry\\s*date|expiration\\s*date|valid\\s*until|만료일|입국만료일)\\s*[/|:]?\\s*" + DATE_REGEX
     );
 
     public VisaInfo parse(String rawText) {
         String text = normalize(rawText);
+        log.info("rawText: {}", text);
 
         VisaType visaType = extractVisaType(text);
         LocalDate visaStartDate = extractVisaStartDate(text);
@@ -49,16 +47,16 @@ public class VisaOcrParser {
 
         List<LocalDate> allDates = extractAllDates(text);
 
-        if (visaStartDate == null) {
-            visaStartDate = inferStartDate(allDates, visaExpiredAt);
-        }
-
         if (visaExpiredAt == null) {
             visaExpiredAt = inferExpireDate(allDates, visaStartDate);
         }
 
         if (visaExpiredAt == null) {
             visaExpiredAt = extractExpireDateFromMrz(text);
+        }
+
+        if (visaStartDate == null) {
+            visaStartDate = inferStartDate(allDates, visaExpiredAt);
         }
 
         return new VisaInfo(visaType, visaStartDate, visaExpiredAt);
@@ -69,24 +67,10 @@ public class VisaOcrParser {
     }
 
     private VisaType extractVisaType(String text) {
-        Matcher matcher = STATUS_PATTERN.matcher(text);
+        Matcher matcher = SUPPORTED_VISA_PATTERN.matcher(text);
         if (matcher.find()) {
-            VisaType visaType = VisaType.from(matcher.group(2));
-            if (visaType != null) {
-                return visaType;
-            }
+            return VisaType.from(matcher.group(1));
         }
-
-        Pattern fallbackPattern = Pattern.compile("\\b([A-Z]\\s*-?\\s*\\d{1,2})\\b");
-        Matcher fallbackMatcher = fallbackPattern.matcher(text);
-
-        while (fallbackMatcher.find()) {
-            VisaType visaType = VisaType.from(fallbackMatcher.group(1));
-            if (visaType != null) {
-                return visaType;
-            }
-        }
-
         return null;
     }
 
@@ -127,8 +111,8 @@ public class VisaOcrParser {
 
         if (expiredAt != null) {
             return dates.stream()
-                    .filter(date -> !date.isAfter(expiredAt))
-                    .min(LocalDate::compareTo)
+                    .filter(date -> date.isBefore(expiredAt))
+                    .max(LocalDate::compareTo)
                     .orElse(null);
         }
 
@@ -144,13 +128,13 @@ public class VisaOcrParser {
 
         if (startDate != null) {
             return dates.stream()
-                    .filter(date -> !date.isBefore(startDate))
+                    .filter(date -> date.isAfter(startDate))
                     .max(LocalDate::compareTo)
                     .orElse(null);
         }
 
         return dates.stream()
-                .max(LocalDate::compareTo)
+                .max(Comparator.naturalOrder())
                 .orElse(null);
     }
 
