@@ -1,13 +1,16 @@
-package org.sopt.kareer.global.external.clova.service;
+package org.sopt.kareer.global.document.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.sopt.kareer.global.external.ai.exception.RagErrorCode;
-import org.sopt.kareer.global.external.ai.exception.RagException;
-import org.sopt.kareer.global.external.clova.dto.response.PageText;
+import org.sopt.kareer.global.document.dto.response.PageText;
+import org.sopt.kareer.global.document.exception.DocumentErrorCode;
+import org.sopt.kareer.global.document.exception.DocumentException;
+import org.sopt.kareer.global.external.clova.exception.ClovaErrorCode;
+import org.sopt.kareer.global.external.clova.exception.ClovaException;
+import org.sopt.kareer.global.external.clova.service.ClovaOcrService;
 import org.springframework.stereotype.Service;
 
 import java.awt.image.BufferedImage;
@@ -55,7 +58,7 @@ public class DocumentProcessingService {
             return pages;
 
         } catch (Exception e) {
-            throw new RagException(RagErrorCode.EXTRACT_IMAGE_FAILED, e.getMessage());
+            throw new ClovaException(ClovaErrorCode.EXTRACT_IMAGE_FAILED, e.getMessage());
         }
     }
 
@@ -69,7 +72,7 @@ public class DocumentProcessingService {
         try (PDDocument document = PDDocument.load(pdfFile)) {
             return document.getNumberOfPages();
         } catch (IOException e) {
-            throw new RagException(RagErrorCode.EXTRACT_TEXT_FAILED, e.getMessage());
+            throw new DocumentException(DocumentErrorCode.EXTRACT_TEXT_FAILED, e.getMessage());
         }
     }
 
@@ -92,7 +95,7 @@ public class DocumentProcessingService {
             }
             return pages;
         } catch (IOException e) {
-            throw new RagException(RagErrorCode.EXTRACT_TEXT_FAILED, e.getMessage());
+            throw new DocumentException(DocumentErrorCode.EXTRACT_TEXT_FAILED, e.getMessage());
         }
     }
 
