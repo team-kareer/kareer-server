@@ -29,8 +29,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-
 import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.*;
 
 @RestController
@@ -164,7 +162,7 @@ public class MemberController {
     @Operation(summary = "온보딩 비자 OCR API", description = "온보딩 과정에서 유저의 비자 문서를 분석하여 정보를 추출합니다.")
     @PostMapping(value = "/onboard/ocr/visa", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<BaseResponse<OcrVisaResponse>> getVisaInfo(
-            @RequestPart("file") MultipartFile file) throws IOException {
+            @RequestPart("file") MultipartFile file){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok(memberService.getVisaOcr(file), "사용자 비자 정보 추출에 성공했습니다."));
     }
@@ -172,7 +170,7 @@ public class MemberController {
     @Operation(summary = "온보딩 여권 OCR API", description = "온보딩 과정에서 유저의 여권을 분석하여 정보를 추출합니다.")
     @PostMapping(value = "/onboard/ocr/passport", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<BaseResponse<OcrPassportResponse>> getPassportInfo(
-            @RequestPart("file") MultipartFile file) throws IOException {
+            @RequestPart("file") MultipartFile file){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok(memberService.getPassportOcr(file), "사용자 여권 정보 추출에 성공했습니다."));
     }

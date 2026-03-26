@@ -14,6 +14,8 @@ import org.sopt.kareer.domain.member.repository.MemberVisaRepository;
 import org.sopt.kareer.domain.member.service.dto.request.MypageCommand;
 import org.sopt.kareer.domain.member.util.PassportOcrParser;
 import org.sopt.kareer.domain.member.util.VisaOcrParser;
+import org.sopt.kareer.global.document.exception.DocumentErrorCode;
+import org.sopt.kareer.global.document.exception.DocumentException;
 import org.sopt.kareer.global.document.service.DocumentProcessingService;
 import org.sopt.kareer.global.exception.customexception.GlobalException;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
@@ -22,8 +24,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -181,17 +181,33 @@ public class MemberService {
     }
 
 
-    public OcrVisaResponse getVisaOcr(MultipartFile file) throws IOException {
-        String text = documentProcessingService.extractText(file);
-        VisaOcrParser.VisaInfo visaInfo = visaOcrParser.parse(text);
+    public OcrVisaResponse getVisaOcr(MultipartFile file){
+        try {
+            String text = documentProcessingService.extractText(file);
+            VisaOcrParser.VisaInfo visaInfo = visaOcrParser.parse(text);
 
-        return OcrVisaResponse.from(visaInfo);
+            return OcrVisaResponse.from(visaInfo);
+        } catch (DocumentException e) {
+            throw e;
+        } catch(Exception e) {
+            throw new DocumentException(
+                    DocumentErrorCode.OCR_PROCESSING_FAILED
+            );
+        }
     }
 
-    public OcrPassportResponse getPassportOcr(MultipartFile file) throws IOException {
-        String text = documentProcessingService.extractText(file);
-        PassportOcrParser.PassportInfo passportInfo = passportOcrParser.parse(text);
+    public OcrPassportResponse getPassportOcr(MultipartFile file) {
+        try {
+            String text = documentProcessingService.extractText(file);
+            PassportOcrParser.PassportInfo passportInfo = passportOcrParser.parse(text);
 
-        return OcrPassportResponse.from(passportInfo);
+            return OcrPassportResponse.from(passportInfo);
+        } catch (DocumentException e) {
+            throw e;
+        } catch(Exception e) {
+            throw new DocumentException(
+                    DocumentErrorCode.OCR_PROCESSING_FAILED
+            );
+        }
     }
 }
