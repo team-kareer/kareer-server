@@ -1,19 +1,12 @@
 package org.sopt.kareer.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.domain.member.dto.request.*;
 import org.sopt.kareer.domain.member.dto.response.*;
-import org.sopt.kareer.domain.member.entity.*;
 import org.sopt.kareer.domain.member.entity.enums.*;
-import org.sopt.kareer.domain.member.exception.*;
-import org.sopt.kareer.domain.member.repository.*;
 import org.sopt.kareer.domain.member.service.dto.request.MypageCommand;
-import org.sopt.kareer.domain.member.util.*;
-import org.sopt.kareer.global.document.exception.*;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardV2Request;
 import org.sopt.kareer.domain.member.dto.request.MemberTermsRequest;
-import org.sopt.kareer.domain.member.dto.response.*;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.entity.MemberTerm;
 import org.sopt.kareer.domain.member.entity.MemberVisa;
@@ -23,7 +16,6 @@ import org.sopt.kareer.domain.member.exception.MemberException;
 import org.sopt.kareer.domain.member.repository.MemberRepository;
 import org.sopt.kareer.domain.member.repository.MemberTermRepository;
 import org.sopt.kareer.domain.member.repository.MemberVisaRepository;
-import org.sopt.kareer.domain.member.service.dto.request.MypageCommand;
 import org.sopt.kareer.domain.member.util.PassportOcrParser;
 import org.sopt.kareer.domain.member.util.VisaOcrParser;
 import org.sopt.kareer.domain.term.entity.Term;
