@@ -12,7 +12,7 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=
-      - LOG_BASE=./logs/blue
+      - LOG_BASE=/app/logs
     env_file:
       - .env
     networks:
@@ -36,7 +36,7 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=
-      - LOG_BASE=./logs/green
+      - LOG_BASE=/app/logs
     env_file:
       - .env
     networks:
