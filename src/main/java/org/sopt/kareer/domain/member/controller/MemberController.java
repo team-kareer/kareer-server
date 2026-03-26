@@ -19,7 +19,6 @@ import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapTestResponse;
 import org.sopt.kareer.domain.roadmap.service.RoadMapService;
 import org.sopt.kareer.domain.roadmap.service.RoadmapAsyncService;
-import org.sopt.kareer.domain.term.service.TermService;
 import org.sopt.kareer.global.annotation.CustomExceptionDescription;
 import org.sopt.kareer.global.auth.service.AuthService;
 import org.sopt.kareer.global.config.swagger.SwaggerResponseDescription;
@@ -43,7 +42,6 @@ public class MemberController {
     private final RoadMapService roadMapService;
     private final RoadmapAsyncService roadmapAsyncService;
     private final AuthService authService;
-    private final TermService termService;
 
     @GetMapping("/me")
     @Operation(summary = "회원 정보 조회", description = "로그인한 회원의 정보를 조회합니다.")
@@ -180,12 +178,13 @@ public class MemberController {
 
 
     @Operation(summary = "약관 동의", description = "약관에 동의합니다.")
+    @CustomExceptionDescription(TERM_AGREE)
     @PostMapping("/term-agreements")
     public ResponseEntity<BaseResponse<Void>> agreeTerms(
             @AuthenticationPrincipal Long memberId,
             @RequestBody @Valid MemberTermsRequest request
     ) {
-        termService.agreeTerms(memberId, request);
+        memberService.agreeTerms(memberId, request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok("약관 동의 저장에 성공했습니다."));
     }
