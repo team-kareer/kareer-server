@@ -45,10 +45,9 @@ public class Member extends BaseEntity {
 
     private LocalDate birthDate;
 
-    @Enumerated(EnumType.STRING)
-    private Country country;
+    private String countryCode;
 
-    private String primaryMajor;
+    private String primaryMajorCode;
 
     private String secondaryMajor;
 
@@ -60,7 +59,7 @@ public class Member extends BaseEntity {
 
     private String personalBackground;
 
-    private String university;
+    private String universityCode;
 
     @Enumerated(EnumType.STRING)
     private EnglishLevel englishLevel;
@@ -100,15 +99,49 @@ public class Member extends BaseEntity {
         assertPendingStatus();
         this.name = name;
         this.birthDate = birthDate;
-        this.country = country;
-        this.university = university;
+        this.countryCode = country.getCountryName();
+        this.universityCode = university;
         this.englishLevel = englishLevel;
         this.fieldsOfInterest = fieldsOfInterests;
         this.preparationStatus = preparationStatuses;
         this.languageLevel = languageLevel;
         this.degree = degree;
         this.expectedGraduationDate = expectedGraduationDate;
-        this.primaryMajor = primaryMajor;
+        this.primaryMajorCode = primaryMajor;
+        this.secondaryMajor = secondaryMajor;
+        this.targetJob = targetJob;
+        this.targetJobSkill = targetJobSkill;
+        this.status = MemberStatus.ACTIVE;
+        this.personalBackground = personalBackground;
+    }
+
+    public void updateInfoV2(String name,
+                           LocalDate birthDate,
+                           String countryCode,
+                           String universityCode,
+                           EnglishLevel englishLevel,
+                           String fieldsOfInterests,
+                           String preparationStatuses,
+                           LanguageLevel languageLevel,
+                           Degree degree,
+                           LocalDate expectedGraduationDate,
+                           String primaryMajorCode,
+                           String secondaryMajor,
+                           String targetJob,
+                           String targetJobSkill,
+                           String personalBackground) {
+        assertPendingStatus();
+        this.name = name;
+        this.birthDate = birthDate;
+        this.countryCode = countryCode;
+        this.universityCode = universityCode;
+        this.englishLevel = englishLevel;
+        this.fieldsOfInterest = fieldsOfInterests;
+        this.preparationStatus = preparationStatuses;
+        this.languageLevel = languageLevel;
+        this.degree = degree;
+        this.expectedGraduationDate = expectedGraduationDate;
+        this.primaryMajorCode = primaryMajorCode;
         this.secondaryMajor = secondaryMajor;
         this.targetJob = targetJob;
         this.targetJobSkill = targetJobSkill;
@@ -170,10 +203,10 @@ public class Member extends BaseEntity {
     ) {
         this.targetJob = targetJob;
         this.birthDate = birthDate;
-        this.country = country;
+        this.countryCode = country.getCountryName();
         this.degree = degree;
-        this.university = university;
-        this.primaryMajor = primaryMajor;
+        this.universityCode = university;
+        this.primaryMajorCode = primaryMajor;
         this.secondaryMajor = secondaryMajor;
         this.languageLevel = languageLevel;
         this.englishLevel = englishLevel;

@@ -7,6 +7,7 @@ import org.sopt.kareer.domain.member.dto.response.*;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.entity.MemberVisa;
 import org.sopt.kareer.domain.member.entity.enums.MemberStatus;
+import org.sopt.kareer.domain.member.entity.enums.LocalizedOnboardCategoryType;
 import org.sopt.kareer.domain.member.exception.MemberErrorCode;
 import org.sopt.kareer.domain.member.exception.MemberException;
 import org.sopt.kareer.domain.member.repository.MemberRepository;
@@ -33,6 +34,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberVisaRepository memberVisaRepository;
     private final MemberDeletionService memberDeletionService;
+    private final LocalizedOnboardQueryService localizedOnboardQueryService;
     private final DocumentProcessingService documentProcessingService;
     private final VisaOcrParser visaOcrParser;
     private final PassportOcrParser passportOcrParser;
@@ -69,7 +71,17 @@ public class MemberService {
         Member member = getById(memberId);
         MemberVisa memberVisa = memberVisaRepository.findActiveByMemberId(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.VISA_NOT_FOUND));
-        return MemberInfoResponse.from(member, memberVisa);
+        String countryLabel = localizedOnboardQueryService.resolveLabelByCode(LocalizedOnboardCategoryType.COUNTRY, member.getCountryCode());
+        String primaryMajorLabel = localizedOnboardQueryService.resolveLabelByCode(LocalizedOnboardCategoryType.MAJOR, member.getPrimaryMajorCode());
+        String universityLabel = localizedOnboardQueryService.resolveLabelByCode(LocalizedOnboardCategoryType.UNIVERSITY, member.getUniversityCode());
+
+        return MemberInfoResponse.of(
+                member,
+                memberVisa,
+                countryLabel,
+                primaryMajorLabel,
+                universityLabel
+        );
     }
 
     @Transactional
@@ -97,7 +109,6 @@ public class MemberService {
                 member,
                 request.visaType(),
                 request.visaExpiredAt(),
-                request.visaPoint(),
                 request.visaStartDate()
         );
         memberVisaRepository.save(memberVisa);
@@ -109,18 +120,18 @@ public class MemberService {
         String fieldOfInterest = String.join(",", request.fieldsOfInterests());
         String preparationStatus = String.join(",", request.preparationStatuses());
 
-        member.updateInfo(
+        member.updateInfoV2(
                 request.name(),
                 request.birthDate(),
-                request.country(),
-                request.university(),
+                request.countryCode(),
+                request.universityCode(),
                 request.englishLevel(),
                 fieldOfInterest,
                 preparationStatus,
                 request.languageLevel(),
                 request.degree(),
                 request.expectedGraduationDate(),
-                request.primaryMajor(),
+                request.primaryMajorCode(),
                 request.secondaryMajor(),
                 request.targetJob(),
                 request.targetJobSkill(),
@@ -131,7 +142,6 @@ public class MemberService {
                 member,
                 request.visaType(),
                 request.visaExpiredAt(),
-                request.visaPoint(),
                 request.visaStartDate()
         );
         memberVisaRepository.save(memberVisa);
@@ -152,7 +162,11 @@ public class MemberService {
         Member member = getById(memberId);
         MemberVisa memberVisa = memberVisaRepository.findActiveByMemberId(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.VISA_NOT_FOUND));
-        return MypageResponse.from(member, memberVisa);
+        String countryLabel = localizedOnboardQueryService.resolveLabelByCode(LocalizedOnboardCategoryType.COUNTRY, member.getCountryCode());
+        String primaryMajorLabel = localizedOnboardQueryService.resolveLabelByCode(LocalizedOnboardCategoryType.MAJOR, member.getPrimaryMajorCode());
+        String universityLabel = localizedOnboardQueryService.resolveLabelByCode(LocalizedOnboardCategoryType.UNIVERSITY, member.getUniversityCode());
+
+        return MypageResponse.of(member, memberVisa, countryLabel, primaryMajorLabel, universityLabel);
     }
 
     @Transactional

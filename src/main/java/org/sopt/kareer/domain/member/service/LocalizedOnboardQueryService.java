@@ -41,6 +41,19 @@ public class LocalizedOnboardQueryService {
         return OnboardCountriesResponse.of(toItemResponses(fetchByType(LocalizedOnboardCategoryType.COUNTRY)));
     }
 
+    public String resolveLabelByCode(LocalizedOnboardCategoryType type, String code) {
+        if (code == null || code.isBlank()) {
+            return null;
+        }
+        Locale locale = LocaleContextHolder.getLocale();
+        String languageTag = locale != null ? locale.toLanguageTag() : null;
+        String language = locale != null ? locale.getLanguage() : null;
+
+        return categoryRepository.findByTypeAndCode(type, code)
+                .map(category -> resolveLabel(category, languageTag, language))
+                .orElse(code);
+    }
+
     private List<LocalizedOnboardCategory> fetchByType(LocalizedOnboardCategoryType type) {
         return categoryRepository.findAllByTypeOrderByUseOrderAscIdAsc(type);
     }

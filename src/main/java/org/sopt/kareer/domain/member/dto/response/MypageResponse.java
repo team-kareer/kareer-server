@@ -51,16 +51,19 @@ public record MypageResponse(
         String englishLevel
 
 ) {
-    public static MypageResponse from(Member member, MemberVisa memberVisa) {
+    public static MypageResponse of(Member member, MemberVisa memberVisa,
+                                    String countryLabel,
+                                    String primaryMajorLabel,
+                                    String universityLabel) {
         return MypageResponse.builder()
                 .name(member.getName())
                 .profileImageUrl(member.getProfileImageUrl())
                 .targetJob(member.getTargetJob())
                 .birthDate(member.getBirthDate())
-                .country(member.getCountry().getCountryName())
+                .country(countryLabel)
                 .degree(member.getDegree().getDescription())
-                .university(member.getUniversity())
-                .primaryMajor(member.getPrimaryMajor())
+                .university(universityLabel)
+                .primaryMajor(primaryMajorLabel)
                 .secondaryMajor(member.getSecondaryMajor())
                 .visaType(memberVisa.getVisaType().getDescription())
                 .visaExpiredAt(memberVisa.getVisaExpiredAt())
