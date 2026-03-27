@@ -39,3 +39,6 @@ src/main/resources/.env
 
 ### Querydsl ###
 src/main/generated/
+
+### Claude Code ###
+CLAUDE.md
