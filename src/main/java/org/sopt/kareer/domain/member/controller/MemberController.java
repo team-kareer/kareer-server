@@ -1,28 +1,33 @@
 package org.sopt.kareer.domain.member.controller;
 
 
-import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.*;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
 import org.sopt.kareer.domain.member.dto.request.MemberTermsRequest;
 import org.sopt.kareer.domain.member.dto.request.MypageRequest;
 import org.sopt.kareer.domain.member.dto.response.*;
-import org.sopt.kareer.domain.member.service.*;
+import org.sopt.kareer.domain.member.service.LocalizedOnboardQueryService;
+import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapTestResponse;
-import org.sopt.kareer.domain.roadmap.service.*;
+import org.sopt.kareer.domain.roadmap.service.RoadMapService;
+import org.sopt.kareer.domain.roadmap.service.RoadmapTranslationService;
 import org.sopt.kareer.global.annotation.CustomExceptionDescription;
 import org.sopt.kareer.global.auth.service.AuthService;
 import org.sopt.kareer.global.config.swagger.SwaggerResponseDescription;
 import org.sopt.kareer.global.response.BaseResponse;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +37,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final RoadMapService roadMapService;
-    private final RoadmapAsyncService roadmapAsyncService;
+    private final RoadmapTranslationService roadmapTranslationService;
     private final AuthService authService;
     private final LocalizedOnboardQueryService localizedOnboardQueryService;
 
@@ -97,7 +102,9 @@ public class MemberController {
     public ResponseEntity<BaseResponse<Void>> generateRoadmap(
             @AuthenticationPrincipal Long memberId) {
 
-        roadMapService.createRoadmap(memberId);
+        var target = roadMapService.createRoadmap(memberId);
+
+        roadmapTranslationService.translateAllLanguages(target);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok("AI 로드맵 생성에 성공하였습니다."));
