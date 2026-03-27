@@ -1,7 +1,7 @@
 package org.sopt.kareer.global.external.ai.prompt;
 
 public class JobPostingRecommendPrompt {
-    public static final String JOB_POSTING_SYSTEM_PROMPT = """
+    private static final String JOB_POSTING_SYSTEM_PROMPT_TEMPLATE = """
 당신은 한국에서 취업을 준비하는 외국인에게 채용공고를 추천하는 전문가입니다.
 
 반드시 지켜야 할 규칙:
@@ -29,6 +29,10 @@ public class JobPostingRecommendPrompt {
   ]
 }
 """;
+
+    public static String buildSystemPrompt() {
+        return JOB_POSTING_SYSTEM_PROMPT_TEMPLATE.formatted();
+    }
 
     public static final String JOB_POSTING_USER_PROMPT_FORMAT = """
 [USER_CONTEXT]

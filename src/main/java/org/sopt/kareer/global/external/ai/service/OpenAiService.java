@@ -39,7 +39,7 @@ public class OpenAiService {
         String careerContext = buildSectionContext("CAREER", careerRequiredDocs);
         String policyContext = buildSectionContext("POLICY", policyDocs);
 
-        String systemPrompt = RoadmapPrompt.ROADMAP_SYSTEM_PROMPT;
+        String systemPrompt = RoadmapPrompt.buildSystemPrompt();
         String userPrompt = RoadmapPrompt.ROADMAP_USER_PROMPT_FORMAT.formatted(
                 LocalDate.now(),
                 memberContext,
@@ -51,10 +51,10 @@ public class OpenAiService {
         return call(systemPrompt, userPrompt, RoadmapResponse.class);
     }
 
-    public List<Long> recommendJobPosting(String userContext, List<Document> retrievedDocument){
+    public List<Long> recommendJobPosting(String userContext, List<Document> retrievedDocument) {
         String ragContext = buildRagContext(retrievedDocument, RagType.JOBPOSTING);
 
-        String systemPrompt = JobPostingRecommendPrompt.JOB_POSTING_SYSTEM_PROMPT;
+        String systemPrompt = JobPostingRecommendPrompt.buildSystemPrompt();
         String userPrompt = JobPostingRecommendPrompt.JOB_POSTING_USER_PROMPT_FORMAT.formatted(userContext, ragContext);
 
         JobPostingRecommendResults searched = call(systemPrompt, userPrompt, JobPostingRecommendResults.class);
@@ -65,7 +65,6 @@ public class OpenAiService {
         return searched.results().stream()
                 .map(JobPostingRecommendResults.JobPostingRecommendResult::jobPostingId)
                 .toList();
-
     }
 
     private String buildRagContext(List<Document> docs, RagType ragType) {

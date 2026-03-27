@@ -3,6 +3,7 @@ package org.sopt.kareer.domain.roadmap.service;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapResponse;
+import org.sopt.kareer.domain.roadmap.dto.translation.RoadmapTranslationTarget;
 import org.sopt.kareer.domain.roadmap.entity.*;
 import org.sopt.kareer.domain.roadmap.entity.enums.ActionItemType;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseActionType;
@@ -14,7 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.INVALID_DATE_TYPE;
@@ -30,10 +33,11 @@ public class RoadMapPersistService {
     private final ActionItemRepository actionItemRepository;
 
     @Transactional
-    public void saveRoadMap(Member member, RoadmapResponse response) {
+    public RoadmapTranslationTarget saveRoadMap(Member member, RoadmapResponse response) {
+        List<RoadmapTranslationTarget.PhaseTarget> phaseTargets = new ArrayList<>();
 
-        for(RoadmapResponse.PhasePlan phasePlan : Optional.ofNullable(response.phases()).orElse(Collections.emptyList())){
-            Phase phase = Phase.create(
+        for (RoadmapResponse.PhasePlan phasePlan : Optional.ofNullable(response.phases()).orElse(Collections.emptyList())) {
+            Phase savedPhase = phaseRepository.save(Phase.create(
                     member,
                     phasePlan.sequence(),
                     phasePlan.goal(),
@@ -41,44 +45,57 @@ public class RoadMapPersistService {
                     PhaseStatus.from(phasePlan.status()),
                     parseDate(phasePlan.startDate()),
                     parseDate(phasePlan.endDate())
-            );
-            Phase savedPhase = phaseRepository.save(phase);
+            ));
 
-            for(RoadmapResponse.PhaseActionPlan phaseActionPlan : Optional.ofNullable(phasePlan.actions()).orElse(Collections.emptyList())){
-                PhaseAction phaseAction = PhaseAction.create(
+            List<RoadmapTranslationTarget.PhaseActionTarget> actionTargets = new ArrayList<>();
+
+            for (RoadmapResponse.PhaseActionPlan phaseActionPlan : Optional.ofNullable(phasePlan.actions()).orElse(Collections.emptyList())) {
+                PhaseAction savedPhaseAction = phaseActionRepository.save(PhaseAction.create(
                         phaseActionPlan.title(),
                         phaseActionPlan.description(),
                         PhaseActionType.from(phaseActionPlan.type()),
                         parseDate(phaseActionPlan.deadline()),
                         phaseActionPlan.importance(),
                         savedPhase
-                );
-                PhaseAction savedPhaseAction = phaseActionRepository.save(phaseAction);
+                ));
 
-                for(String g : Optional.ofNullable(phaseActionPlan.guideline()).orElse(Collections.emptyList())){
-                    PhaseActionGuideline phaseActionGuideline = PhaseActionGuideline.create(g, savedPhaseAction);
-                    phaseActionGuidelineRepository.save(phaseActionGuideline);
+                List<RoadmapTranslationTarget.GuidelineTarget> guidelineTargets = new ArrayList<>();
+                for (String g : Optional.ofNullable(phaseActionPlan.guideline()).orElse(Collections.emptyList())) {
+                    PhaseActionGuideline saved = phaseActionGuidelineRepository.save(PhaseActionGuideline.create(g, savedPhaseAction));
+                    guidelineTargets.add(new RoadmapTranslationTarget.GuidelineTarget(saved.getId(), g));
                 }
 
-                for(String c : Optional.ofNullable(phaseActionPlan.commonMistakes()).orElse(Collections.emptyList())){
-                    PhaseActionMistake phaseActionMistake = PhaseActionMistake.create(c, savedPhaseAction);
-                    phaseActionMistakeRepository.save(phaseActionMistake);
+                List<RoadmapTranslationTarget.MistakeTarget> mistakeTargets = new ArrayList<>();
+                for (String c : Optional.ofNullable(phaseActionPlan.commonMistakes()).orElse(Collections.emptyList())) {
+                    PhaseActionMistake saved = phaseActionMistakeRepository.save(PhaseActionMistake.create(c, savedPhaseAction));
+                    mistakeTargets.add(new RoadmapTranslationTarget.MistakeTarget(saved.getId(), c));
                 }
 
-                for(RoadmapResponse.ActionItemPlan actionItemPlan : Optional.ofNullable(phaseActionPlan.actionItems()).orElse(Collections.emptyList())){
-                    ActionItem actionItem = ActionItem.create(
+                List<RoadmapTranslationTarget.ActionItemTarget> actionItemTargets = new ArrayList<>();
+                for (RoadmapResponse.ActionItemPlan actionItemPlan : Optional.ofNullable(phaseActionPlan.actionItems()).orElse(Collections.emptyList())) {
+                    ActionItem saved = actionItemRepository.save(ActionItem.create(
                             actionItemPlan.title(),
                             ActionItemType.from(actionItemPlan.actionsType()),
                             parseDate(actionItemPlan.deadline()),
                             member,
                             savedPhaseAction
-                    );
-                    actionItemRepository.save(actionItem);
+                    ));
+                    actionItemTargets.add(new RoadmapTranslationTarget.ActionItemTarget(saved.getId(), actionItemPlan.title()));
                 }
 
+                actionTargets.add(new RoadmapTranslationTarget.PhaseActionTarget(
+                        savedPhaseAction.getId(),
+                        phaseActionPlan.title(),
+                        phaseActionPlan.description(),
+                        phaseActionPlan.importance(),
+                        guidelineTargets, mistakeTargets, actionItemTargets));
             }
 
+            phaseTargets.add(new RoadmapTranslationTarget.PhaseTarget(
+                    savedPhase.getId(), phasePlan.goal(), phasePlan.description(), actionTargets));
         }
+
+        return new RoadmapTranslationTarget(phaseTargets);
     }
 
     private LocalDate parseDate(String date) {
