@@ -117,6 +117,7 @@ cohere:
 
 google:
   translate:
+    url: ${GOOGLE_TRANSLATE_URL}
     api-key: ${GOOGLE_TRANSLATE_API_KEY}
 ---
 spring:
