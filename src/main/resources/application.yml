@@ -114,6 +114,10 @@ cohere:
   rerank:
     model: rerank-multilingual-v3.0
     top-n: 10
+
+google:
+  translate:
+    api-key: ${GOOGLE_TRANSLATE_API_KEY}
 ---
 spring:
   config:

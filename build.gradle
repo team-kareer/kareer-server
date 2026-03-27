@@ -88,6 +88,7 @@ dependencies {
 
     // Prometheus
     implementation 'io.micrometer:micrometer-registry-prometheus'
+
 }
 
 // Q클래스 생성 경로 설정
