@@ -1,6 +1,8 @@
 package org.sopt.kareer.global.external.google.service;
 
 import org.sopt.kareer.domain.roadmap.dto.translation.RoadmapTranslationTarget;
+import org.sopt.kareer.global.external.google.exception.GoogleTranslationErrorCode;
+import org.sopt.kareer.global.external.google.exception.GoogleTranslationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -65,8 +67,20 @@ public class GoogleTranslationService {
                 .retrieve()
                 .body(Map.class);
 
+        if (response == null) {
+            throw new GoogleTranslationException(GoogleTranslationErrorCode.TRANSLATION_API_INVALID_RESPONSE, "Translation API returned null response");
+        }
+
         Map<String, Object> data = (Map<String, Object>) response.get("data");
+        if (data == null) {
+            throw new GoogleTranslationException(GoogleTranslationErrorCode.TRANSLATION_API_INVALID_RESPONSE, "Translation API response missing 'data' field");
+        }
+
         List<Map<String, String>> translations = (List<Map<String, String>>) data.get("translations");
+        if (translations == null) {
+            throw new GoogleTranslationException(GoogleTranslationErrorCode.TRANSLATION_API_INVALID_RESPONSE, "Translation API returned invalid translations count");
+        }
+
         return translations.stream().map(t -> t.get("translatedText")).toList();
     }
 
