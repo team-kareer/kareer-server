@@ -11,4 +11,5 @@ public interface ActionItemTranslationRepository extends JpaRepository<ActionIte
 
     void deleteAllByActionItem_IdInAndLanguage(List<Long> actionItemIds, String language);
 
+    void deleteAllByActionItem_Member_Id(Long memberId);
 }
