@@ -13,4 +13,6 @@ public interface PhaseActionTranslationRepository extends JpaRepository<PhaseAct
     Optional<PhaseActionTranslation> findByPhaseAction_IdAndLanguage(Long phaseActionId, String language);
 
     void deleteAllByPhaseAction_IdInAndLanguage(List<Long> phaseActionIds, String language);
+
+    void deleteAllByPhaseAction_Phase_Member_Id(Long memberId);
 }
