@@ -11,4 +11,5 @@ public interface PhaseTranslationRepository extends JpaRepository<PhaseTranslati
 
     void deleteAllByPhase_IdInAndLanguage(List<Long> phaseIds, String language);
 
+    void deleteAllByPhase_Member_Id(Long memberId);
 }

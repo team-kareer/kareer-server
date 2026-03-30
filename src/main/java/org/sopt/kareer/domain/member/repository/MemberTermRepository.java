@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface MemberTermRepository extends JpaRepository<MemberTerm, Long> {
 
     boolean existsByMemberId(Long memberId);
+
+    void deleteAllByMemberId(Long memberId);
 }
