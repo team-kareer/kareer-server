@@ -19,12 +19,6 @@ public class Term extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String title;
-
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String content;
-
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private TermType type;
 
