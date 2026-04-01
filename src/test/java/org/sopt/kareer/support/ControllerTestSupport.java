@@ -11,7 +11,6 @@ import org.sopt.kareer.domain.roadmap.controller.PhaseController;
 import org.sopt.kareer.domain.roadmap.service.PhaseActionService;
 import org.sopt.kareer.domain.roadmap.service.PhaseService;
 import org.sopt.kareer.domain.roadmap.service.RoadMapService;
-import org.sopt.kareer.domain.roadmap.service.RoadmapAsyncService;
 import org.sopt.kareer.global.auth.service.AuthService;
 import org.sopt.kareer.global.external.discord.client.DiscordClient;
 import org.sopt.kareer.global.jwt.util.JwtTokenUtil;
@@ -59,9 +58,6 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected RoadMapService roadMapService;
-
-    @MockBean
-    protected RoadmapAsyncService roadmapAsyncService;
 
     @MockBean
     protected JpaMetamodelMappingContext mappingContext;

@@ -107,6 +107,18 @@ management:
       enabled: true
     health:
       show-details: always
+
+cohere:
+  api-key: ${COHERE_API_KEY}
+  base-url: https://api.cohere.com
+  rerank:
+    model: rerank-multilingual-v3.0
+    top-n: 10
+
+google:
+  translate:
+    url: ${GOOGLE_TRANSLATE_URL}
+    api-key: ${GOOGLE_TRANSLATE_API_KEY}
 ---
 spring:
   config:

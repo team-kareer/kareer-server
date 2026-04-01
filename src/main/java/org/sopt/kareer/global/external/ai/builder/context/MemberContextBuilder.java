@@ -1,17 +1,15 @@
 package org.sopt.kareer.global.external.ai.builder.context;
 
+import static org.sopt.kareer.domain.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
+
+import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.domain.member.entity.Member;
-import org.sopt.kareer.domain.member.entity.MemberVisa;
+import org.sopt.kareer.domain.member.entity.*;
 import org.sopt.kareer.domain.member.entity.enums.VisaStatus;
 import org.sopt.kareer.domain.member.exception.MemberException;
-import org.sopt.kareer.domain.member.repository.MemberRepository;
-import org.sopt.kareer.domain.member.repository.MemberVisaRepository;
+import org.sopt.kareer.domain.member.repository.*;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-
-import static org.sopt.kareer.domain.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -27,17 +25,23 @@ public class MemberContextBuilder {
 
         StringBuilder sb = new StringBuilder();
         sb.append("User Profile\n");
-        sb.append("- name: ").append(nullToEmpty(member.getName())).append("\n");
-        sb.append("- country: ").append(member.getCountry() != null ? member.getCountry().name() : "").append("\n");
-        sb.append("- primaryMajor: ").append(nullToEmpty(member.getPrimaryMajor())).append("\n");
-        sb.append("- secondaryMajor: ").append(nullToEmpty(member.getSecondaryMajor())).append("\n");
-        sb.append("- targetJob: ").append(nullToEmpty(member.getTargetJob())).append("\n");
-        sb.append("- languageLevel: ").append(member.getLanguageLevel() != null ? member.getLanguageLevel().name() : "").append("\n");
-        sb.append("- degree: ").append(member.getDegree() != null ? member.getDegree().name() : "").append("\n");
-        sb.append("- graduationDate: ").append(member.getGraduationDate() != null ? member.getGraduationDate() : "").append("\n");
-        sb.append("- expectedGraduationDate: ").append(member.getExpectedGraduationDate() != null ? member.getExpectedGraduationDate() : "").append("\n");
-        sb.append("- targetJobSkill: ").append(nullToEmpty(member.getTargetJobSkill())).append("\n");
-        sb.append("- personalBackground: ").append(nullToEmpty(member.getPersonalBackground())).append("\n");
+        appendLine(sb, "name", member.getName());
+        appendLine(sb, "email", member.getEmail());
+        appendLine(sb, "birthDate", member.getBirthDate());
+        appendLine(sb, "country", member.getCountryCode() != null ? member.getCountryCode() : "");
+        appendLine(sb, "university", member.getCountryCode());
+        appendLine(sb, "primaryMajor", member.getPrimaryMajorCode());
+        appendLine(sb, "secondaryMajor", member.getSecondaryMajor());
+        appendLine(sb, "targetJob", member.getTargetJob());
+        appendLine(sb, "targetJobSkill", member.getTargetJobSkill());
+        appendLine(sb, "fieldsOfInterest", member.getFieldsOfInterest());
+        appendLine(sb, "preparationStatus", member.getPreparationStatus());
+        appendLine(sb, "personalBackground", member.getPersonalBackground());
+        appendLine(sb, "languageLevel", member.getLanguageLevel() != null ? member.getLanguageLevel().name() : "");
+        appendLine(sb, "englishLevel", member.getEnglishLevelCode() != null ? member.getEnglishLevelCode() : "");
+        appendLine(sb, "degree", member.getDegreeCode() != null ? member.getDegreeCode() : "");
+        appendLine(sb, "graduationDate", member.getGraduationDate());
+        appendLine(sb, "expectedGraduationDate", member.getExpectedGraduationDate());
 
         sb.append("Visa Info\n");
         for (MemberVisa v : visas) {
@@ -45,7 +49,6 @@ public class MemberContextBuilder {
                     .append(", visaStatus: ").append(v.getVisaStatus().name())
                     .append(", visaStartDate: ").append(v.getVisaStartDate())
                     .append(", visaExpiredAt: ").append(v.getVisaExpiredAt())
-                    .append(", visaPoint: ").append(v.getVisaPoint() != null ? v.getVisaPoint() : "")
                     .append("\n");
         }
 
@@ -54,6 +57,18 @@ public class MemberContextBuilder {
 
     private String nullToEmpty(String s) {
         return s == null ? "" : s;
+    }
+
+    private void appendLine(StringBuilder sb, String key, String value) {
+        sb.append("- ").append(key).append(": ").append(nullToEmpty(value)).append("\n");
+    }
+
+    private void appendLine(StringBuilder sb, String key, LocalDate value) {
+        sb.append("- ").append(key).append(": ").append(toText(value)).append("\n");
+    }
+
+    private String toText(LocalDate value) {
+        return value == null ? "" : value.toString();
     }
 
     public record MemberAndContext(Member member, String contextText) {}

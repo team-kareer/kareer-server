@@ -19,20 +19,20 @@ public record MypageRequest(
         LocalDate birthDate,
 
         @Schema(description = "국가", example = "Afghanistan")
-        @NotNull(message = "국가는 필수 입력값입니다.")
-        Country country,
+        @NotNull(message = "국가코드는 필수 입력값입니다.")
+        String countryCode,
 
         @Schema(description = "학위", example = "DOMESTIC_ASSOCIATE")
         @NotNull(message = "학위는 필수 입력값입니다.")
         Degree degree,
 
         @Schema(description = "대학", example = "Konkuk University")
-        @NotBlank(message = "대학은 필수 입력값입니다.")
-        String university,
+        @NotBlank(message = "대학코드는 필수 입력값입니다.")
+        String universityCode,
 
         @Schema(description = "전공", example = "Computer Science")
-        @NotBlank(message = "전공은 필수 입력값입니다.")
-        String primaryMajor,
+        @NotBlank(message = "전공코드는 필수 입력값입니다.")
+        String primaryMajorCode,
 
         @Schema(description = "부전공", example = "Statistic")
         @NotBlank(message = "부전공은 필수 입력값입니다.")
@@ -55,8 +55,8 @@ public record MypageRequest(
         EnglishLevel englishLevel
 ) {
         public MypageCommand toCommand(){
-                return new MypageCommand(this.targetJob, this.birthDate, this.country,
-                        this.degree, this.university, this.primaryMajor, this.secondaryMajor, this.visaType,
+                return new MypageCommand(this.targetJob, this.birthDate, this.countryCode,
+                        this.degree, this.universityCode, this.primaryMajorCode, this.secondaryMajor, this.visaType,
                         this.visaExpiredAt, this.languageLevel, this.englishLevel);
         }
 }

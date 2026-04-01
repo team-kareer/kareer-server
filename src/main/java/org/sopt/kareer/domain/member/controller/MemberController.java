@@ -1,8 +1,6 @@
 package org.sopt.kareer.domain.member.controller;
 
 
-import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.*;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,22 +8,26 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
+import org.sopt.kareer.domain.member.dto.request.MemberTermsRequest;
 import org.sopt.kareer.domain.member.dto.request.MypageRequest;
 import org.sopt.kareer.domain.member.dto.response.*;
-import org.sopt.kareer.domain.member.entity.constants.*;
-import org.sopt.kareer.domain.member.entity.enums.Country;
+import org.sopt.kareer.domain.member.service.LocalizedOnboardQueryService;
 import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapTestResponse;
 import org.sopt.kareer.domain.roadmap.service.RoadMapService;
-import org.sopt.kareer.domain.roadmap.service.RoadmapAsyncService;
+import org.sopt.kareer.domain.roadmap.service.RoadmapTranslationService;
 import org.sopt.kareer.global.annotation.CustomExceptionDescription;
 import org.sopt.kareer.global.auth.service.AuthService;
 import org.sopt.kareer.global.config.swagger.SwaggerResponseDescription;
 import org.sopt.kareer.global.response.BaseResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,8 +37,9 @@ public class MemberController {
 
     private final MemberService memberService;
     private final RoadMapService roadMapService;
-    private final RoadmapAsyncService roadmapAsyncService;
+    private final RoadmapTranslationService roadmapTranslationService;
     private final AuthService authService;
+    private final LocalizedOnboardQueryService localizedOnboardQueryService;
 
     @GetMapping("/me")
     @Operation(summary = "회원 정보 조회", description = "로그인한 회원의 정보를 조회합니다.")
@@ -63,7 +66,7 @@ public class MemberController {
     public ResponseEntity<BaseResponse<OnboardUniversitiesResponse>> getOnboardUniversities() {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(BaseResponse.ok(OnboardUniversitiesResponse.from(University.UNIVERSITY_LIST),
+                .body(BaseResponse.ok(localizedOnboardQueryService.getUniversities(),
                         "온보딩 대학교 목록 조회에 성공하였습니다."));
     }
 
@@ -73,7 +76,7 @@ public class MemberController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(BaseResponse.ok(
-                        OnboardCountriesResponse.from(Country.getCountries()),
+                        localizedOnboardQueryService.getCountries(),
                         "온보딩 국가 목록 조회에 성공하였습니다."));
     }
 
@@ -82,8 +85,7 @@ public class MemberController {
     public ResponseEntity<BaseResponse<OnboardMajorsResponse>> getOnboardMajors() {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(BaseResponse.ok(OnboardMajorsResponse.from(Major.MAJOR_LIST), "온보딩 전공 목록 조회에 성공하였습니다.")
-                );
+                .body(BaseResponse.ok(localizedOnboardQueryService.getMajors(), "온보딩 전공 목록 조회에 성공하였습니다."));
     }
 
     @GetMapping("/onboard/fields")
@@ -91,8 +93,7 @@ public class MemberController {
     public ResponseEntity<BaseResponse<OnboardFieldsResponse>> getOnboardFields() {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(BaseResponse.ok(OnboardFieldsResponse.from(Field.FIELD_LIST), "온보딩 관심 분야 목록 조회에 성공하였습니다.")
-                );
+                .body(BaseResponse.ok(localizedOnboardQueryService.getFields(), "온보딩 관심 분야 목록 조회에 성공하였습니다."));
     }
 
     @Operation(summary = "AI 로드맵 생성 API", description = "사용자가 온보딩에 입력한 정보를 통해 로드맵을 생성합니다.")
@@ -101,7 +102,9 @@ public class MemberController {
     public ResponseEntity<BaseResponse<Void>> generateRoadmap(
             @AuthenticationPrincipal Long memberId) {
 
-        roadMapService.createRoadmap(memberId);
+        var target = roadMapService.createRoadmap(memberId);
+
+        roadmapTranslationService.translateAllLanguages(target);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok("AI 로드맵 생성에 성공하였습니다."));
@@ -155,4 +158,32 @@ public class MemberController {
                 .body(BaseResponse.ok("회원 탈퇴에 성공하였습니다."));
     }
 
+    @Operation(summary = "온보딩 비자 OCR API", description = "온보딩 과정에서 유저의 비자 문서를 분석하여 정보를 추출합니다.")
+    @PostMapping(value = "/onboard/ocr/visa", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<BaseResponse<OcrVisaResponse>> getVisaInfo(
+            @RequestPart("file") MultipartFile file){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.ok(memberService.getVisaOcr(file), "사용자 비자 정보 추출에 성공했습니다."));
+    }
+
+    @Operation(summary = "온보딩 여권 OCR API", description = "온보딩 과정에서 유저의 여권을 분석하여 정보를 추출합니다.")
+    @PostMapping(value = "/onboard/ocr/passport", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<BaseResponse<OcrPassportResponse>> getPassportInfo(
+            @RequestPart("file") MultipartFile file){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.ok(memberService.getPassportOcr(file), "사용자 여권 정보 추출에 성공했습니다."));
+    }
+
+
+    @Operation(summary = "약관 동의", description = "약관에 동의합니다.")
+    @CustomExceptionDescription(TERM_AGREE)
+    @PostMapping("/term-agreements")
+    public ResponseEntity<BaseResponse<Void>> agreeTerms(
+            @AuthenticationPrincipal Long memberId,
+            @RequestBody @Valid MemberTermsRequest request
+    ) {
+        memberService.agreeTerms(memberId, request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.ok("약관 동의 저장에 성공했습니다."));
+    }
 }

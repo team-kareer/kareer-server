@@ -1,16 +1,11 @@
 package org.sopt.kareer.domain.member.entity;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.sopt.kareer.domain.member.entity.enums.Country;
-import org.sopt.kareer.domain.member.entity.enums.Degree;
-import org.sopt.kareer.domain.member.entity.enums.EnglishLevel;
-import org.sopt.kareer.domain.member.entity.enums.LanguageLevel;
-import org.sopt.kareer.domain.member.fixture.MemberFixture;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.*;
+import org.sopt.kareer.domain.member.entity.enums.*;
+import org.sopt.kareer.domain.member.fixture.MemberFixture;
 
 class MemberTest {
 
@@ -25,10 +20,10 @@ class MemberTest {
         member.updateProfile(
                 "Developer",
                 newBirthDate,
-                Country.AFGHANISTAN,
+                "afghanistan",
                 Degree.DOMESTIC_ASSOCIATE,
-                "Konkuk University",
-                "Computer Science",
+                "konkuk-university",
+                "computer-science",
                 "Statistic",
                 LanguageLevel.LEVEL_3,
                 EnglishLevel.BEGINNER
@@ -37,12 +32,12 @@ class MemberTest {
        //then
         assertThat(member.getTargetJob()).isEqualTo("Developer");
         assertThat(member.getBirthDate()).isEqualTo(newBirthDate);
-        assertThat(member.getCountry()).isEqualTo(Country.AFGHANISTAN);
-        assertThat(member.getDegree()).isEqualTo(Degree.DOMESTIC_ASSOCIATE);
-        assertThat(member.getUniversity()).isEqualTo("Konkuk University");
-        assertThat(member.getPrimaryMajor()).isEqualTo("Computer Science");
+        assertThat(member.getCountryCode()).isEqualTo("afghanistan");
+        assertThat(member.getDegreeCode()).isEqualTo("south-korea-associate");
+        assertThat(member.getUniversityCode()).isEqualTo("konkuk-university");
+        assertThat(member.getPrimaryMajorCode()).isEqualTo("computer-science");
         assertThat(member.getSecondaryMajor()).isEqualTo("Statistic");
         assertThat(member.getLanguageLevel()).isEqualTo(LanguageLevel.LEVEL_3);
-        assertThat(member.getEnglishLevel()).isEqualTo(EnglishLevel.BEGINNER);
+        assertThat(member.getUniversityCode()).isEqualTo("beginner");
     }
 }

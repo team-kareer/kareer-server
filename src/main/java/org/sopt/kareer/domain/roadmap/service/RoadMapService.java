@@ -10,6 +10,7 @@ import org.sopt.kareer.domain.member.repository.MemberVisaRepository;
 import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapTestResponse;
+import org.sopt.kareer.domain.roadmap.dto.translation.RoadmapTranslationTarget;
 import org.sopt.kareer.global.external.ai.builder.context.MemberContextBuilder;
 import org.sopt.kareer.global.external.ai.service.OpenAiService;
 import org.sopt.kareer.global.external.ai.service.PolicyDocumentRetriever;
@@ -35,7 +36,7 @@ public class RoadMapService {
     private final MemberVisaRepository memberVisaRepository;
 
     @Transactional
-    public void createRoadmap(Long memberId){
+    public RoadmapTranslationTarget createRoadmap(Long memberId){
 
         Member member = memberService.getById(memberId);
 
@@ -64,14 +65,15 @@ public class RoadMapService {
                 policyDocs
         );
 
-        roadMapPersistService.saveRoadMap(member, response);
+        RoadmapTranslationTarget target = roadMapPersistService.saveRoadMap(member, response);
 
         member.markRoadmapDone();
+
+        return target;
     }
 
     @Transactional
     public RoadmapTestResponse createRoadmapTest(Long memberId) {
-        Long startTime = System.currentTimeMillis();
         Member member = memberService.getById(memberId);
 
         var memberContext = memberContextBuilder.load(memberId);
@@ -98,8 +100,6 @@ public class RoadMapService {
                 policyDocs
         );
 
-        Long endTime = System.currentTimeMillis();
-        log.info("Time : {}ms", (endTime - startTime));
 
         List<Document> retrieved = new ArrayList<>();
         retrieved.addAll(visaDocs);
