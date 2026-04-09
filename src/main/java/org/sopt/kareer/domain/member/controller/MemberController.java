@@ -186,4 +186,15 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok("약관 동의 저장에 성공했습니다."));
     }
+
+    @Operation(summary = "온보딩, 약관동의 여부 조회")
+    @CustomExceptionDescription(GET_COMPLETION)
+    @GetMapping("completion")
+    public ResponseEntity<BaseResponse<MemberCompletionResponse>> getMemberCompletionStatus(
+            @AuthenticationPrincipal Long memberId
+    ){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.ok(memberService.getCompletion(memberId), "온보딩/약관동의 여부 조회에 성공하였습니다,"));
+    }
+
 }

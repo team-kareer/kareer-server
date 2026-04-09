@@ -1,39 +1,20 @@
 package org.sopt.kareer.global.config.swagger;
 
-import static org.sopt.kareer.domain.jobposting.exception.JobPostingErrorCode.JOB_POSTING_NOT_FOUND;
-import static org.sopt.kareer.domain.jobposting.exception.JobPostingErrorCode.RESUME_CONTEXT_FAILED;
-import static org.sopt.kareer.domain.jobposting.exception.JobPostingErrorCode.TOO_MANY_FILES;
-import static org.sopt.kareer.domain.member.exception.MemberErrorCode.INVALID_COUNTRY;
-import static org.sopt.kareer.domain.member.exception.MemberErrorCode.INVALID_VISA_POINT;
-import static org.sopt.kareer.domain.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
-import static org.sopt.kareer.domain.member.exception.MemberErrorCode.ONBOARDING_ALREADY_COMPLETED;
-import static org.sopt.kareer.domain.member.exception.MemberErrorCode.ONBOARDING_REQUIRED;
-import static org.sopt.kareer.domain.member.exception.MemberErrorCode.VISA_NOT_FOUND;
-import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.ACTION_ITEM_INACTIVE;
-import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.ACTION_ITEM_NOT_FOUND;
-import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.ACTION_ITEM_TYPE_BLANK;
-import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.ACTION_ITEM_TYPE_INVALID;
-import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.PHASE_ACTION_ALREADY_COMPLETED;
-import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.PHASE_ACTION_NOT_FOUND;
-import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.PHASE_ACTION_TYPE_BLANK;
-import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.PHASE_ACTION_TYPE_INVALID;
-import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.PHASE_NOT_FOUND;
-import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.PHASE_STATUS_BLANK;
-import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.PHASE_STATUS_INVALID;
-import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.TODO_ALREADY_ADDED;
+import lombok.Getter;
+import org.sopt.kareer.global.exception.errorcode.ErrorCode;
+import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import static org.sopt.kareer.domain.jobposting.exception.JobPostingErrorCode.*;
+import static org.sopt.kareer.domain.member.exception.MemberErrorCode.*;
+import static org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode.*;
 import static org.sopt.kareer.domain.term.exception.TermErrorCode.*;
 import static org.sopt.kareer.global.auth.exception.AuthErrorCode.LOGIN_CODE_ALREADY_USED;
 import static org.sopt.kareer.global.auth.exception.AuthErrorCode.LOGIN_CODE_NOT_FOUND;
 import static org.sopt.kareer.global.external.ai.exception.LlmErrorCode.LLM_JSON_PARSING_FAILED;
-import static org.sopt.kareer.global.external.ai.exception.RagErrorCode.DOCUMENTS_RETRIEVED_EMPTY;
-import static org.sopt.kareer.global.external.ai.exception.RagErrorCode.EMBEDDING_FAILED;
-import static org.sopt.kareer.global.external.ai.exception.RagErrorCode.EXTRACT_TEXT_FAILED;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
-import lombok.Getter;
-import org.sopt.kareer.global.exception.errorcode.ErrorCode;
-import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
+import static org.sopt.kareer.global.external.ai.exception.RagErrorCode.*;
 
 @Getter
 public enum SwaggerResponseDescription {
@@ -128,6 +109,10 @@ public enum SwaggerResponseDescription {
             DUPLICATE_TERM,
             MISSING_TERM,
             REQUIRED_TERM_NOT_AGREED
+    ))),
+    GET_COMPLETION(new LinkedHashSet<>(Set.of(
+            MEMBER_NOT_FOUND,
+            VISA_NOT_FOUND
     )))
     ;
 

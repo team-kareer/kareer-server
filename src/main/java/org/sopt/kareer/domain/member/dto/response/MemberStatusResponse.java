@@ -20,23 +20,15 @@ public record MemberStatusResponse(
         LocalDate expectedGraduationDate,
 
         @Schema(description = "졸업일")
-        LocalDate graduationDate,
-
-        @Schema(description = "온보딩 여부", example = "true")
-        boolean onboardingRequired,
-
-        @Schema(description = "약관 동의 여부", example = "true")
-        boolean agreedTerm
+        LocalDate graduationDate
 
 ) {
-    public static MemberStatusResponse from(Member member, MemberVisa visa, boolean onboardingRequired, boolean agreedTerm) {
+    public static MemberStatusResponse from(Member member, MemberVisa visa) {
         return MemberStatusResponse.builder()
                 .visaType(visa.getVisaType())
                 .visaExpiredAt(visa.getVisaExpiredAt())
                 .graduationDate(member.getGraduationDate())
                 .expectedGraduationDate(member.getExpectedGraduationDate())
-                .onboardingRequired(onboardingRequired)
-                .agreedTerm(agreedTerm)
                 .build();
     }
 }
