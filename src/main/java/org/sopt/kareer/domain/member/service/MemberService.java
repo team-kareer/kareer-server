@@ -177,10 +177,7 @@ public class MemberService {
         MemberVisa memberVisa = memberVisaRepository.findActiveByMemberId(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.VISA_NOT_FOUND));
 
-        boolean onboardingRequired = member.getStatus().equals(MemberStatus.PENDING);
-        boolean agreedTerm = memberTermRepository.existsByMemberIdAndAgreedTrue(memberId);
-
-        return MemberStatusResponse.from(member, memberVisa, onboardingRequired, agreedTerm);
+        return MemberStatusResponse.from(member, memberVisa);
     }
 
     public MypageResponse getMypage(Long memberId) {
