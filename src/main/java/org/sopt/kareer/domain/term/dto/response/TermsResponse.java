@@ -27,11 +27,11 @@ public record TermsResponse(
             @Schema(description = "필수 여부", example="true")
             boolean required
     ) {
-        public static TermResponse from(Term term) {
+        public static TermResponse of(Term term, String title, String content) {
             return new TermResponse(
                     term.getId(),
-                    term.getTitle(),
-                    term.getContent(),
+                    title,
+                    content,
                     term.isRequired()
             );
         }
