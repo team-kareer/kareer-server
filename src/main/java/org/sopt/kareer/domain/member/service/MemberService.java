@@ -1,21 +1,21 @@
 package org.sopt.kareer.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.domain.member.dto.response.*;
-import org.sopt.kareer.domain.member.entity.enums.*;
-import org.sopt.kareer.domain.member.service.dto.request.MypageCommand;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardV2Request;
 import org.sopt.kareer.domain.member.dto.request.MemberTermsRequest;
+import org.sopt.kareer.domain.member.dto.response.*;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.entity.MemberTerm;
 import org.sopt.kareer.domain.member.entity.MemberVisa;
+import org.sopt.kareer.domain.member.entity.enums.LocalizedOnboardCategoryType;
 import org.sopt.kareer.domain.member.entity.enums.MemberStatus;
 import org.sopt.kareer.domain.member.exception.MemberErrorCode;
 import org.sopt.kareer.domain.member.exception.MemberException;
 import org.sopt.kareer.domain.member.repository.MemberRepository;
 import org.sopt.kareer.domain.member.repository.MemberTermRepository;
 import org.sopt.kareer.domain.member.repository.MemberVisaRepository;
+import org.sopt.kareer.domain.member.service.dto.request.MypageCommand;
 import org.sopt.kareer.domain.member.util.PassportOcrParser;
 import org.sopt.kareer.domain.member.util.VisaOcrParser;
 import org.sopt.kareer.domain.term.entity.Term;
@@ -177,10 +177,7 @@ public class MemberService {
         MemberVisa memberVisa = memberVisaRepository.findActiveByMemberId(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.VISA_NOT_FOUND));
 
-        boolean onboardingRequired = member.getStatus().equals(MemberStatus.PENDING);
-        boolean agreedTerm = memberTermRepository.existsByMemberIdAndAgreedTrue(memberId);
-
-        return MemberStatusResponse.from(member, memberVisa, onboardingRequired, agreedTerm);
+        return MemberStatusResponse.from(member, memberVisa);
     }
 
     public MypageResponse getMypage(Long memberId) {
@@ -307,5 +304,18 @@ public class MemberService {
                 .toList();
 
         memberTermRepository.saveAll(memberTerms);
+    }
+
+
+    public MemberCompletionResponse getCompletion(Long memberId){
+        Member member = getById(memberId);
+
+        MemberVisa memberVisa = memberVisaRepository.findActiveByMemberId(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.VISA_NOT_FOUND));
+
+        boolean onboardingRequired = member.getStatus().equals(MemberStatus.PENDING);
+        boolean agreedTerm = memberTermRepository.existsByMemberIdAndAgreedTrue(memberId);
+
+        return MemberCompletionResponse.of(onboardingRequired, agreedTerm);
     }
 }
