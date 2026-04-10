@@ -217,6 +217,10 @@ public enum Country {
                     country -> country.countryName.toLowerCase(),
                     Function.identity()));
 
+    public String getCode() {
+        return name().toLowerCase().replace("_", "-");
+    }
+
     public static List<String> getCountries() {
         return Arrays.stream(Country.values())
                 .map(Country::getCountryName)
