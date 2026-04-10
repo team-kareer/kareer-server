@@ -310,9 +310,6 @@ public class MemberService {
     public MemberCompletionResponse getCompletion(Long memberId){
         Member member = getById(memberId);
 
-        MemberVisa memberVisa = memberVisaRepository.findActiveByMemberId(memberId)
-                .orElseThrow(() -> new MemberException(MemberErrorCode.VISA_NOT_FOUND));
-
         boolean onboardingRequired = member.getStatus().equals(MemberStatus.PENDING);
         boolean agreedTerm = memberTermRepository.existsByMemberIdAndAgreedTrue(memberId);
 
