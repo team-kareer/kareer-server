@@ -1,28 +1,33 @@
 package org.sopt.kareer.domain.member.fixture;
 
-import java.time.LocalDate;
-import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
-import org.sopt.kareer.domain.member.entity.enums.Country;
+import org.sopt.kareer.domain.member.dto.request.MemberOnboardV2Request;
 import org.sopt.kareer.domain.member.entity.enums.Degree;
+import org.sopt.kareer.domain.member.entity.enums.EnglishLevel;
 import org.sopt.kareer.domain.member.entity.enums.LanguageLevel;
 import org.sopt.kareer.domain.member.entity.enums.VisaType;
 
+import java.time.LocalDate;
+import java.util.List;
+
 public class MemberOnboardRequestFixture {
 
-    public static MemberOnboardRequest create() {
-        return new MemberOnboardRequest(
+    public static MemberOnboardV2Request create() {
+        return new MemberOnboardV2Request(
                 "test-user",
                 LocalDate.of(2000, 4, 1),
-                Country.UNITED_STATES,
+                "konkuk-university",
+                "united-states",
                 LanguageLevel.LEVEL_4,
+                EnglishLevel.ADVANCED,
                 Degree.OVERSEAS_BACHELORS,
-                VisaType.D10,
-                null,
-                LocalDate.of(2024, 5, 1),
+                VisaType.D2,
+                LocalDate.of(2026, 2, 1),
+                LocalDate.of(2022, 3, 1),
                 LocalDate.of(2026, 5, 1),
-                70,
-                "Computer Science",
-                "Applied Mathematics",
+                "computer-science",
+                "applied-mathematics",
+                List.of("it-development", "data-science"),
+                List.of(),
                 "Backend Engineer",
                 "Java, Spring",
                 "해외 경험을 쌓고 싶어요"

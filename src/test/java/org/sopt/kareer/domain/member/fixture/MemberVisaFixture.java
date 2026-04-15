@@ -14,7 +14,6 @@ public class MemberVisaFixture {
                 .visaType(VisaType.D2)
                 .visaStatus(VisaStatus.ACTIVE)
                 .visaExpiredAt(LocalDate.now().plusYears(1))
-                .visaPoint(null)
                 .visaStartDate(LocalDate.now().minusMonths(3))
                 .build();
     }
@@ -25,7 +24,6 @@ public class MemberVisaFixture {
                 .visaType(VisaType.D2)
                 .visaStatus(VisaStatus.INACTIVE)
                 .visaExpiredAt(LocalDate.now().minusMonths(1))
-                .visaPoint(null)
                 .visaStartDate(LocalDate.now().minusYears(1))
                 .build();
     }
@@ -36,7 +34,6 @@ public class MemberVisaFixture {
                 .visaType(VisaType.D10)
                 .visaStatus(VisaStatus.ACTIVE)
                 .visaExpiredAt(LocalDate.now().plusMonths(18))
-                .visaPoint(70)
                 .visaStartDate(LocalDate.now())
                 .build();
     }
