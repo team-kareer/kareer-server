@@ -23,6 +23,6 @@ public interface PhaseActionGuidelineTranslationRepository extends JpaRepository
 
     void deleteAllByGuideline_PhaseAction_IdInAndLanguage(List<Long> phaseActionIds, String language);
 
-    void deleteAllByGuideline_PhaseAction_Phase_Member_Id(Long memberId);
+    void deleteAllByGuideline_PhaseAction_Phase_Roadmap_Member_Id(Long memberId);
 
 }

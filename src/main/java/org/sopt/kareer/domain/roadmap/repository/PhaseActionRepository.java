@@ -16,11 +16,12 @@ public interface PhaseActionRepository extends JpaRepository<PhaseAction, Long> 
         SELECT pa
         FROM PhaseAction pa
         JOIN FETCH pa.phase p
-        JOIN FETCH p.member m
+        JOIN FETCH p.roadmap r
+        JOIN FETCH r.member m
         WHERE pa.id = :phaseActionId
                 AND m.id = :memberId
         """)
     Optional<PhaseAction> findByIdAndMemberId(@Param("phaseActionId") Long phaseActionId, @Param("memberId") Long memberId);
 
-    void deleteAllByPhase_Member_Id(Long memberId);
+    void deleteAllByPhase_Roadmap_Member_Id(Long memberId);
 }

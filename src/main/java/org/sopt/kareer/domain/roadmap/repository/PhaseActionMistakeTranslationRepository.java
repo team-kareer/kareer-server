@@ -23,6 +23,6 @@ public interface PhaseActionMistakeTranslationRepository extends JpaRepository<P
 
     void deleteAllByMistake_PhaseAction_IdInAndLanguage(List<Long> phaseActionIds, String language);
 
-    void deleteAllByMistake_PhaseAction_Phase_Member_Id(Long memberId);
+    void deleteAllByMistake_PhaseAction_Phase_Roadmap_Member_Id(Long memberId);
 
 }
