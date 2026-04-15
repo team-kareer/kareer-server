@@ -90,6 +90,8 @@ auth:
       name: test
       secure: false
       same-site: test
+  token-blacklist:
+    redis-prefix: test-blacklist
 swagger:
   auth:
     username: ddd
@@ -97,3 +99,15 @@ swagger:
 discord:
   webhook:
     url: test-url
+
+cohere:
+  api-key: test-cohere-key
+  base-url: https://api.cohere.com
+  rerank:
+    model: rerank-multilingual-v3.0
+    top-n: 10
+
+google:
+  translate:
+    url: https://translation.googleapis.com
+    api-key: test-google-translate-key
