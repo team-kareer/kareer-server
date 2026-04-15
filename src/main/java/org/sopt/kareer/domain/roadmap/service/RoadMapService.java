@@ -76,11 +76,7 @@ public class RoadMapService {
                 policyDocs
         );
 
-        RoadmapTranslationTarget target = roadMapPersistService.saveRoadMap(member, response);
-
-        member.markRoadmapDone();
-
-        return target;
+        return roadMapPersistService.saveRoadMap(member, response);
     }
 
     @Transactional
@@ -120,9 +116,4 @@ public class RoadMapService {
         return RoadmapTestResponse.of(roadmap, retrieved);
     }
 
-    @Transactional
-    public void markFailed(Long memberId) {
-        Member member = memberService.getById(memberId);
-        member.markRoadmapFailed();
-    }
 }

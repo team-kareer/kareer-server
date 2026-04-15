@@ -75,10 +75,6 @@ public class Member extends BaseEntity {
 
     private String fieldsOfInterest;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private RoadmapStatus roadmapStatus;
-
     // 프론트 온보딩 구현 완료 후 삭제 예정
     public void updateInfo(String name,
                            LocalDate birthDate,
@@ -160,7 +156,6 @@ public class Member extends BaseEntity {
                 .provider(provider)
                 .providerId(providerId)
                 .profileImageUrl(profileImageUrl)
-                .roadmapStatus(RoadmapStatus.NOT_STARTED)
                 .build();
     }
 
@@ -175,19 +170,6 @@ public class Member extends BaseEntity {
         }
     }
 
-
-    public void assertCanStartRoadmap() {
-        if (roadmapStatus == RoadmapStatus.IN_PROGRESS) {
-            throw new MemberException(MemberErrorCode.ROADMAP_IN_PROGRESS);
-        }
-        if (roadmapStatus == RoadmapStatus.DONE) {
-            throw new MemberException(MemberErrorCode.ROADMAP_ALREADY_GENERATED);
-        }
-    }
-
-    public void markRoadmapInProgress() { this.roadmapStatus = RoadmapStatus.IN_PROGRESS; }
-    public void markRoadmapDone() { this.roadmapStatus = RoadmapStatus.DONE; }
-    public void markRoadmapFailed() { this.roadmapStatus = RoadmapStatus.FAILED; }
 
     public void updateProfile(
             String targetJob,
