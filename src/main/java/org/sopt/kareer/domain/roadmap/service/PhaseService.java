@@ -60,7 +60,7 @@ public class PhaseService {
     }
 
     public RoadmapPhaseDetailResponse getRoadmapPhaseDetail(Long memberId, Long phaseId) {
-        if (!phaseRepository.existsByIdAndMember_Id(phaseId, memberId)) {
+        if (!phaseRepository.existsByIdAndRoadmap_Member_Id(phaseId, memberId)) {
             throw new RoadMapException(RoadmapErrorCode.PHASE_NOT_FOUND);
         }
         Map<String, List<RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse>> raw =
@@ -117,7 +117,7 @@ public class PhaseService {
     }
 
     public HomePhaseDetailResponse getHomePhaseDetail(Long memberId, Long phaseId) {
-        if (!phaseRepository.existsByIdAndMember_Id(phaseId, memberId)) {
+        if (!phaseRepository.existsByIdAndRoadmap_Member_Id(phaseId, memberId)) {
             throw new RoadMapException(RoadmapErrorCode.PHASE_NOT_FOUND);
         }
 
