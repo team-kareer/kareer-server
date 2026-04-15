@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
 import org.sopt.kareer.domain.member.dto.request.MemberTermsRequest;
 import org.sopt.kareer.domain.member.dto.request.MypageRequest;
 import org.sopt.kareer.domain.member.dto.response.*;
@@ -15,7 +14,10 @@ import org.sopt.kareer.global.response.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -32,15 +34,7 @@ public class MemberController implements MemberApi {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok(memberService.getMemberInfo(memberId), "회원 정보 조회에 성공하였습니다."));
     }
-
-    @Override
-    public ResponseEntity<BaseResponse<Void>> onboardMember(@AuthenticationPrincipal Long memberId,
-                                                            @Valid @RequestBody MemberOnboardRequest request) {
-        memberService.onboardMember(request, memberId);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(BaseResponse.ok("회원 온보딩이 완료되었습니다."));
-    }
-
+    
     @Override
     public ResponseEntity<BaseResponse<OnboardUniversitiesResponse>> getOnboardUniversities() {
         return ResponseEntity.status(HttpStatus.OK)

@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
 import org.sopt.kareer.domain.member.dto.request.MemberTermsRequest;
 import org.sopt.kareer.domain.member.dto.request.MypageRequest;
 import org.sopt.kareer.domain.member.dto.response.*;
@@ -27,12 +26,6 @@ public interface MemberApi {
     @Operation(summary = "회원 정보 조회", description = "로그인한 회원의 정보를 조회합니다.")
     @CustomExceptionDescription(SwaggerResponseDescription.MEMBER_INFO)
     ResponseEntity<BaseResponse<MemberInfoResponse>> getMemberInfo(@AuthenticationPrincipal Long memberId);
-
-    @PostMapping("/onboard")
-    @Operation(summary = "회원 온보딩", description = "PENDING 상태의 회원의 온보딩 결과를 저장합니다.")
-    @CustomExceptionDescription(SwaggerResponseDescription.MEMBER_ONBOARD)
-    ResponseEntity<BaseResponse<Void>> onboardMember(@AuthenticationPrincipal Long memberId,
-                                                     @Valid @RequestBody MemberOnboardRequest request);
 
     @GetMapping("/onboard/universities")
     @Operation(summary = "온보딩 대학교 목록 조회", description = "회원 온보딩 시 선택할 수 있는 대학교 목록을 조회합니다.")
