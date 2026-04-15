@@ -34,7 +34,7 @@ public class MemberController implements MemberApi {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok(memberService.getMemberInfo(memberId), "회원 정보 조회에 성공하였습니다."));
     }
-    
+
     @Override
     public ResponseEntity<BaseResponse<OnboardUniversitiesResponse>> getOnboardUniversities() {
         return ResponseEntity.status(HttpStatus.OK)
@@ -112,6 +112,6 @@ public class MemberController implements MemberApi {
     @Override
     public ResponseEntity<BaseResponse<MemberCompletionResponse>> getMemberCompletionStatus(@AuthenticationPrincipal Long memberId) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(BaseResponse.ok(memberService.getCompletion(memberId), "온보딩/약관동의 여부 조회에 성공하였습니다,"));
+                .body(BaseResponse.ok(memberService.getCompletion(memberId), "온보딩/약관동의 여부 조회에 성공하였습니다."));
     }
 }
