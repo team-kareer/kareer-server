@@ -1,6 +1,7 @@
 package org.sopt.kareer.domain.roadmap.repository;
 
 import org.sopt.kareer.domain.roadmap.entity.PhaseAction;
+import org.sopt.kareer.domain.roadmap.entity.enums.RoadmapActiveStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,8 +21,12 @@ public interface PhaseActionRepository extends JpaRepository<PhaseAction, Long> 
         JOIN FETCH r.member m
         WHERE pa.id = :phaseActionId
                 AND m.id = :memberId
+                AND r.status = :status
         """)
-    Optional<PhaseAction> findByIdAndMemberId(@Param("phaseActionId") Long phaseActionId, @Param("memberId") Long memberId);
+    Optional<PhaseAction> findByIdAndMemberIdAndRoadmapStatus(
+            @Param("phaseActionId") Long phaseActionId,
+            @Param("memberId") Long memberId,
+            @Param("status") RoadmapActiveStatus status);
 
     void deleteAllByPhase_Roadmap_Member_Id(Long memberId);
 }

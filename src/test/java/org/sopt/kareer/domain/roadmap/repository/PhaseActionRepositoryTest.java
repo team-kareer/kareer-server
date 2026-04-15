@@ -11,6 +11,7 @@ import org.sopt.kareer.domain.roadmap.entity.PhaseAction;
 import org.sopt.kareer.domain.roadmap.entity.Roadmap;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseActionType;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseStatus;
+import org.sopt.kareer.domain.roadmap.entity.enums.RoadmapActiveStatus;
 import org.sopt.kareer.domain.roadmap.fixture.PhaseActionFixture;
 import org.sopt.kareer.domain.roadmap.fixture.PhaseFixture;
 import org.sopt.kareer.global.config.QuerydslConfig;
@@ -83,7 +84,7 @@ public class PhaseActionRepositoryTest {
         PhaseAction action1 = phaseActionRepository.save(PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA));
 
         // when
-        Optional<PhaseAction> result = phaseActionRepository.findByIdAndMemberId(action1.getId(), member1.getId());
+        Optional<PhaseAction> result = phaseActionRepository.findByIdAndMemberIdAndRoadmapStatus(action1.getId(), member1.getId(), RoadmapActiveStatus.ACTIVE);
 
         // then
         assertThat(result).isPresent();

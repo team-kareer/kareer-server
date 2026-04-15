@@ -11,6 +11,7 @@ import org.sopt.kareer.domain.roadmap.entity.PhaseAction;
 import org.sopt.kareer.domain.roadmap.entity.Roadmap;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseActionType;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseStatus;
+import org.sopt.kareer.domain.roadmap.entity.enums.RoadmapActiveStatus;
 import org.sopt.kareer.domain.roadmap.fixture.PhaseActionFixture;
 import org.sopt.kareer.domain.roadmap.fixture.PhaseFixture;
 import org.sopt.kareer.global.config.QuerydslConfig;
@@ -155,7 +156,7 @@ public class PhaseRepositoryTest {
         @DisplayName("phaseId와 memberId가 일치하는 Phase가 존재하면 true를 반환한다.")
         void existsByIdAndMemberId_true() {
             // when
-            boolean result = phaseRepository.existsByIdAndRoadmap_Member_Id(phase1.getId(), member1.getId());
+            boolean result = phaseRepository.existsByIdAndRoadmap_Member_IdAndRoadmap_Status(phase1.getId(), member1.getId(), RoadmapActiveStatus.ACTIVE);
 
             // then
             assertThat(result).isTrue();
@@ -168,7 +169,7 @@ public class PhaseRepositoryTest {
             Member member2 = memberRepository.save(MemberFixture.getMember("test-provider-id-2"));
 
             // when
-            boolean result = phaseRepository.existsByIdAndRoadmap_Member_Id(phase1.getId(), member2.getId());
+            boolean result = phaseRepository.existsByIdAndRoadmap_Member_IdAndRoadmap_Status(phase1.getId(), member2.getId(), RoadmapActiveStatus.ACTIVE);
 
             // then
             assertThat(result).isFalse();

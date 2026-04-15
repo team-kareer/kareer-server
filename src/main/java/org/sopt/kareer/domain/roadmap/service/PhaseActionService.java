@@ -6,6 +6,7 @@ import org.sopt.kareer.domain.roadmap.dto.response.AiGuideResponse;
 import org.sopt.kareer.domain.roadmap.entity.ActionItem;
 import org.sopt.kareer.domain.roadmap.entity.PhaseAction;
 import org.sopt.kareer.domain.roadmap.entity.PhaseActionTranslation;
+import org.sopt.kareer.domain.roadmap.entity.enums.RoadmapActiveStatus;
 import org.sopt.kareer.domain.roadmap.exception.RoadMapException;
 import org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode;
 import org.sopt.kareer.domain.roadmap.repository.ActionItemRepository;
@@ -34,7 +35,7 @@ public class PhaseActionService {
 
     @Transactional
     public void createPhaseActionTodo(Long memberId, Long phaseActionId) {
-        PhaseAction phaseAction = phaseActionRepository.findByIdAndMemberId(phaseActionId, memberId)
+        PhaseAction phaseAction = phaseActionRepository.findByIdAndMemberIdAndRoadmapStatus(phaseActionId, memberId, RoadmapActiveStatus.ACTIVE)
                 .orElseThrow(() -> new RoadMapException(RoadmapErrorCode.PHASE_ACTION_NOT_FOUND));
 
         if (phaseAction.getAdded()) {
@@ -51,7 +52,7 @@ public class PhaseActionService {
     }
 
     public AiGuideResponse getAiGuide(Long memberId, Long phaseActionId) {
-        PhaseAction phaseAction = phaseActionRepository.findByIdAndMemberId(phaseActionId, memberId)
+        PhaseAction phaseAction = phaseActionRepository.findByIdAndMemberIdAndRoadmapStatus(phaseActionId, memberId, RoadmapActiveStatus.ACTIVE)
                 .orElseThrow(() -> new RoadMapException(RoadmapErrorCode.PHASE_ACTION_NOT_FOUND));
 
         String importance = phaseAction.getImportance();
