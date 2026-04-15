@@ -11,6 +11,9 @@ import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapTestResponse;
 import org.sopt.kareer.domain.roadmap.dto.translation.RoadmapTranslationTarget;
+import org.sopt.kareer.domain.roadmap.entity.enums.RoadmapActiveStatus;
+import org.sopt.kareer.domain.roadmap.repository.ActionItemRepository;
+import org.sopt.kareer.domain.roadmap.repository.RoadmapRepository;
 import org.sopt.kareer.global.external.ai.builder.context.MemberContextBuilder;
 import org.sopt.kareer.global.external.ai.service.OpenAiService;
 import org.sopt.kareer.global.external.ai.service.PolicyDocumentRetriever;
@@ -34,11 +37,19 @@ public class RoadMapService {
     private final RequiredDocumentRetriever requiredRetriever;
     private final PolicyDocumentRetriever policyDocumentRetriever;
     private final MemberVisaRepository memberVisaRepository;
+    private final RoadmapRepository roadmapRepository;
+    private final ActionItemRepository actionItemRepository;
 
     @Transactional
     public RoadmapTranslationTarget createRoadmap(Long memberId){
 
         Member member = memberService.getById(memberId);
+
+        roadmapRepository.findByMember_IdAndStatus(memberId, RoadmapActiveStatus.ACTIVE)
+                .ifPresent(existing -> {
+                    actionItemRepository.deactivateAllByRoadmapId(existing.getId());
+                    existing.deactivate();
+                });
 
         var memberContext = memberContextBuilder.load(memberId);
 
