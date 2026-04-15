@@ -40,7 +40,7 @@ class PhaseActionControllerTest extends ControllerTestSupport {
                     .willReturn(response);
 
             // when & then
-            mockMvc.perform(get("/api/v1/phase-actions/{phaseActionId}/guide", phaseActionId))
+            mockMvc.perform(get("/api/v1/roadmap/phase-actions/{phaseActionId}/guide", phaseActionId))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.message").value("AI 가이드가 조회되었습니다."))
@@ -62,7 +62,7 @@ class PhaseActionControllerTest extends ControllerTestSupport {
                     .willThrow(new RoadMapException(RoadmapErrorCode.PHASE_ACTION_NOT_FOUND));
 
             // when & then
-            mockMvc.perform(get("/api/v1/phase-actions/{phaseActionId}/guide", phaseActionId))
+            mockMvc.perform(get("/api/v1/roadmap/phase-actions/{phaseActionId}/guide", phaseActionId))
                     .andDo(print())
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.message").value(RoadmapErrorCode.PHASE_ACTION_NOT_FOUND.getMessage()));

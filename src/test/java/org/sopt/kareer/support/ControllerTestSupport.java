@@ -5,6 +5,8 @@ import org.sopt.kareer.domain.jobposting.controller.JobPostingController;
 import org.sopt.kareer.domain.jobposting.service.JobPostingCrawler;
 import org.sopt.kareer.domain.jobposting.service.JobPostingService;
 import org.sopt.kareer.domain.member.controller.MemberController;
+import org.sopt.kareer.domain.member.controller.MemberControllerV2;
+import org.sopt.kareer.domain.member.service.LocalizedOnboardQueryService;
 import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.domain.roadmap.controller.PhaseActionController;
 import org.sopt.kareer.domain.roadmap.controller.PhaseController;
@@ -31,7 +33,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
-@WebMvcTest(controllers = {JobPostingController.class, MemberController.class, PhaseController.class, PhaseActionController.class},
+@WebMvcTest(controllers = {JobPostingController.class, MemberController.class, MemberControllerV2.class, PhaseController.class, PhaseActionController.class},
         excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE)
         })
 @AutoConfigureMockMvc(addFilters = false)
@@ -55,6 +57,9 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected MemberService memberService;
+
+    @MockBean
+    protected LocalizedOnboardQueryService localizedOnboardQueryService;
 
     @MockBean
     protected RoadMapService roadMapService;

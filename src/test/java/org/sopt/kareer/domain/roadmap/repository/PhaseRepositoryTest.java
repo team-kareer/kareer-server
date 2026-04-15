@@ -8,6 +8,7 @@ import org.sopt.kareer.domain.roadmap.dto.response.PhaseResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapPhaseDetailResponse;
 import org.sopt.kareer.domain.roadmap.entity.Phase;
 import org.sopt.kareer.domain.roadmap.entity.PhaseAction;
+import org.sopt.kareer.domain.roadmap.entity.Roadmap;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseActionType;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseStatus;
 import org.sopt.kareer.domain.roadmap.fixture.PhaseActionFixture;
@@ -35,15 +36,20 @@ public class PhaseRepositoryTest {
     private MemberRepository memberRepository;
 
     @Autowired
+    private RoadmapRepository roadmapRepository;
+
+    @Autowired
     private PhaseActionRepository phaseActionRepository;
 
     private Phase phase1;
     private Member member1;
+    private Roadmap roadmap1;
 
     @BeforeEach
     void setUp() {
         member1 = memberRepository.save(MemberFixture.getMember("test-provider-id-1"));
-        phase1 = phaseRepository.save(PhaseFixture.getPhase(member1, 1, PhaseStatus.CURRENT));
+        roadmap1 = roadmapRepository.save(Roadmap.create(member1));
+        phase1 = phaseRepository.save(PhaseFixture.getPhase(roadmap1, 1, PhaseStatus.CURRENT));
     }
 
     @Nested
@@ -54,8 +60,8 @@ public class PhaseRepositoryTest {
         @DisplayName("phase 리스트가 sequence 오름차순 정렬되어 반환된다.")
         void findPhases_ordered() {
             // given
-            Phase phase3 = PhaseFixture.getPhase(member1, 3, PhaseStatus.FUTURE);
-            Phase phase2 = PhaseFixture.getPhase(member1, 2, PhaseStatus.NEXT);
+            Phase phase3 = PhaseFixture.getPhase(roadmap1, 3, PhaseStatus.FUTURE);
+            Phase phase2 = PhaseFixture.getPhase(roadmap1, 2, PhaseStatus.NEXT);
             phaseRepository.saveAll(List.of(phase2, phase3));
 
             // when
@@ -74,7 +80,8 @@ public class PhaseRepositoryTest {
         void findPhases_onlyOwnData() {
             // given
             Member member2 = memberRepository.save(MemberFixture.getMember("test-provider-id-2"));
-            Phase phase2 = phaseRepository.save(PhaseFixture.getPhase(member2, 1, PhaseStatus.CURRENT));
+            Roadmap roadmap2 = roadmapRepository.save(Roadmap.create(member2));
+            Phase phase2 = phaseRepository.save(PhaseFixture.getPhase(roadmap2, 1, PhaseStatus.CURRENT));
 
             // when
             List<PhaseResponse> response = phaseRepository.findPhases(member1.getId());
@@ -124,7 +131,8 @@ public class PhaseRepositoryTest {
         void getRoadmapPhaseDetail_onlyOwnData() {
             // given
             Member member2 = memberRepository.save(MemberFixture.getMember("test-provider-id-2"));
-            Phase phase2 = phaseRepository.save(PhaseFixture.getPhase(member2, 1, PhaseStatus.CURRENT));
+            Roadmap roadmap2 = roadmapRepository.save(Roadmap.create(member2));
+            Phase phase2 = phaseRepository.save(PhaseFixture.getPhase(roadmap2, 1, PhaseStatus.CURRENT));
 
             PhaseAction phaseActionVisa1 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
             PhaseAction phaseActionVisaOfOtherMember = PhaseActionFixture.getPhaseAction(phase2, PhaseActionType.CAREER);
@@ -146,10 +154,8 @@ public class PhaseRepositoryTest {
         @Test
         @DisplayName("phaseId와 memberId가 일치하는 Phase가 존재하면 true를 반환한다.")
         void existsByIdAndMemberId_true() {
-            // given
-
             // when
-            boolean result = phaseRepository.existsByIdAndMember_Id(phase1.getId(), member1.getId());
+            boolean result = phaseRepository.existsByIdAndRoadmap_Member_Id(phase1.getId(), member1.getId());
 
             // then
             assertThat(result).isTrue();
@@ -160,8 +166,9 @@ public class PhaseRepositoryTest {
         void existsByIdAndMemberId_false() {
             // given
             Member member2 = memberRepository.save(MemberFixture.getMember("test-provider-id-2"));
+
             // when
-            boolean result = phaseRepository.existsByIdAndMember_Id(phase1.getId(), member2.getId());
+            boolean result = phaseRepository.existsByIdAndRoadmap_Member_Id(phase1.getId(), member2.getId());
 
             // then
             assertThat(result).isFalse();
