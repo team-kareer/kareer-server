@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Phase Action API", description = "Phase Action 관련 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/phase-actions")
+@RequestMapping("/api/v1/roadmap/phase-actions")
 public class PhaseActionController {
 
     private final PhaseActionService phaseActionService;

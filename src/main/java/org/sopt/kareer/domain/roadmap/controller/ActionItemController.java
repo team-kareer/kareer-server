@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Action Item API", description = "Action Item 관련 API")
 @RestController
-@RequestMapping("/api/v1/action-items")
+@RequestMapping("/api/v1/roadmap/action-items")
 @RequiredArgsConstructor
 public class ActionItemController {
 

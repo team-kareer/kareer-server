@@ -13,9 +13,6 @@ import org.sopt.kareer.domain.member.dto.request.MypageRequest;
 import org.sopt.kareer.domain.member.dto.response.*;
 import org.sopt.kareer.domain.member.service.LocalizedOnboardQueryService;
 import org.sopt.kareer.domain.member.service.MemberService;
-import org.sopt.kareer.domain.roadmap.dto.response.RoadmapTestResponse;
-import org.sopt.kareer.domain.roadmap.service.RoadMapService;
-import org.sopt.kareer.domain.roadmap.service.RoadmapTranslationService;
 import org.sopt.kareer.global.annotation.CustomExceptionDescription;
 import org.sopt.kareer.global.auth.service.AuthService;
 import org.sopt.kareer.global.config.swagger.SwaggerResponseDescription;
@@ -36,8 +33,6 @@ import static org.sopt.kareer.global.config.swagger.SwaggerResponseDescription.*
 public class MemberController {
 
     private final MemberService memberService;
-    private final RoadMapService roadMapService;
-    private final RoadmapTranslationService roadmapTranslationService;
     private final AuthService authService;
     private final LocalizedOnboardQueryService localizedOnboardQueryService;
 
@@ -94,30 +89,6 @@ public class MemberController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(BaseResponse.ok(localizedOnboardQueryService.getFields(), "온보딩 관심 분야 목록 조회에 성공하였습니다."));
-    }
-
-    @Operation(summary = "AI 로드맵 생성 API", description = "사용자가 온보딩에 입력한 정보를 통해 로드맵을 생성합니다.")
-    @CustomExceptionDescription(CREATE_ROADMAP)
-    @PostMapping("roadmap")
-    public ResponseEntity<BaseResponse<Void>> generateRoadmap(
-            @AuthenticationPrincipal Long memberId) {
-
-        var target = roadMapService.createRoadmap(memberId);
-
-        roadmapTranslationService.translateAllLanguages(target);
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(BaseResponse.ok("AI 로드맵 생성에 성공하였습니다."));
-    }
-
-    @Operation(summary = "AI 로드맵 생성 테스트용 API (Server Only)", description = "사용자가 온보딩에 입력한 정보를 통해 로드맵을 생성합니다.")
-    @CustomExceptionDescription(CREATE_ROADMAP)
-    @PostMapping("roadmap/test")
-    public ResponseEntity<BaseResponse<RoadmapTestResponse>> generateRoadmapForTest(
-            @AuthenticationPrincipal Long memberId) {
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(BaseResponse.ok(roadMapService.createRoadmapTest(memberId), "AI 로드맵 생성에 성공하였습니다."));
     }
 
     @Operation(summary = "유저 상태 조회", description = "사용자의 비자 정보, 졸업 정보를 조회합니다.")

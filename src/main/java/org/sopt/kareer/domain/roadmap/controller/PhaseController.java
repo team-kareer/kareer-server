@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name="Phase API", description = "Phase 관련 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/phases")
+@RequestMapping("/api/v1/roadmap/phases")
 public class PhaseController {
 
     private final PhaseService phaseService;
@@ -38,7 +38,7 @@ public class PhaseController {
         );
     }
 
-    @GetMapping("/{phaseId}/roadmap")
+    @GetMapping("/{phaseId}")
     @Operation(summary = "로드맵 Phase 상세정보 조회", description = "로드맵 Phase 상세조회를 조회합니다.")
     @CustomExceptionDescription(SwaggerResponseDescription.ROADMAP_PHASE_LIST_DETAIL)
     public ResponseEntity<BaseResponse<RoadmapPhaseDetailResponse>> getRoadmapPhaseDetail(
