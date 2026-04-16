@@ -74,42 +74,7 @@ public class Member extends BaseEntity {
     private String preparationStatus;
 
     private String fieldsOfInterest;
-
-    // 프론트 온보딩 구현 완료 후 삭제 예정
-    public void updateInfo(String name,
-                           LocalDate birthDate,
-                           Country country,
-                           String university,
-                           EnglishLevel englishLevel,
-                           String fieldsOfInterests,
-                           String preparationStatuses,
-                           LanguageLevel languageLevel,
-                           Degree degree,
-                           LocalDate expectedGraduationDate,
-                           String primaryMajor,
-                           String secondaryMajor,
-                           String targetJob,
-                           String targetJobSkill,
-                           String personalBackground) {
-        assertPendingStatus();
-        this.name = name;
-        this.birthDate = birthDate;
-        this.countryCode = country.getCountryName();
-        this.universityCode = university;
-        this.englishLevelCode = englishLevel.getDescription();
-        this.fieldsOfInterest = fieldsOfInterests;
-        this.preparationStatus = preparationStatuses;
-        this.languageLevel = languageLevel;
-        this.degreeCode = degree.getDescription();
-        this.expectedGraduationDate = expectedGraduationDate;
-        this.primaryMajorCode = primaryMajor;
-        this.secondaryMajor = secondaryMajor;
-        this.targetJob = targetJob;
-        this.targetJobSkill = targetJobSkill;
-        this.status = MemberStatus.ACTIVE;
-        this.personalBackground = personalBackground;
-    }
-
+    
     public void updateInfoV2(String name,
                            LocalDate birthDate,
                            String countryCode,
