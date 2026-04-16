@@ -1,17 +1,18 @@
 package org.sopt.kareer.domain.roadmap.service;
 
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.domain.roadmap.dto.response.*;
-import org.sopt.kareer.domain.roadmap.dto.response.PhaseResponse;
+import org.sopt.kareer.domain.roadmap.dto.response.HomePhaseDetailResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.PhaseListResponse;
+import org.sopt.kareer.domain.roadmap.dto.response.PhaseResponse;
+import org.sopt.kareer.domain.roadmap.dto.response.RoadmapPhaseDetailResponse;
 import org.sopt.kareer.domain.roadmap.entity.PhaseAction;
 import org.sopt.kareer.domain.roadmap.entity.PhaseActionTranslation;
 import org.sopt.kareer.domain.roadmap.entity.PhaseTranslation;
+import org.sopt.kareer.domain.roadmap.entity.enums.RoadmapActiveStatus;
 import org.sopt.kareer.domain.roadmap.exception.RoadMapException;
 import org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode;
 import org.sopt.kareer.domain.roadmap.repository.PhaseActionRepository;
 import org.sopt.kareer.domain.roadmap.repository.PhaseActionTranslationRepository;
-import org.sopt.kareer.domain.roadmap.dto.response.RoadmapPhaseDetailResponse;
 import org.sopt.kareer.domain.roadmap.repository.PhaseRepository;
 import org.sopt.kareer.domain.roadmap.repository.PhaseTranslationRepository;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -60,7 +61,7 @@ public class PhaseService {
     }
 
     public RoadmapPhaseDetailResponse getRoadmapPhaseDetail(Long memberId, Long phaseId) {
-        if (!phaseRepository.existsByIdAndMember_Id(phaseId, memberId)) {
+        if (!phaseRepository.existsByIdAndRoadmap_Member_IdAndRoadmap_Status(phaseId, memberId, RoadmapActiveStatus.ACTIVE)) {
             throw new RoadMapException(RoadmapErrorCode.PHASE_NOT_FOUND);
         }
         Map<String, List<RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse>> raw =
@@ -117,7 +118,7 @@ public class PhaseService {
     }
 
     public HomePhaseDetailResponse getHomePhaseDetail(Long memberId, Long phaseId) {
-        if (!phaseRepository.existsByIdAndMember_Id(phaseId, memberId)) {
+        if (!phaseRepository.existsByIdAndRoadmap_Member_IdAndRoadmap_Status(phaseId, memberId, RoadmapActiveStatus.ACTIVE)) {
             throw new RoadMapException(RoadmapErrorCode.PHASE_NOT_FOUND);
         }
 

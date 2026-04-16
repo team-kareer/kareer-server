@@ -18,6 +18,7 @@ import org.sopt.kareer.domain.roadmap.dto.response.RoadmapPhaseDetailResponse;
 import org.sopt.kareer.domain.roadmap.entity.QPhase;
 import org.sopt.kareer.domain.roadmap.entity.QPhaseAction;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseActionType;
+import org.sopt.kareer.domain.roadmap.entity.enums.RoadmapActiveStatus;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -51,7 +52,8 @@ public class PhaseRepositoryCustomImpl implements PhaseRepositoryCustom {
                         phase.endDate
                 ))
                 .from(phase)
-                .where(phase.member.id.eq(memberId))
+                .where(phase.roadmap.member.id.eq(memberId)
+                        .and(phase.roadmap.status.eq(RoadmapActiveStatus.ACTIVE)))
                 .orderBy(phase.sequence.asc())
                 .fetch();
     }

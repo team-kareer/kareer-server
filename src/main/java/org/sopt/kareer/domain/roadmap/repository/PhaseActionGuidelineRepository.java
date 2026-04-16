@@ -17,5 +17,5 @@ public interface PhaseActionGuidelineRepository extends JpaRepository<PhaseActio
     """)
     List<String> findContentByPhaseActionId(@Param("phaseActionId") Long phaseActionId);
 
-    void deleteAllByPhaseAction_Phase_Member_Id(Long memberId);
+    void deleteAllByPhaseAction_Phase_Roadmap_Member_Id(Long memberId);
 }

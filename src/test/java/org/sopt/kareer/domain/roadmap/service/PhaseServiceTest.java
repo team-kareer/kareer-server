@@ -10,6 +10,7 @@ import org.sopt.kareer.domain.roadmap.dto.response.PhaseResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapPhaseDetailResponse;
 import org.sopt.kareer.domain.roadmap.entity.Phase;
 import org.sopt.kareer.domain.roadmap.entity.PhaseAction;
+import org.sopt.kareer.domain.roadmap.entity.Roadmap;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseActionType;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseStatus;
 import org.sopt.kareer.domain.roadmap.exception.RoadMapException;
@@ -18,6 +19,7 @@ import org.sopt.kareer.domain.roadmap.fixture.PhaseActionFixture;
 import org.sopt.kareer.domain.roadmap.fixture.PhaseFixture;
 import org.sopt.kareer.domain.roadmap.repository.PhaseActionRepository;
 import org.sopt.kareer.domain.roadmap.repository.PhaseRepository;
+import org.sopt.kareer.domain.roadmap.repository.RoadmapRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -36,6 +38,9 @@ public class PhaseServiceTest {
     private MemberRepository memberRepository;
 
     @Autowired
+    private RoadmapRepository roadmapRepository;
+
+    @Autowired
     private PhaseRepository phaseRepository;
 
     @Autowired
@@ -46,17 +51,20 @@ public class PhaseServiceTest {
 
     private Phase phase1;
     private Member member1;
+    private Roadmap roadmap1;
 
     @BeforeEach
     void setUp() {
         member1 = memberRepository.save(MemberFixture.getMember("test-provider-id-1"));
-        phase1 = phaseRepository.save(PhaseFixture.getPhase(member1, 1, PhaseStatus.CURRENT));
+        roadmap1 = roadmapRepository.save(Roadmap.create(member1));
+        phase1 = phaseRepository.save(PhaseFixture.getPhase(roadmap1, 1, PhaseStatus.CURRENT));
     }
 
     @AfterEach
     void tearDown() {
         phaseActionRepository.deleteAllInBatch();
         phaseRepository.deleteAllInBatch();
+        roadmapRepository.deleteAllInBatch();
         memberRepository.deleteAllInBatch();
     }
 
@@ -68,8 +76,8 @@ public class PhaseServiceTest {
         @DisplayName("Phase 리스트를 조회한다.")
         void getPhases_success() {
             // given
-            Phase phase2 = PhaseFixture.getPhase(member1, 2, PhaseStatus.NEXT);
-            Phase phase3 = PhaseFixture.getPhase(member1, 3, PhaseStatus.FUTURE);
+            Phase phase2 = PhaseFixture.getPhase(roadmap1, 2, PhaseStatus.NEXT);
+            Phase phase3 = PhaseFixture.getPhase(roadmap1, 3, PhaseStatus.FUTURE);
             phaseRepository.saveAll(List.of(phase1, phase2, phase3));
 
             // when
@@ -91,9 +99,10 @@ public class PhaseServiceTest {
         void getPhases_onlyOwnData() {
             // given
             Member member2 = memberRepository.save(MemberFixture.getMember("test-provider-id-2"));
-            Phase phase2 = PhaseFixture.getPhase(member1, 2, PhaseStatus.NEXT);
-            Phase phase3 = PhaseFixture.getPhase(member1, 3, PhaseStatus.FUTURE);
-            Phase phase4 = PhaseFixture.getPhase(member2, 2, PhaseStatus.CURRENT);
+            Roadmap roadmap2 = roadmapRepository.save(Roadmap.create(member2));
+            Phase phase2 = PhaseFixture.getPhase(roadmap1, 2, PhaseStatus.NEXT);
+            Phase phase3 = PhaseFixture.getPhase(roadmap1, 3, PhaseStatus.FUTURE);
+            Phase phase4 = PhaseFixture.getPhase(roadmap2, 2, PhaseStatus.CURRENT);
             phaseRepository.saveAll(List.of(phase1, phase2, phase3, phase4));
 
             // when
@@ -163,9 +172,9 @@ public class PhaseServiceTest {
         @DisplayName("로드맵 Phase 상세정보를 조회시 그룹 내 아이템은 deadline 오름차순, 동일 시 title 오름차순으로 정렬된다.")
         void getRoadmapPhaseDetail_ordered() {
             // given
-            PhaseAction phaseActionVisaLateTitle1 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA, "test-title-1", LocalDate.of(2026, 3,2));
-            PhaseAction phaseActionVisaLateTitle2 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA,"test-title-2", LocalDate.of(2026, 3,2));
-            PhaseAction phaseActionVisaEarlyTitle1 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA, "test-title-1", LocalDate.of(2026, 3,1));
+            PhaseAction phaseActionVisaLateTitle1 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA, "test-title-1", LocalDate.of(2026, 3, 2));
+            PhaseAction phaseActionVisaLateTitle2 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA, "test-title-2", LocalDate.of(2026, 3, 2));
+            PhaseAction phaseActionVisaEarlyTitle1 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA, "test-title-1", LocalDate.of(2026, 3, 1));
 
             phaseActionRepository.saveAll(List.of(phaseActionVisaLateTitle1, phaseActionVisaLateTitle2, phaseActionVisaEarlyTitle1));
 
@@ -186,7 +195,7 @@ public class PhaseServiceTest {
         @DisplayName("특정 로드맵 Phase 상세정보 조회 시, 다른 Phase의 Action은 포함되지 않는다.")
         void getRoadmapPhaseDetail_onlyParticularPhaseData() {
             // given
-            Phase phase2 = phaseRepository.save(PhaseFixture.getPhase(member1, 1, PhaseStatus.CURRENT));
+            Phase phase2 = phaseRepository.save(PhaseFixture.getPhase(roadmap1, 1, PhaseStatus.CURRENT));
             PhaseAction phaseActionVisa1 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
             PhaseAction phaseActionVisa2 = PhaseActionFixture.getPhaseAction(phase2, PhaseActionType.VISA);
             phaseActionRepository.saveAll(List.of(phaseActionVisa1, phaseActionVisa2));
@@ -261,7 +270,7 @@ public class PhaseServiceTest {
         @DisplayName("특정 홈 Phase 상세정보 조회 시, 다른 Phase의 Action은 포함되지 않는다.")
         void getHomePhaseDetail_onlyParticularPhaseData() {
             // given
-            Phase phase2 = phaseRepository.save(PhaseFixture.getPhase(member1, 1, PhaseStatus.CURRENT));
+            Phase phase2 = phaseRepository.save(PhaseFixture.getPhase(roadmap1, 1, PhaseStatus.CURRENT));
             PhaseAction phaseActionVisa1 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
             PhaseAction phaseActionVisa2 = PhaseActionFixture.getPhaseAction(phase2, PhaseActionType.VISA);
             phaseActionRepository.saveAll(List.of(phaseActionVisa1, phaseActionVisa2));

@@ -16,6 +16,7 @@ import org.sopt.kareer.domain.roadmap.repository.PhaseActionRepository;
 import org.sopt.kareer.domain.roadmap.repository.PhaseActionTranslationRepository;
 import org.sopt.kareer.domain.roadmap.repository.PhaseRepository;
 import org.sopt.kareer.domain.roadmap.repository.PhaseTranslationRepository;
+import org.sopt.kareer.domain.roadmap.repository.RoadmapRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,22 +38,24 @@ public class MemberDeletionService {
     private final PhaseActionMistakeTranslationRepository phaseActionMistakeTranslationRepository;
     private final ActionItemRepository actionItemRepository;
     private final ActionItemTranslationRepository actionItemTranslationRepository;
+    private final RoadmapRepository roadmapRepository;
 
     @Transactional
     public void deleteMember(Member member) {
         Long memberId = member.getId();
 
-        phaseActionGuidelineTranslationRepository.deleteAllByGuideline_PhaseAction_Phase_Member_Id(memberId);
-        phaseActionMistakeTranslationRepository.deleteAllByMistake_PhaseAction_Phase_Member_Id(memberId);
+        phaseActionGuidelineTranslationRepository.deleteAllByGuideline_PhaseAction_Phase_Roadmap_Member_Id(memberId);
+        phaseActionMistakeTranslationRepository.deleteAllByMistake_PhaseAction_Phase_Roadmap_Member_Id(memberId);
         actionItemTranslationRepository.deleteAllByActionItem_Member_Id(memberId);
-        phaseActionTranslationRepository.deleteAllByPhaseAction_Phase_Member_Id(memberId);
-        phaseTranslationRepository.deleteAllByPhase_Member_Id(memberId);
+        phaseActionTranslationRepository.deleteAllByPhaseAction_Phase_Roadmap_Member_Id(memberId);
+        phaseTranslationRepository.deleteAllByPhase_Roadmap_Member_Id(memberId);
 
-        phaseActionGuidelineRepository.deleteAllByPhaseAction_Phase_Member_Id(memberId);
-        phaseActionMistakeRepository.deleteAllByPhaseAction_Phase_Member_Id(memberId);
+        phaseActionGuidelineRepository.deleteAllByPhaseAction_Phase_Roadmap_Member_Id(memberId);
+        phaseActionMistakeRepository.deleteAllByPhaseAction_Phase_Roadmap_Member_Id(memberId);
         actionItemRepository.deleteAllByMemberId(memberId);
-        phaseActionRepository.deleteAllByPhase_Member_Id(memberId);
-        phaseRepository.deleteAllByMember_Id(memberId);
+        phaseActionRepository.deleteAllByPhase_Roadmap_Member_Id(memberId);
+        phaseRepository.deleteAllByRoadmap_Member_Id(memberId);
+        roadmapRepository.deleteAllByMember_Id(memberId);
         jobPostingBookmarkRepository.deleteAllByMemberId(memberId);
         memberTermRepository.deleteAllByMemberId(memberId);
         memberVisaRepository.deleteAllByMemberId(memberId);

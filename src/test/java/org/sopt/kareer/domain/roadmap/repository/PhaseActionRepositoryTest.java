@@ -8,8 +8,10 @@ import org.sopt.kareer.domain.member.fixture.MemberFixture;
 import org.sopt.kareer.domain.member.repository.MemberRepository;
 import org.sopt.kareer.domain.roadmap.entity.Phase;
 import org.sopt.kareer.domain.roadmap.entity.PhaseAction;
+import org.sopt.kareer.domain.roadmap.entity.Roadmap;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseActionType;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseStatus;
+import org.sopt.kareer.domain.roadmap.entity.enums.RoadmapActiveStatus;
 import org.sopt.kareer.domain.roadmap.fixture.PhaseActionFixture;
 import org.sopt.kareer.domain.roadmap.fixture.PhaseFixture;
 import org.sopt.kareer.global.config.QuerydslConfig;
@@ -35,22 +37,27 @@ public class PhaseActionRepositoryTest {
     private MemberRepository memberRepository;
 
     @Autowired
+    private RoadmapRepository roadmapRepository;
+
+    @Autowired
     private PhaseActionRepository phaseActionRepository;
 
     private Phase phase1;
     private Member member1;
+    private Roadmap roadmap1;
 
     @BeforeEach
     void setUp() {
         member1 = memberRepository.save(MemberFixture.getMember("test-provider-id-1"));
-        phase1 = phaseRepository.save(PhaseFixture.getPhase(member1, 1, PhaseStatus.CURRENT));
+        roadmap1 = roadmapRepository.save(Roadmap.create(member1));
+        phase1 = phaseRepository.save(PhaseFixture.getPhase(roadmap1, 1, PhaseStatus.CURRENT));
     }
 
     @Test
     @DisplayName("phaseId가 일치하는 phaseAction들 중 아직 완료되지 않은 phaseAction들을 반환한다. ")
     void findByPhaseIdAndCompletedIsFalse() {
         // given
-        Phase phase2 = phaseRepository.save(PhaseFixture.getPhase(member1, 2, PhaseStatus.NEXT));
+        Phase phase2 = phaseRepository.save(PhaseFixture.getPhase(roadmap1, 2, PhaseStatus.NEXT));
 
         PhaseAction action1 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
         PhaseAction action2 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
@@ -77,12 +84,12 @@ public class PhaseActionRepositoryTest {
         PhaseAction action1 = phaseActionRepository.save(PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA));
 
         // when
-        Optional<PhaseAction> result = phaseActionRepository.findByIdAndMemberId(action1.getId(), member1.getId());
+        Optional<PhaseAction> result = phaseActionRepository.findByIdAndMemberIdAndRoadmapStatus(action1.getId(), member1.getId(), RoadmapActiveStatus.ACTIVE);
 
         // then
         assertThat(result).isPresent();
         assertThat(result.get().getId()).isEqualTo(action1.getId());
-        assertThat(result.get().getPhase().getMember().getId())
+        assertThat(result.get().getPhase().getRoadmap().getMember().getId())
                 .isEqualTo(member1.getId());
     }
 }

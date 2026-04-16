@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseStatus;
 import org.sopt.kareer.global.entity.BaseEntity;
 
@@ -25,8 +24,8 @@ public class Phase extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+    @JoinColumn(name = "roadmap_id", nullable = false)
+    private Roadmap roadmap;
 
     @Column(nullable = false)
     private int sequence;
@@ -48,8 +47,8 @@ public class Phase extends BaseEntity {
     private LocalDate endDate;
 
     @Builder
-    private Phase(Member member, int sequence, String goal, String description, PhaseStatus status, LocalDate startDate, LocalDate endDate) {
-        this.member = member;
+    private Phase(Roadmap roadmap, int sequence, String goal, String description, PhaseStatus status, LocalDate startDate, LocalDate endDate) {
+        this.roadmap = roadmap;
         this.sequence = sequence;
         this.goal = goal;
         this.description = description;
@@ -58,9 +57,9 @@ public class Phase extends BaseEntity {
         this.endDate = endDate;
     }
 
-    public static Phase create(Member member, int sequence, String goal, String description, PhaseStatus status, LocalDate startDate, LocalDate endDate) {
+    public static Phase create(Roadmap roadmap, int sequence, String goal, String description, PhaseStatus status, LocalDate startDate, LocalDate endDate) {
         return Phase.builder()
-                .member(member)
+                .roadmap(roadmap)
                 .sequence(sequence)
                 .goal(goal)
                 .description(description)

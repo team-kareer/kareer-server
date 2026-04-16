@@ -1,7 +1,6 @@
 package org.sopt.kareer.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.domain.member.dto.request.MemberOnboardRequest;
 import org.sopt.kareer.domain.member.dto.request.MemberOnboardV2Request;
 import org.sopt.kareer.domain.member.dto.request.MemberTermsRequest;
 import org.sopt.kareer.domain.member.dto.response.*;
@@ -105,37 +104,6 @@ public class MemberService {
                 degreeLabel,
                 englishLevelLabel
         );
-    }
-
-    // 프론트 온보딩 구현 완료 후 삭제 예정
-    @Transactional
-    public void onboardMember(MemberOnboardRequest request, Long memberId) {
-        Member member = getById(memberId);
-        member.updateInfo(
-                request.name(),
-                request.birthDate(),
-                request.country(),
-                null,
-                null,
-                null,
-                null,
-                request.languageLevel(),
-                request.degree(),
-                request.expectedGraduationDate(),
-                request.primaryMajor(),
-                request.secondaryMajor(),
-                request.targetJob(),
-                request.targetJobSkill(),
-                request.personalBackground()
-        );
-
-        MemberVisa memberVisa = MemberVisa.createMemberVisa(
-                member,
-                request.visaType(),
-                request.visaExpiredAt(),
-                request.visaStartDate()
-        );
-        memberVisaRepository.save(memberVisa);
     }
 
     @Transactional

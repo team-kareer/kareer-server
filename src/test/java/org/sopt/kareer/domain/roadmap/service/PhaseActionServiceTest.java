@@ -9,6 +9,7 @@ import org.sopt.kareer.domain.roadmap.entity.Phase;
 import org.sopt.kareer.domain.roadmap.entity.PhaseAction;
 import org.sopt.kareer.domain.roadmap.entity.PhaseActionGuideline;
 import org.sopt.kareer.domain.roadmap.entity.PhaseActionMistake;
+import org.sopt.kareer.domain.roadmap.entity.Roadmap;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseActionType;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseStatus;
 import org.sopt.kareer.domain.roadmap.exception.RoadMapException;
@@ -19,6 +20,7 @@ import org.sopt.kareer.domain.roadmap.repository.PhaseActionGuidelineRepository;
 import org.sopt.kareer.domain.roadmap.repository.PhaseActionMistakeRepository;
 import org.sopt.kareer.domain.roadmap.repository.PhaseActionRepository;
 import org.sopt.kareer.domain.roadmap.repository.PhaseRepository;
+import org.sopt.kareer.domain.roadmap.repository.RoadmapRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -34,6 +36,9 @@ public class PhaseActionServiceTest {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private RoadmapRepository roadmapRepository;
 
     @Autowired
     private PhaseRepository phaseRepository;
@@ -52,11 +57,13 @@ public class PhaseActionServiceTest {
 
     private Phase phase1;
     private Member member1;
+    private Roadmap roadmap1;
 
     @BeforeEach
     void setUp() {
         member1 = memberRepository.save(MemberFixture.getMember("test-provider-id-1"));
-        phase1 = phaseRepository.save(PhaseFixture.getPhase(member1, 1, PhaseStatus.CURRENT));
+        roadmap1 = roadmapRepository.save(Roadmap.create(member1));
+        phase1 = phaseRepository.save(PhaseFixture.getPhase(roadmap1, 1, PhaseStatus.CURRENT));
     }
 
     @AfterEach
@@ -65,6 +72,7 @@ public class PhaseActionServiceTest {
         phaseActionMistakeRepository.deleteAll();
         phaseActionRepository.deleteAllInBatch();
         phaseRepository.deleteAllInBatch();
+        roadmapRepository.deleteAllInBatch();
         memberRepository.deleteAllInBatch();
     }
 

@@ -45,7 +45,7 @@ class PhaseControllerTest extends ControllerTestSupport {
         );
 
         // when & then
-        mockMvc.perform(get("/api/v1/phases"))
+        mockMvc.perform(get("/api/v1/roadmap/phases"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Phase 리스트가 조회되었습니다."))
@@ -89,7 +89,7 @@ class PhaseControllerTest extends ControllerTestSupport {
                     .willReturn(response);
 
             // when & then
-            mockMvc.perform(get("/api/v1/phases/{phaseId}/roadmap", phaseId))
+            mockMvc.perform(get("/api/v1/roadmap/phases/{phaseId}", phaseId))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.message").value("로드맵 Phase 상세정보가 조회되었습니다."))
@@ -108,7 +108,7 @@ class PhaseControllerTest extends ControllerTestSupport {
                     .willThrow(new RoadMapException(RoadmapErrorCode.PHASE_NOT_FOUND));
 
             // when & then
-            mockMvc.perform(get("/api/v1/phases/{phaseId}/roadmap", phaseId))
+            mockMvc.perform(get("/api/v1/roadmap/phases/{phaseId}", phaseId))
                     .andDo(print())
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.message").value(RoadmapErrorCode.PHASE_NOT_FOUND.getMessage()));
@@ -138,7 +138,7 @@ class PhaseControllerTest extends ControllerTestSupport {
                     .willReturn(response);
 
             // when & then
-            mockMvc.perform(get("/api/v1/phases/{phaseId}/home", phaseId))
+            mockMvc.perform(get("/api/v1/roadmap/phases/{phaseId}/home", phaseId))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.message").value("홈 Phase 상세정보가 조회되었습니다."))
@@ -158,7 +158,7 @@ class PhaseControllerTest extends ControllerTestSupport {
                     .willThrow(new RoadMapException(RoadmapErrorCode.PHASE_NOT_FOUND));
 
             // when & then
-            mockMvc.perform(get("/api/v1/phases/{phaseId}/home", phaseId))
+            mockMvc.perform(get("/api/v1/roadmap/phases/{phaseId}/home", phaseId))
                     .andDo(print())
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.message").value(RoadmapErrorCode.PHASE_NOT_FOUND.getMessage()));

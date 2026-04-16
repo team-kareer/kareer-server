@@ -38,6 +38,6 @@ class MemberTest {
         assertThat(member.getPrimaryMajorCode()).isEqualTo("computer-science");
         assertThat(member.getSecondaryMajor()).isEqualTo("Statistic");
         assertThat(member.getLanguageLevel()).isEqualTo(LanguageLevel.LEVEL_3);
-        assertThat(member.getUniversityCode()).isEqualTo("beginner");
+        assertThat(member.getEnglishLevelCode()).isEqualTo("beginner");
     }
 }

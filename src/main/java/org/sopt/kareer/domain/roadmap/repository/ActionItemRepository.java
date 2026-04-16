@@ -3,6 +3,8 @@ package org.sopt.kareer.domain.roadmap.repository;
 import org.sopt.kareer.domain.roadmap.entity.ActionItem;
 import org.sopt.kareer.domain.roadmap.entity.enums.ActionItemStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
@@ -21,4 +23,17 @@ public interface ActionItemRepository extends JpaRepository<ActionItem, Long> {
     Optional<ActionItem> findByIdAndMemberId(@Param("actionItemId") Long actionItemId, @Param("memberId") Long memberId);
 
     void deleteAllByMemberId(Long memberId);
+
+    @Modifying
+    @Query("""
+        UPDATE ActionItem ai
+        SET ai.status = 'INACTIVE'
+        WHERE ai.phaseAction.id IN (
+            SELECT pa.id FROM PhaseAction pa
+            WHERE pa.phase.id IN (
+                SELECT p.id FROM Phase p WHERE p.roadmap.id = :roadmapId
+            )
+        )
+    """)
+    void deactivateAllByRoadmapId(@Param("roadmapId") Long roadmapId);
 }
