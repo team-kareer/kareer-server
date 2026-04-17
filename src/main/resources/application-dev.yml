@@ -33,7 +33,7 @@ spring:
       timeout-ms: 15000
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     properties:
       hibernate:
         format_sql: true
