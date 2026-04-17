@@ -2,6 +2,8 @@ spring:
   config:
     activate:
       on-profile: local
+  flyway:
+    enabled: false
   datasource:
     url: ${LOCAL_DATASOURCE_URL}
     username: ${LOCAL_DATASOURCE_USERNAME}

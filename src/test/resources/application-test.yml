@@ -12,6 +12,8 @@ spring:
     username: sa
     password:
 
+  flyway:
+    enabled: false
   jpa:
     hibernate:
       ddl-auto: create-drop
