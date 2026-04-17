@@ -2,6 +2,10 @@ spring:
   config:
     activate:
       on-profile: prod
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 1
   datasource:
     url: ${PROD_DATASOURCE_URL}
     username: ${PROD_DATASOURCE_USERNAME}
