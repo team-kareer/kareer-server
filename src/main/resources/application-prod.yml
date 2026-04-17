@@ -1,0 +1,130 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 1
+  datasource:
+    url: ${PROD_DATASOURCE_URL}
+    username: ${PROD_DATASOURCE_USERNAME}
+    password: ${PROD_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+  servlet:
+    multipart:
+      max-file-size: 40MB
+      max-request-size: 40MB
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: gpt-4.1-mini
+          temperature: 0.5
+      embedding:
+        options:
+          model: text-embedding-3-small
+  clova:
+    ocr:
+      url: ${CLOVA_OCR_URL}
+      secret: ${CLOVA_OCR_SECRET}
+      timeout-ms: 15000
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        highlight_sql: true
+    open-in-view: false
+  rag:
+    roadmap:
+      policy-top-k: 4
+      career-action-top-k: 4
+      career-guide-top-k: 4
+      career-todo-top-k: 6
+      candidate-pool-top-k: 30
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${GOOGLE_REDIRECT_URI}
+            scope:
+              - openid
+              - profile
+              - email
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
+            user-name-attribute: sub
+      redirect:
+        redirect-uri: ${OAUTH_REDIRECT_URI}
+
+server:
+  port: 8082
+
+cors:
+  allowed-origins: ${PROD_CORS_ALLOWED_ORIGINS}
+  allow-credentials: true
+
+jwt:
+  secret: ${JWT_SECRET}
+  access-token:
+    expiration-seconds: ${JWT_ACCESS_EXPIRATION}
+  refresh-token:
+    expiration-seconds: ${JWT_REFRESH_EXPIRATION}
+
+auth:
+  login-code:
+    ttl-seconds: ${AUTH_LOGIN_CODE_TTL_SECONDS}
+    redis-prefix: ${AUTH_LOGIN_CODE_REDIS_PREFIX}
+  cookie:
+    refresh-token:
+      name: ${AUTH_REFRESH_TOKEN_COOKIE_NAME}
+      secure: ${AUTH_REFRESH_TOKEN_COOKIE_SECURE}
+      same-site: ${AUTH_REFRESH_TOKEN_COOKIE_SAMESITE}
+  token-blacklist:
+    redis-prefix: ${AUTH_TOKEN_BLACKLIST_REDIS_PREFIX}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+    health:
+      show-details: always
+
+cohere:
+  api-key: ${COHERE_API_KEY}
+  base-url: https://api.cohere.com
+  rerank:
+    model: rerank-multilingual-v3.0
+    top-n: 10
+
+google:
+  translate:
+    url: ${GOOGLE_TRANSLATE_URL}
+    api-key: ${GOOGLE_TRANSLATE_API_KEY}
+
+discord:
+  webhook:
+    url: ${PROD_DISCORD_WEBHOOK_URL}
+
+selenium:
+  chrome:
+    driver-path: ${PROD_DRIVER_PATH}
