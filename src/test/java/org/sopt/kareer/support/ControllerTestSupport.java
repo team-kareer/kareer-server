@@ -6,8 +6,10 @@ import org.sopt.kareer.domain.jobposting.service.JobPostingCrawler;
 import org.sopt.kareer.domain.jobposting.service.JobPostingService;
 import org.sopt.kareer.domain.member.controller.MemberController;
 import org.sopt.kareer.domain.member.controller.MemberControllerV2;
+import org.sopt.kareer.domain.member.facade.MemberFacade;
+import org.sopt.kareer.domain.member.facade.MemberOcrFacade;
+import org.sopt.kareer.domain.member.facade.MemberOnboardingFacade;
 import org.sopt.kareer.domain.member.service.LocalizedOnboardQueryService;
-import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.domain.roadmap.controller.PhaseActionController;
 import org.sopt.kareer.domain.roadmap.controller.PhaseController;
 import org.sopt.kareer.domain.roadmap.service.PhaseActionService;
@@ -56,7 +58,13 @@ public abstract class ControllerTestSupport {
     protected JwtTokenUtil jwtTokenUtil;
 
     @MockBean
-    protected MemberService memberService;
+    protected MemberFacade memberFacade;
+
+    @MockBean
+    protected MemberOcrFacade memberOcrFacade;
+
+    @MockBean
+    protected MemberOnboardingFacade memberOnboardingFacade;
 
     @MockBean
     protected LocalizedOnboardQueryService localizedOnboardQueryService;

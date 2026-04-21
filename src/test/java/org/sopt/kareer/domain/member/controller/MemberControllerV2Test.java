@@ -26,7 +26,7 @@ class MemberControllerV2Test extends ControllerTestSupport {
     @DisplayName("회원 온보딩 V2 정보를 저장한다.")
     @Test
     void onboardMember() throws Exception {
-        willDoNothing().given(memberService).onboardMemberV2(any(), any());
+        willDoNothing().given(memberOnboardingFacade).onboard(any(), any());
 
         mockMvc.perform(post("/api/v2/members/onboard")
                         .with(authentication(authenticatedMember()))

@@ -53,7 +53,7 @@ class MemberControllerTest extends ControllerTestSupport {
                 "Java",
                 VisaType.D2
         );
-        given(memberService.getMemberInfo(any())).willReturn(response);
+        given(memberFacade.getMemberInfo(any())).willReturn(response);
 
         mockMvc.perform(get("/api/v1/members/me")
                         .with(authentication(authenticatedMember())))
@@ -88,7 +88,7 @@ class MemberControllerTest extends ControllerTestSupport {
                 .expectedGraduationDate(LocalDate.of(2024, 2, 1))
                 .graduationDate(LocalDate.of(2023, 2, 1))
                 .build();
-        given(memberService.getMemberStatus(any())).willReturn(response);
+        given(memberFacade.getMemberStatus(any())).willReturn(response);
 
         mockMvc.perform(get("/api/v1/members/me/status")
                         .with(authentication(authenticatedMember())))
@@ -112,7 +112,7 @@ class MemberControllerTest extends ControllerTestSupport {
                 member.getDegreeCode(),
                 member.getEnglishLevelCode()
         );
-        given(memberService.getMypage(any())).willReturn(response);
+        given(memberFacade.getMypage(any())).willReturn(response);
 
         //when && then
         mockMvc.perform(get("/api/v1/members/mypage")
