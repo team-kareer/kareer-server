@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.roadmap.dto.response.HomePhaseDetailResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.PhaseListResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapPhaseDetailResponse;
-import org.sopt.kareer.domain.roadmap.service.PhaseService;
+import org.sopt.kareer.domain.roadmap.facade.PhaseFacade;
 import org.sopt.kareer.global.response.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/roadmap/phases")
 public class PhaseController implements PhaseApi {
 
-    private final PhaseService phaseService;
+    private final PhaseFacade phaseFacade;
 
     @Override
     public ResponseEntity<BaseResponse<PhaseListResponse>> getPhaseList(
             @AuthenticationPrincipal Long memberId) {
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(BaseResponse.ok(phaseService.getPhases(memberId), "Phase 리스트가 조회되었습니다."));
+                .body(BaseResponse.ok(phaseFacade.getPhases(memberId), "Phase 리스트가 조회되었습니다."));
     }
 
     @Override
@@ -34,7 +34,7 @@ public class PhaseController implements PhaseApi {
             @PathVariable Long phaseId) {
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(BaseResponse.ok(phaseService.getRoadmapPhaseDetail(memberId, phaseId), "로드맵 Phase 상세정보가 조회되었습니다."));
+                .body(BaseResponse.ok(phaseFacade.getRoadmapPhaseDetail(memberId, phaseId), "로드맵 Phase 상세정보가 조회되었습니다."));
     }
 
     @Override
@@ -43,6 +43,6 @@ public class PhaseController implements PhaseApi {
             @PathVariable Long phaseId) {
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(BaseResponse.ok(phaseService.getHomePhaseDetail(memberId, phaseId), "홈 Phase 상세정보가 조회되었습니다."));
+                .body(BaseResponse.ok(phaseFacade.getHomePhaseDetail(memberId, phaseId), "홈 Phase 상세정보가 조회되었습니다."));
     }
 }

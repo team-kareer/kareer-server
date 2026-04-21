@@ -2,7 +2,7 @@ package org.sopt.kareer.domain.roadmap.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.roadmap.dto.response.AiGuideResponse;
-import org.sopt.kareer.domain.roadmap.service.PhaseActionService;
+import org.sopt.kareer.domain.roadmap.facade.PhaseActionFacade;
 import org.sopt.kareer.global.response.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/roadmap/phase-actions")
 public class PhaseActionController implements PhaseActionApi {
 
-    private final PhaseActionService phaseActionService;
+    private final PhaseActionFacade phaseActionFacade;
 
     @Override
     public ResponseEntity<BaseResponse<Void>> createPhaseActionTodo(
             @AuthenticationPrincipal Long memberId,
             @PathVariable Long phaseActionId) {
 
-        phaseActionService.createPhaseActionTodo(memberId, phaseActionId);
+        phaseActionFacade.createPhaseActionTodo(memberId, phaseActionId);
         return ResponseEntity.ok(BaseResponse.ok("Phase Action 기반 Todo가 생성되었습니다."));
     }
 
@@ -33,6 +33,6 @@ public class PhaseActionController implements PhaseActionApi {
             @PathVariable Long phaseActionId) {
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(BaseResponse.ok(phaseActionService.getAiGuide(memberId, phaseActionId), "AI 가이드가 조회되었습니다."));
+                .body(BaseResponse.ok(phaseActionFacade.getAiGuide(memberId, phaseActionId), "AI 가이드가 조회되었습니다."));
     }
 }
