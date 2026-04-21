@@ -1,8 +1,6 @@
 package org.sopt.kareer.domain.roadmap.service;
 
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.domain.roadmap.dto.response.HomePhaseDetailResponse;
-import org.sopt.kareer.domain.roadmap.dto.response.PhaseListResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.PhaseResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapPhaseDetailResponse;
 import org.sopt.kareer.domain.roadmap.entity.PhaseAction;
@@ -15,11 +13,11 @@ import org.sopt.kareer.domain.roadmap.repository.PhaseActionRepository;
 import org.sopt.kareer.domain.roadmap.repository.PhaseActionTranslationRepository;
 import org.sopt.kareer.domain.roadmap.repository.PhaseRepository;
 import org.sopt.kareer.domain.roadmap.repository.PhaseTranslationRepository;
+import org.sopt.kareer.domain.roadmap.service.dto.response.PhaseActionDetail;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,14 +26,14 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class PhaseService {
+public class PhaseQueryService {
 
     private final PhaseRepository phaseRepository;
     private final PhaseActionRepository phaseActionRepository;
     private final PhaseTranslationRepository phaseTranslationRepository;
     private final PhaseActionTranslationRepository phaseActionTranslationRepository;
 
-    public PhaseListResponse getPhases(Long memberId) {
+    public List<PhaseResponse> getPhases(Long memberId) {
         List<PhaseResponse> responses = phaseRepository.findPhases(memberId);
 
         String language = currentLanguage();
@@ -57,13 +55,14 @@ public class PhaseService {
                     .toList();
         }
 
-        return PhaseListResponse.from(responses);
+        return responses;
     }
 
-    public RoadmapPhaseDetailResponse getRoadmapPhaseDetail(Long memberId, Long phaseId) {
+    public Map<String, List<RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse>> getRoadmapPhaseDetail(Long memberId, Long phaseId) {
         if (!phaseRepository.existsByIdAndRoadmap_Member_IdAndRoadmap_Status(phaseId, memberId, RoadmapActiveStatus.ACTIVE)) {
             throw new RoadMapException(RoadmapErrorCode.PHASE_NOT_FOUND);
         }
+
         Map<String, List<RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse>> raw =
                 phaseRepository.getRoadmapPhaseDetail(phaseId);
 
@@ -95,29 +94,10 @@ public class PhaseService {
                     ));
         }
 
-        Map<String, RoadmapPhaseDetailResponse.ActionGroupResponse> actions = new LinkedHashMap<>();
-        actions.put("Visa", wrap(raw.get("Visa")));
-        actions.put("Career", wrap(raw.get("Career")));
-        actions.put("Done", wrap(raw.get("Done")));
-
-        long totalCount = raw.values().stream().mapToLong(List::size).sum();
-        return RoadmapPhaseDetailResponse.from(totalCount, actions);
+        return raw;
     }
 
-    private RoadmapPhaseDetailResponse.ActionGroupResponse wrap(
-            List<RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse> items
-    ) {
-        if (items == null) items = List.of();
-
-        List<RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse> sorted = items.stream()
-                .sorted(Comparator.comparing(RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse::deadline)
-                        .thenComparing(RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse::title))
-                .toList();
-
-        return new RoadmapPhaseDetailResponse.ActionGroupResponse((long) sorted.size(), sorted);
-    }
-
-    public HomePhaseDetailResponse getHomePhaseDetail(Long memberId, Long phaseId) {
+    public List<PhaseActionDetail> getHomePhaseDetail(Long memberId, Long phaseId) {
         if (!phaseRepository.existsByIdAndRoadmap_Member_IdAndRoadmap_Status(phaseId, memberId, RoadmapActiveStatus.ACTIVE)) {
             throw new RoadMapException(RoadmapErrorCode.PHASE_NOT_FOUND);
         }
@@ -131,19 +111,13 @@ public class PhaseService {
                 .stream()
                 .collect(Collectors.toMap(t -> t.getPhaseAction().getId(), t -> t));
 
-        final Map<Long, PhaseActionTranslation> finalTranslationMap = translationMap;
-        List<HomePhaseDetailResponse.HomePhaseActionResponse> actionResponses = phaseActions.stream()
+        return phaseActions.stream()
                 .map(pa -> {
-                    PhaseActionTranslation t = finalTranslationMap.get(pa.getId());
-                    if (t != null && t.getTitle() != null) {
-                        return new HomePhaseDetailResponse.HomePhaseActionResponse(
-                                pa.getId(), pa.getType().getDisplayName(), t.getTitle(), pa.getDeadline());
-                    }
-                    return HomePhaseDetailResponse.HomePhaseActionResponse.from(pa);
+                    PhaseActionTranslation t = translationMap.get(pa.getId());
+                    String title = (t != null && t.getTitle() != null) ? t.getTitle() : pa.getTitle();
+                    return new PhaseActionDetail(pa.getId(), pa.getType().getDisplayName(), title, pa.getDeadline());
                 })
                 .toList();
-
-        return HomePhaseDetailResponse.from(actionResponses);
     }
 
     private String currentLanguage() {
