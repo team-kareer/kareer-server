@@ -1,17 +1,12 @@
-package org.sopt.kareer.domain.roadmap.service;
+package org.sopt.kareer.domain.roadmap.service.phaseaction;
 
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.domain.roadmap.entity.PhaseAction;
-import org.sopt.kareer.domain.roadmap.entity.PhaseActionTranslation;
 import org.sopt.kareer.domain.roadmap.entity.enums.RoadmapActiveStatus;
+import org.sopt.kareer.domain.roadmap.entity.phaseaction.PhaseAction;
+import org.sopt.kareer.domain.roadmap.entity.phaseaction.PhaseActionTranslation;
 import org.sopt.kareer.domain.roadmap.exception.RoadMapException;
 import org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode;
-import org.sopt.kareer.domain.roadmap.repository.PhaseActionGuidelineRepository;
-import org.sopt.kareer.domain.roadmap.repository.PhaseActionGuidelineTranslationRepository;
-import org.sopt.kareer.domain.roadmap.repository.PhaseActionMistakeRepository;
-import org.sopt.kareer.domain.roadmap.repository.PhaseActionMistakeTranslationRepository;
-import org.sopt.kareer.domain.roadmap.repository.PhaseActionRepository;
-import org.sopt.kareer.domain.roadmap.repository.PhaseActionTranslationRepository;
+import org.sopt.kareer.domain.roadmap.repository.*;
 import org.sopt.kareer.domain.roadmap.service.dto.response.AiGuideData;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;

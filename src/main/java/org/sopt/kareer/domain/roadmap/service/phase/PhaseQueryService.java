@@ -1,12 +1,12 @@
-package org.sopt.kareer.domain.roadmap.service;
+package org.sopt.kareer.domain.roadmap.service.phase;
 
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.roadmap.dto.response.PhaseResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapPhaseDetailResponse;
-import org.sopt.kareer.domain.roadmap.entity.PhaseAction;
-import org.sopt.kareer.domain.roadmap.entity.PhaseActionTranslation;
-import org.sopt.kareer.domain.roadmap.entity.PhaseTranslation;
 import org.sopt.kareer.domain.roadmap.entity.enums.RoadmapActiveStatus;
+import org.sopt.kareer.domain.roadmap.entity.phase.PhaseTranslation;
+import org.sopt.kareer.domain.roadmap.entity.phaseaction.PhaseAction;
+import org.sopt.kareer.domain.roadmap.entity.phaseaction.PhaseActionTranslation;
 import org.sopt.kareer.domain.roadmap.exception.RoadMapException;
 import org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode;
 import org.sopt.kareer.domain.roadmap.repository.PhaseActionRepository;

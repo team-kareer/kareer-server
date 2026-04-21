@@ -1,9 +1,9 @@
-package org.sopt.kareer.domain.roadmap.service;
+package org.sopt.kareer.domain.roadmap.service.actionitem;
 
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.domain.roadmap.entity.ActionItem;
-import org.sopt.kareer.domain.roadmap.entity.PhaseAction;
+import org.sopt.kareer.domain.roadmap.entity.actionitem.ActionItem;
 import org.sopt.kareer.domain.roadmap.entity.enums.ActionItemStatus;
+import org.sopt.kareer.domain.roadmap.entity.phaseaction.PhaseAction;
 import org.sopt.kareer.domain.roadmap.exception.RoadMapException;
 import org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode;
 import org.sopt.kareer.domain.roadmap.repository.ActionItemRepository;

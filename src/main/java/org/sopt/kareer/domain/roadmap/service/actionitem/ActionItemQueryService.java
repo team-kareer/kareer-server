@@ -1,8 +1,8 @@
-package org.sopt.kareer.domain.roadmap.service;
+package org.sopt.kareer.domain.roadmap.service.actionitem;
 
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.domain.roadmap.entity.ActionItem;
-import org.sopt.kareer.domain.roadmap.entity.ActionItemTranslation;
+import org.sopt.kareer.domain.roadmap.entity.actionitem.ActionItem;
+import org.sopt.kareer.domain.roadmap.entity.actionitem.ActionItemTranslation;
 import org.sopt.kareer.domain.roadmap.entity.enums.ActionItemStatus;
 import org.sopt.kareer.domain.roadmap.repository.ActionItemRepository;
 import org.sopt.kareer.domain.roadmap.repository.ActionItemTranslationRepository;

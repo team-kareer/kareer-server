@@ -1,17 +1,20 @@
 package org.sopt.kareer.domain.roadmap.repository;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.fixture.MemberFixture;
 import org.sopt.kareer.domain.member.repository.MemberRepository;
 import org.sopt.kareer.domain.roadmap.dto.response.PhaseResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapPhaseDetailResponse;
-import org.sopt.kareer.domain.roadmap.entity.Phase;
-import org.sopt.kareer.domain.roadmap.entity.PhaseAction;
 import org.sopt.kareer.domain.roadmap.entity.Roadmap;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseActionType;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseStatus;
 import org.sopt.kareer.domain.roadmap.entity.enums.RoadmapActiveStatus;
+import org.sopt.kareer.domain.roadmap.entity.phase.Phase;
+import org.sopt.kareer.domain.roadmap.entity.phaseaction.PhaseAction;
 import org.sopt.kareer.domain.roadmap.fixture.PhaseActionFixture;
 import org.sopt.kareer.domain.roadmap.fixture.PhaseFixture;
 import org.sopt.kareer.global.config.QuerydslConfig;

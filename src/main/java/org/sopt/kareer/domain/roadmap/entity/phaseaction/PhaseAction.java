@@ -1,15 +1,13 @@
-package org.sopt.kareer.domain.roadmap.entity;
+package org.sopt.kareer.domain.roadmap.entity.phaseaction;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.*;
 import lombok.Builder.Default;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseActionType;
+import org.sopt.kareer.domain.roadmap.entity.phase.Phase;
 import org.sopt.kareer.global.entity.BaseEntity;
+
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "phase_actions")

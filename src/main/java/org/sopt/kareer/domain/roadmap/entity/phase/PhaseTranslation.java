@@ -1,4 +1,4 @@
-package org.sopt.kareer.domain.roadmap.entity;
+package org.sopt.kareer.domain.roadmap.entity.phase;
 
 import jakarta.persistence.*;
 import lombok.*;

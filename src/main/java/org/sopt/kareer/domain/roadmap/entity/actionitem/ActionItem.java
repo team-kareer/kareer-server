@@ -1,17 +1,15 @@
-package org.sopt.kareer.domain.roadmap.entity;
+package org.sopt.kareer.domain.roadmap.entity.actionitem;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.*;
 import lombok.Builder.Default;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.roadmap.entity.enums.ActionItemStatus;
 import org.sopt.kareer.domain.roadmap.entity.enums.ActionItemType;
-import org.sopt.kareer.domain.member.entity.Member;
+import org.sopt.kareer.domain.roadmap.entity.phaseaction.PhaseAction;
 import org.sopt.kareer.global.entity.BaseEntity;
+
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "action_items")
