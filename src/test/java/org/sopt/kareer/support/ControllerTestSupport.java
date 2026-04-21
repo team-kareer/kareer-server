@@ -12,9 +12,8 @@ import org.sopt.kareer.domain.member.facade.MemberOnboardingFacade;
 import org.sopt.kareer.domain.member.service.LocalizedOnboardQueryService;
 import org.sopt.kareer.domain.roadmap.controller.PhaseActionController;
 import org.sopt.kareer.domain.roadmap.controller.PhaseController;
-import org.sopt.kareer.domain.roadmap.service.PhaseActionService;
-import org.sopt.kareer.domain.roadmap.service.PhaseService;
-import org.sopt.kareer.domain.roadmap.service.RoadMapService;
+import org.sopt.kareer.domain.roadmap.facade.PhaseActionFacade;
+import org.sopt.kareer.domain.roadmap.facade.PhaseFacade;
 import org.sopt.kareer.global.auth.service.AuthService;
 import org.sopt.kareer.global.external.discord.client.DiscordClient;
 import org.sopt.kareer.global.jwt.util.JwtTokenUtil;
@@ -70,9 +69,6 @@ public abstract class ControllerTestSupport {
     protected LocalizedOnboardQueryService localizedOnboardQueryService;
 
     @MockBean
-    protected RoadMapService roadMapService;
-
-    @MockBean
     protected JpaMetamodelMappingContext mappingContext;
 
     @MockBean
@@ -82,10 +78,10 @@ public abstract class ControllerTestSupport {
     protected AuthService authService;
 
     @MockBean
-    protected PhaseService phaseService;
+    protected PhaseFacade phaseFacade;
 
     @MockBean
-    protected PhaseActionService phaseActionService;
+    protected PhaseActionFacade phaseActionFacade;
 
     @TestConfiguration
     static class TestSecurityWebMvcConfig implements WebMvcConfigurer {

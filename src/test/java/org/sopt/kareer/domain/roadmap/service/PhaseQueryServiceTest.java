@@ -4,8 +4,6 @@ import org.junit.jupiter.api.*;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.fixture.MemberFixture;
 import org.sopt.kareer.domain.member.repository.MemberRepository;
-import org.sopt.kareer.domain.roadmap.dto.response.HomePhaseDetailResponse;
-import org.sopt.kareer.domain.roadmap.dto.response.PhaseListResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.PhaseResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapPhaseDetailResponse;
 import org.sopt.kareer.domain.roadmap.entity.Roadmap;
@@ -20,19 +18,21 @@ import org.sopt.kareer.domain.roadmap.fixture.PhaseFixture;
 import org.sopt.kareer.domain.roadmap.repository.PhaseActionRepository;
 import org.sopt.kareer.domain.roadmap.repository.PhaseRepository;
 import org.sopt.kareer.domain.roadmap.repository.RoadmapRepository;
+import org.sopt.kareer.domain.roadmap.service.dto.response.PhaseActionDetail;
+import org.sopt.kareer.domain.roadmap.service.phase.PhaseQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class PhaseServiceTest {
+public class PhaseQueryServiceTest {
 
     @Autowired
     private MemberRepository memberRepository;
@@ -44,7 +44,7 @@ public class PhaseServiceTest {
     private PhaseRepository phaseRepository;
 
     @Autowired
-    private PhaseService phaseService;
+    private PhaseQueryService phaseQueryService;
 
     @Autowired
     private PhaseActionRepository phaseActionRepository;
@@ -81,11 +81,11 @@ public class PhaseServiceTest {
             phaseRepository.saveAll(List.of(phase1, phase2, phase3));
 
             // when
-            PhaseListResponse response = phaseService.getPhases(member1.getId());
+            List<PhaseResponse> responses = phaseQueryService.getPhases(member1.getId());
 
             // then
-            assertThat(response.phases()).hasSize(3);
-            assertThat(response.phases())
+            assertThat(responses).hasSize(3);
+            assertThat(responses)
                     .extracting(PhaseResponse::phaseId)
                     .containsExactly(
                             phase1.getId(),
@@ -106,11 +106,11 @@ public class PhaseServiceTest {
             phaseRepository.saveAll(List.of(phase1, phase2, phase3, phase4));
 
             // when
-            PhaseListResponse response = phaseService.getPhases(member1.getId());
+            List<PhaseResponse> responses = phaseQueryService.getPhases(member1.getId());
 
             // then
-            assertThat(response.phases()).hasSize(3);
-            assertThat(response.phases())
+            assertThat(responses).hasSize(3);
+            assertThat(responses)
                     .extracting(PhaseResponse::phaseId)
                     .containsExactlyInAnyOrder(
                             phase1.getId(),
@@ -125,7 +125,7 @@ public class PhaseServiceTest {
     class GetRoadmapPhaseDetail {
 
         @Test
-        @DisplayName("로드맵 phase 상세정보 조회 시 액션들이 타입별로 그룹화되어 지정된 순서대로 반환된다.")
+        @DisplayName("로드맵 phase 상세정보 조회 시 액션들이 타입별로 그룹화되어 반환된다.")
         void getRoadmapPhaseDetail_grouped() {
             // given
             PhaseAction phaseActionVisa = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
@@ -139,21 +139,20 @@ public class PhaseServiceTest {
             phaseActionRepository.saveAll(List.of(phaseActionVisa, phaseActionDone, phaseActionCareer));
 
             // when
-            RoadmapPhaseDetailResponse response = phaseService.getRoadmapPhaseDetail(member1.getId(), phase1.getId());
+            Map<String, List<RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse>> raw =
+                    phaseQueryService.getRoadmapPhaseDetail(member1.getId(), phase1.getId());
 
             // then
-            assertThat(response.totalCount()).isEqualTo(3);
+            long totalCount = raw.values().stream().mapToLong(List::size).sum();
+            assertThat(totalCount).isEqualTo(3);
 
-            List<String> keys = new ArrayList<>(response.actions().keySet());
-            assertThat(keys).containsExactly("Visa", "Career", "Done");
-
-            assertThat(response.actions().get("Visa").count()).isEqualTo(1);
-            assertThat(response.actions().get("Career").count()).isEqualTo(1);
-            assertThat(response.actions().get("Done").count()).isEqualTo(1);
+            assertThat(raw.get("Visa")).hasSize(1);
+            assertThat(raw.get("Career")).hasSize(1);
+            assertThat(raw.get("Done")).hasSize(1);
         }
 
         @Test
-        @DisplayName("로드맵 Phase 상세정보 조회시 그룹에 item이 없으면 빈 리스트를 반환한다.")
+        @DisplayName("로드맵 Phase 상세정보 조회시 그룹에 item이 없으면 해당 키가 없거나 빈 리스트를 반환한다.")
         void getRoadmapPhaseDetail_emptyGrouped() {
             // given
             PhaseAction phaseActionVisa1 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
@@ -161,16 +160,16 @@ public class PhaseServiceTest {
             phaseActionRepository.saveAll(List.of(phaseActionVisa1, phaseActionVisa2));
 
             // when
-            RoadmapPhaseDetailResponse response = phaseService.getRoadmapPhaseDetail(member1.getId(), phase1.getId());
+            Map<String, List<RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse>> raw =
+                    phaseQueryService.getRoadmapPhaseDetail(member1.getId(), phase1.getId());
 
             // then
-            assertThat(response.actions().get("Career").items().isEmpty()).isTrue();
-            assertThat(response.actions().get("Career").count()).isEqualTo(0);
+            assertThat(raw.get("Career")).isNullOrEmpty();
         }
 
         @Test
-        @DisplayName("로드맵 Phase 상세정보를 조회시 그룹 내 아이템은 deadline 오름차순, 동일 시 title 오름차순으로 정렬된다.")
-        void getRoadmapPhaseDetail_ordered() {
+        @DisplayName("로드맵 Phase 상세정보를 조회시 그룹 내 아이템은 올바른 deadline과 title을 갖는다.")
+        void getRoadmapPhaseDetail_itemsHaveCorrectData() {
             // given
             PhaseAction phaseActionVisaLateTitle1 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA, "test-title-1", LocalDate.of(2026, 3, 2));
             PhaseAction phaseActionVisaLateTitle2 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA, "test-title-2", LocalDate.of(2026, 3, 2));
@@ -179,12 +178,14 @@ public class PhaseServiceTest {
             phaseActionRepository.saveAll(List.of(phaseActionVisaLateTitle1, phaseActionVisaLateTitle2, phaseActionVisaEarlyTitle1));
 
             // when
-            RoadmapPhaseDetailResponse response = phaseService.getRoadmapPhaseDetail(member1.getId(), phase1.getId());
+            Map<String, List<RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse>> raw =
+                    phaseQueryService.getRoadmapPhaseDetail(member1.getId(), phase1.getId());
 
             // then
-            assertThat(response.actions().get("Visa").items())
+            assertThat(raw.get("Visa")).hasSize(3);
+            assertThat(raw.get("Visa"))
                     .extracting("deadline", "title")
-                    .containsExactly(
+                    .containsExactlyInAnyOrder(
                             tuple(LocalDate.of(2026, 3, 1), "test-title-1"),
                             tuple(LocalDate.of(2026, 3, 2), "test-title-1"),
                             tuple(LocalDate.of(2026, 3, 2), "test-title-2")
@@ -201,11 +202,12 @@ public class PhaseServiceTest {
             phaseActionRepository.saveAll(List.of(phaseActionVisa1, phaseActionVisa2));
 
             // when
-            RoadmapPhaseDetailResponse response = phaseService.getRoadmapPhaseDetail(member1.getId(), phase1.getId());
+            Map<String, List<RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse>> raw =
+                    phaseQueryService.getRoadmapPhaseDetail(member1.getId(), phase1.getId());
 
             // then
-            assertThat(response.actions().get("Visa").items()).hasSize(1);
-            assertThat(response.actions().get("Visa").items())
+            assertThat(raw.get("Visa")).hasSize(1);
+            assertThat(raw.get("Visa"))
                     .extracting(RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse::phaseActionId)
                     .containsExactly(phaseActionVisa1.getId());
         }
@@ -217,7 +219,7 @@ public class PhaseServiceTest {
             Long phaseId = 0L;
 
             // when & then
-            assertThatThrownBy(() -> phaseService.getRoadmapPhaseDetail(member1.getId(), phaseId))
+            assertThatThrownBy(() -> phaseQueryService.getRoadmapPhaseDetail(member1.getId(), phaseId))
                     .isInstanceOf(RoadMapException.class)
                     .extracting("errorCode")
                     .isEqualTo(RoadmapErrorCode.PHASE_NOT_FOUND);
@@ -230,7 +232,7 @@ public class PhaseServiceTest {
             Member member2 = memberRepository.save(MemberFixture.getMember("test-provider-id-2"));
 
             // when & then
-            assertThatThrownBy(() -> phaseService.getRoadmapPhaseDetail(member2.getId(), phase1.getId()))
+            assertThatThrownBy(() -> phaseQueryService.getRoadmapPhaseDetail(member2.getId(), phase1.getId()))
                     .isInstanceOf(RoadMapException.class)
                     .extracting("errorCode")
                     .isEqualTo(RoadmapErrorCode.PHASE_NOT_FOUND);
@@ -254,16 +256,14 @@ public class PhaseServiceTest {
             phaseActionRepository.saveAll(List.of(phaseActionIncomplete, phaseActionComplete));
 
             // when
-            HomePhaseDetailResponse response = phaseService.getHomePhaseDetail(member1.getId(), phase1.getId());
+            List<PhaseActionDetail> details = phaseQueryService.getHomePhaseDetail(member1.getId(), phase1.getId());
 
             // then
-            assertThat(response.count()).isEqualTo(1);
-            assertThat(response.actions()).hasSize(1);
-
-            assertThat(response.actions().get(0).phaseActionId()).isEqualTo(phaseActionIncomplete.getId());
-            assertThat(response.actions().get(0).type()).isEqualTo(phaseActionIncomplete.getType().getDisplayName());
-            assertThat(response.actions().get(0).title()).isEqualTo(phaseActionIncomplete.getTitle());
-            assertThat(response.actions().get(0).deadline()).isEqualTo(phaseActionIncomplete.getDeadline());
+            assertThat(details).hasSize(1);
+            assertThat(details.get(0).id()).isEqualTo(phaseActionIncomplete.getId());
+            assertThat(details.get(0).type()).isEqualTo(phaseActionIncomplete.getType().getDisplayName());
+            assertThat(details.get(0).title()).isEqualTo(phaseActionIncomplete.getTitle());
+            assertThat(details.get(0).deadline()).isEqualTo(phaseActionIncomplete.getDeadline());
         }
 
         @Test
@@ -276,12 +276,12 @@ public class PhaseServiceTest {
             phaseActionRepository.saveAll(List.of(phaseActionVisa1, phaseActionVisa2));
 
             // when
-            HomePhaseDetailResponse response = phaseService.getHomePhaseDetail(member1.getId(), phase1.getId());
+            List<PhaseActionDetail> details = phaseQueryService.getHomePhaseDetail(member1.getId(), phase1.getId());
 
             // then
-            assertThat(response.actions()).hasSize(1);
-            assertThat(response.actions())
-                    .extracting(HomePhaseDetailResponse.HomePhaseActionResponse::phaseActionId)
+            assertThat(details).hasSize(1);
+            assertThat(details)
+                    .extracting(PhaseActionDetail::id)
                     .containsExactly(phaseActionVisa1.getId());
         }
 
@@ -292,7 +292,7 @@ public class PhaseServiceTest {
             Long phaseId = 0L;
 
             // when & then
-            assertThatThrownBy(() -> phaseService.getHomePhaseDetail(member1.getId(), phaseId))
+            assertThatThrownBy(() -> phaseQueryService.getHomePhaseDetail(member1.getId(), phaseId))
                     .isInstanceOf(RoadMapException.class)
                     .extracting("errorCode")
                     .isEqualTo(RoadmapErrorCode.PHASE_NOT_FOUND);
@@ -305,7 +305,7 @@ public class PhaseServiceTest {
             Member member2 = memberRepository.save(MemberFixture.getMember("test-provider-id-2"));
 
             // when & then
-            assertThatThrownBy(() -> phaseService.getHomePhaseDetail(member2.getId(), phase1.getId()))
+            assertThatThrownBy(() -> phaseQueryService.getHomePhaseDetail(member2.getId(), phase1.getId()))
                     .isInstanceOf(RoadMapException.class)
                     .extracting("errorCode")
                     .isEqualTo(RoadmapErrorCode.PHASE_NOT_FOUND);

@@ -4,7 +4,6 @@ import org.junit.jupiter.api.*;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.fixture.MemberFixture;
 import org.sopt.kareer.domain.member.repository.MemberRepository;
-import org.sopt.kareer.domain.roadmap.dto.response.AiGuideResponse;
 import org.sopt.kareer.domain.roadmap.entity.Roadmap;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseActionType;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseStatus;
@@ -17,6 +16,8 @@ import org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode;
 import org.sopt.kareer.domain.roadmap.fixture.PhaseActionFixture;
 import org.sopt.kareer.domain.roadmap.fixture.PhaseFixture;
 import org.sopt.kareer.domain.roadmap.repository.*;
+import org.sopt.kareer.domain.roadmap.service.dto.response.AiGuideData;
+import org.sopt.kareer.domain.roadmap.service.phaseaction.PhaseActionQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -28,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class PhaseActionServiceTest {
+public class PhaseActionQueryServiceTest {
 
     @Autowired
     private MemberRepository memberRepository;
@@ -49,7 +50,7 @@ public class PhaseActionServiceTest {
     private PhaseActionGuidelineRepository phaseActionGuidelineRepository;
 
     @Autowired
-    private PhaseActionService phaseActionService;
+    private PhaseActionQueryService phaseActionQueryService;
 
     private Phase phase1;
     private Member member1;
@@ -91,14 +92,13 @@ public class PhaseActionServiceTest {
             phaseActionGuidelineRepository.saveAll(List.of(guideline1, guideline2));
 
             // when
-            AiGuideResponse response =
-                    phaseActionService.getAiGuide(member1.getId(), phaseAction1.getId());
+            AiGuideData data = phaseActionQueryService.getAiGuide(member1.getId(), phaseAction1.getId());
 
             // then
-            assertThat(response).isNotNull();
-            assertThat(response.importance()).isEqualTo("test-importance");
-            assertThat(response.mistakes()).containsExactlyInAnyOrder("test-content-1", "test-content-2");
-            assertThat(response.guidelines()).containsExactlyInAnyOrder("test-content-1", "test-content-2");
+            assertThat(data).isNotNull();
+            assertThat(data.importance()).isEqualTo("test-importance");
+            assertThat(data.mistakes()).containsExactlyInAnyOrder("test-content-1", "test-content-2");
+            assertThat(data.guidelines()).containsExactlyInAnyOrder("test-content-1", "test-content-2");
         }
 
         @Test
@@ -108,7 +108,7 @@ public class PhaseActionServiceTest {
             Long phaseActionId = 0L;
 
             // when & then
-            assertThatThrownBy(() -> phaseActionService.getAiGuide(member1.getId(), phaseActionId))
+            assertThatThrownBy(() -> phaseActionQueryService.getAiGuide(member1.getId(), phaseActionId))
                     .isInstanceOf(RoadMapException.class)
                     .extracting("errorCode")
                     .isEqualTo(RoadmapErrorCode.PHASE_ACTION_NOT_FOUND);
@@ -122,7 +122,7 @@ public class PhaseActionServiceTest {
             PhaseAction phaseAction1 = phaseActionRepository.save(PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA));
 
             // when & then
-            assertThatThrownBy(() -> phaseActionService.getAiGuide(member2.getId(), phaseAction1.getId()))
+            assertThatThrownBy(() -> phaseActionQueryService.getAiGuide(member2.getId(), phaseAction1.getId()))
                     .isInstanceOf(RoadMapException.class)
                     .extracting("errorCode")
                     .isEqualTo(RoadmapErrorCode.PHASE_ACTION_NOT_FOUND);
@@ -135,12 +135,11 @@ public class PhaseActionServiceTest {
             PhaseAction phaseAction = phaseActionRepository.save(PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA));
 
             // when
-            AiGuideResponse response =
-                    phaseActionService.getAiGuide(member1.getId(), phaseAction.getId());
+            AiGuideData data = phaseActionQueryService.getAiGuide(member1.getId(), phaseAction.getId());
 
             // then
-            assertThat(response.mistakes()).isEmpty();
-            assertThat(response.guidelines()).isEmpty();
+            assertThat(data.mistakes()).isEmpty();
+            assertThat(data.guidelines()).isEmpty();
         }
     }
 }

@@ -36,7 +36,7 @@ class PhaseActionControllerTest extends ControllerTestSupport {
                     List.of("test-guideline-1", "test-guideline-2")
             );
 
-            given(phaseActionService.getAiGuide(any(),eq(phaseActionId)))
+            given(phaseActionFacade.getAiGuide(any(),eq(phaseActionId)))
                     .willReturn(response);
 
             // when & then
@@ -58,7 +58,7 @@ class PhaseActionControllerTest extends ControllerTestSupport {
             // given
             Long phaseActionId = 0L;
 
-            given(phaseActionService.getAiGuide(any(),eq(phaseActionId)))
+            given(phaseActionFacade.getAiGuide(any(),eq(phaseActionId)))
                     .willThrow(new RoadMapException(RoadmapErrorCode.PHASE_ACTION_NOT_FOUND));
 
             // when & then
