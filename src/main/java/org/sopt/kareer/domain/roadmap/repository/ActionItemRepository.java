@@ -1,6 +1,6 @@
 package org.sopt.kareer.domain.roadmap.repository;
 
-import org.sopt.kareer.domain.roadmap.entity.ActionItem;
+import org.sopt.kareer.domain.roadmap.entity.actionitem.ActionItem;
 import org.sopt.kareer.domain.roadmap.entity.enums.ActionItemStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

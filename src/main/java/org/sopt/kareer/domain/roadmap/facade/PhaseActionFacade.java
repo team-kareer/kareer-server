@@ -2,9 +2,9 @@ package org.sopt.kareer.domain.roadmap.facade;
 
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.roadmap.dto.response.AiGuideResponse;
-import org.sopt.kareer.domain.roadmap.service.PhaseActionCommandService;
-import org.sopt.kareer.domain.roadmap.service.PhaseActionQueryService;
 import org.sopt.kareer.domain.roadmap.service.dto.response.AiGuideData;
+import org.sopt.kareer.domain.roadmap.service.phaseaction.PhaseActionCommandService;
+import org.sopt.kareer.domain.roadmap.service.phaseaction.PhaseActionQueryService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

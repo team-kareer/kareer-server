@@ -13,7 +13,7 @@ import org.sopt.kareer.domain.jobposting.repository.JobPostingRepository;
 import org.sopt.kareer.domain.jobposting.util.ResumeContextService;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.service.MemberService;
-import org.sopt.kareer.domain.roadmap.entity.ActionItem;
+import org.sopt.kareer.domain.roadmap.entity.actionitem.ActionItem;
 import org.sopt.kareer.domain.roadmap.repository.ActionItemRepository;
 import org.sopt.kareer.global.external.ai.builder.context.MemberContextBuilder;
 import org.sopt.kareer.global.external.ai.enums.RagType;

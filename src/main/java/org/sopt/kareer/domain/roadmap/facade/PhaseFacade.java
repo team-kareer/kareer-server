@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.roadmap.dto.response.HomePhaseDetailResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.PhaseListResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapPhaseDetailResponse;
-import org.sopt.kareer.domain.roadmap.service.PhaseQueryService;
 import org.sopt.kareer.domain.roadmap.service.dto.response.PhaseActionDetail;
+import org.sopt.kareer.domain.roadmap.service.phase.PhaseQueryService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
