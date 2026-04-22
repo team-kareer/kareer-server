@@ -76,9 +76,10 @@ public class MemberCommandService {
                 request.targetJobSkill(),
                 request.personalBackground()
         );
+        Member managedMember = memberRepository.save(member);
 
         memberVisaRepository.save(MemberVisa.createMemberVisa(
-                member,
+                managedMember,
                 request.visaType(),
                 request.visaExpiredAt(),
                 request.visaStartDate()
@@ -98,6 +99,8 @@ public class MemberCommandService {
                 command.englishLevel()
         );
         visa.updateVisa(command.visaType(), command.visaExpiredAt());
+        memberRepository.save(member);
+        memberVisaRepository.save(visa);
     }
 
     public void agreeTerms(Member member, List<Term> activeTerms, MemberTermsRequest request) {
