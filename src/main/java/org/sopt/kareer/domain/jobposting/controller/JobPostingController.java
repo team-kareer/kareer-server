@@ -3,8 +3,8 @@ package org.sopt.kareer.domain.jobposting.controller;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.jobposting.dto.response.JobPostingCrawlListResponse;
 import org.sopt.kareer.domain.jobposting.dto.response.JobPostingListResponse;
+import org.sopt.kareer.domain.jobposting.facade.JobPostingFacade;
 import org.sopt.kareer.domain.jobposting.service.JobPostingCrawler;
-import org.sopt.kareer.domain.jobposting.service.JobPostingService;
 import org.sopt.kareer.global.response.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ import java.util.List;
 public class JobPostingController implements JobPostingApi {
 
     private final JobPostingCrawler jobPostingCrawler;
-    private final JobPostingService jobPostingService;
+    private final JobPostingFacade jobPostingFacade;
 
     @Override
     public ResponseEntity<BaseResponse<JobPostingCrawlListResponse>> crawlJobPostings(@RequestParam(defaultValue = "5") int limit) {
@@ -34,14 +34,14 @@ public class JobPostingController implements JobPostingApi {
             @RequestPart(value = "files", required = false) List<MultipartFile> files,
             @RequestParam(value = "includeCompletedTodo", defaultValue = "false") boolean includeCompletedTodos) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(BaseResponse.ok(jobPostingService.recommend(memberId, files, includeCompletedTodos), "채용 공고 추천에 성공하였습니다."));
+                .body(BaseResponse.ok(jobPostingFacade.recommend(memberId, files, includeCompletedTodos), "채용 공고 추천에 성공하였습니다."));
     }
 
     @Override
     public ResponseEntity<BaseResponse<Void>> createJobPostingBookmark(
             @AuthenticationPrincipal Long memberId,
             @PathVariable Long jobPostingId) {
-        jobPostingService.createOrDeleteBookmark(memberId, jobPostingId);
+        jobPostingFacade.createOrDeleteBookmark(memberId, jobPostingId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok("채용 공고 북마크 추가 / 삭제에 성공했습니다."));
     }
@@ -49,6 +49,6 @@ public class JobPostingController implements JobPostingApi {
     @Override
     public ResponseEntity<BaseResponse<JobPostingListResponse>> getJobPostingBookmarks(@AuthenticationPrincipal Long memberId) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(BaseResponse.ok(jobPostingService.getJobPostingBookmarks(memberId), "북마크 채용 공고 조회에 성공하였습니다."));
+                .body(BaseResponse.ok(jobPostingFacade.getJobPostingBookmarks(memberId), "북마크 채용 공고 조회에 성공하였습니다."));
     }
 }
