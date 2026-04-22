@@ -37,7 +37,7 @@ class JobPostingControllerTest extends ControllerTestSupport {
         JobPostingResponse response3 = JobPostingResponse.from(jobPosting3, false);
         JobPostingResponse response4 = JobPostingResponse.from(jobPosting4, false);
 
-        given(jobPostingService.recommend(
+        given(jobPostingFacade.recommend(
                 any(),
                 any(),
                 anyBoolean()
@@ -60,8 +60,8 @@ class JobPostingControllerTest extends ControllerTestSupport {
 
        //given
         willDoNothing()
-                .given(jobPostingService)
-                .createOrDeleteBookmark(1L, 1L);
+                .given(jobPostingFacade)
+                .createOrDeleteBookmark(any(), any());
        //when && then
         mockMvc.perform(
                 post("/api/v1/job-postings/1/bookmarks")
@@ -88,7 +88,7 @@ class JobPostingControllerTest extends ControllerTestSupport {
         JobPostingResponse response3 = JobPostingResponse.from(jobPosting3, false);
         JobPostingResponse response4 = JobPostingResponse.from(jobPosting4, false);
 
-        given(jobPostingService.getJobPostingBookmarks(any()))
+        given(jobPostingFacade.getJobPostingBookmarks(any()))
                 .willReturn(new JobPostingListResponse(List.of(response1, response2, response3, response4)));
 
        //when && then

@@ -2,8 +2,8 @@ package org.sopt.kareer.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.sopt.kareer.domain.jobposting.controller.JobPostingController;
+import org.sopt.kareer.domain.jobposting.facade.JobPostingFacade;
 import org.sopt.kareer.domain.jobposting.service.JobPostingCrawler;
-import org.sopt.kareer.domain.jobposting.service.JobPostingService;
 import org.sopt.kareer.domain.member.controller.MemberController;
 import org.sopt.kareer.domain.member.controller.MemberControllerV2;
 import org.sopt.kareer.domain.member.facade.MemberFacade;
@@ -48,7 +48,7 @@ public abstract class ControllerTestSupport {
     protected ObjectMapper objectMapper;
 
     @MockBean
-    protected JobPostingService jobPostingService;
+    protected JobPostingFacade jobPostingFacade;
 
     @MockBean
     protected JobPostingCrawler jobPostingCrawler;
