@@ -1,20 +1,7 @@
 package org.sopt.kareer.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.sopt.kareer.domain.jobposting.controller.JobPostingController;
-import org.sopt.kareer.domain.jobposting.facade.JobPostingFacade;
-import org.sopt.kareer.domain.jobposting.service.JobPostingCrawler;
-import org.sopt.kareer.domain.member.controller.MemberController;
-import org.sopt.kareer.domain.member.controller.MemberControllerV2;
-import org.sopt.kareer.domain.member.facade.MemberFacade;
-import org.sopt.kareer.domain.member.facade.MemberOcrFacade;
-import org.sopt.kareer.domain.member.facade.MemberOnboardingFacade;
-import org.sopt.kareer.domain.member.service.LocalizedOnboardQueryService;
-import org.sopt.kareer.domain.roadmap.controller.PhaseActionController;
-import org.sopt.kareer.domain.roadmap.controller.PhaseController;
-import org.sopt.kareer.domain.roadmap.facade.PhaseActionFacade;
-import org.sopt.kareer.domain.roadmap.facade.PhaseFacade;
-import org.sopt.kareer.global.auth.facade.AuthFacade;
+import org.sopt.kareer.domain.member.service.MemberQueryService;
 import org.sopt.kareer.global.external.discord.client.DiscordClient;
 import org.sopt.kareer.global.jwt.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +21,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
-@WebMvcTest(controllers = {JobPostingController.class, MemberController.class, MemberControllerV2.class, PhaseController.class, PhaseActionController.class},
-        excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE)
-        })
+@WebMvcTest(excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE)})
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 @Import(ControllerTestSupport.TestSecurityWebMvcConfig.class)
 public abstract class ControllerTestSupport {
+
     @Autowired
     protected MockMvc mockMvc;
 
@@ -48,40 +34,16 @@ public abstract class ControllerTestSupport {
     protected ObjectMapper objectMapper;
 
     @MockBean
-    protected JobPostingFacade jobPostingFacade;
-
-    @MockBean
-    protected JobPostingCrawler jobPostingCrawler;
-
-    @MockBean
     protected JwtTokenUtil jwtTokenUtil;
 
     @MockBean
-    protected MemberFacade memberFacade;
-
-    @MockBean
-    protected MemberOcrFacade memberOcrFacade;
-
-    @MockBean
-    protected MemberOnboardingFacade memberOnboardingFacade;
-
-    @MockBean
-    protected LocalizedOnboardQueryService localizedOnboardQueryService;
+    protected MemberQueryService memberQueryService;
 
     @MockBean
     protected JpaMetamodelMappingContext mappingContext;
 
     @MockBean
     protected DiscordClient discordClient;
-
-    @MockBean
-    protected AuthFacade authFacade;
-
-    @MockBean
-    protected PhaseFacade phaseFacade;
-
-    @MockBean
-    protected PhaseActionFacade phaseActionFacade;
 
     @TestConfiguration
     static class TestSecurityWebMvcConfig implements WebMvcConfigurer {

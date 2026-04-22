@@ -5,8 +5,14 @@ import org.junit.jupiter.api.Test;
 import org.sopt.kareer.domain.jobposting.dto.response.JobPostingListResponse;
 import org.sopt.kareer.domain.jobposting.dto.response.JobPostingResponse;
 import org.sopt.kareer.domain.jobposting.entity.JobPosting;
+import org.sopt.kareer.domain.jobposting.facade.JobPostingFacade;
 import org.sopt.kareer.domain.jobposting.fixture.JobPostingFixture;
+import org.sopt.kareer.domain.jobposting.service.JobPostingCrawler;
 import org.sopt.kareer.support.ControllerTestSupport;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,7 +26,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WebMvcTest(JobPostingController.class)
+@AutoConfigureMockMvc(addFilters = false)
+@ActiveProfiles("test")
 class JobPostingControllerTest extends ControllerTestSupport {
+
+    @MockBean
+    private JobPostingCrawler jobPostingCrawler;
+
+    @MockBean
+    private JobPostingFacade jobPostingFacade;
 
     @DisplayName("사용자의 정보를 바탕으로 채용공고를 추천해준다.")
     @Test

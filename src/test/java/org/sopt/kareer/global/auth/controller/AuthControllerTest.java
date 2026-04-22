@@ -7,11 +7,13 @@ import org.junit.jupiter.api.Test;
 import org.sopt.kareer.global.auth.dto.request.TokenExchangeRequest;
 import org.sopt.kareer.global.auth.dto.response.TokenExchangeResponse;
 import org.sopt.kareer.global.auth.dto.response.TokenResponse;
+import org.sopt.kareer.global.auth.facade.AuthFacade;
 import org.sopt.kareer.global.exception.customexception.GlobalException;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
 import org.sopt.kareer.support.ControllerTestSupport;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -28,6 +30,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 class AuthControllerTest extends ControllerTestSupport {
+
+    @MockBean
+    private AuthFacade authFacade;
 
     @DisplayName("로그인 코드를 Access Token으로 교환한다.")
     @Test

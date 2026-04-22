@@ -2,9 +2,14 @@ package org.sopt.kareer.domain.member.controller;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.sopt.kareer.domain.member.facade.MemberOnboardingFacade;
 import org.sopt.kareer.domain.member.fixture.MemberOnboardRequestFixture;
 import org.sopt.kareer.support.ControllerTestSupport;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
@@ -17,7 +22,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WebMvcTest(MemberControllerV2.class)
+@AutoConfigureMockMvc(addFilters = false)
+@ActiveProfiles("test")
 class MemberControllerV2Test extends ControllerTestSupport {
+
+    @MockBean
+    private MemberOnboardingFacade memberOnboardingFacade;
 
     private UsernamePasswordAuthenticationToken authenticatedMember() {
         return new UsernamePasswordAuthenticationToken(1L, null, List.of());

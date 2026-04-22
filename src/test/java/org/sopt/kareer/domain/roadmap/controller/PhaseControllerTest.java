@@ -10,7 +10,12 @@ import org.sopt.kareer.domain.roadmap.dto.response.RoadmapPhaseDetailResponse;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseStatus;
 import org.sopt.kareer.domain.roadmap.exception.RoadMapException;
 import org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode;
+import org.sopt.kareer.domain.roadmap.facade.PhaseFacade;
 import org.sopt.kareer.support.ControllerTestSupport;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,7 +28,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@WebMvcTest(PhaseController.class)
+@AutoConfigureMockMvc(addFilters = false)
+@ActiveProfiles("test")
 class PhaseControllerTest extends ControllerTestSupport {
+
+    @MockBean
+    private PhaseFacade phaseFacade;
 
     @DisplayName("Phase 리스트를 성공적으로 조회한다.")
     @Test
@@ -66,7 +77,6 @@ class PhaseControllerTest extends ControllerTestSupport {
             // given
             Long phaseId = 1L;
 
-            // ActionResponse 리스트 생성
             List<RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse> actionsList = List.of(
                     new RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse(
                             1L,
@@ -77,12 +87,10 @@ class PhaseControllerTest extends ControllerTestSupport {
                     )
             );
 
-            // ActionGroupResponse 맵 생성
             Map<String, RoadmapPhaseDetailResponse.ActionGroupResponse> actionsMap = Map.of(
                     "Visa", new RoadmapPhaseDetailResponse.ActionGroupResponse(1L, actionsList)
             );
 
-            // Response 생성
             RoadmapPhaseDetailResponse response = new RoadmapPhaseDetailResponse(1L, actionsMap);
 
             given(phaseFacade.getRoadmapPhaseDetail(any(), eq(phaseId)))

@@ -9,10 +9,19 @@ import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.entity.MemberVisa;
 import org.sopt.kareer.domain.member.entity.enums.LanguageLevel;
 import org.sopt.kareer.domain.member.entity.enums.VisaType;
+import org.sopt.kareer.domain.member.facade.MemberFacade;
+import org.sopt.kareer.domain.member.facade.MemberOcrFacade;
+import org.sopt.kareer.domain.member.facade.MemberOnboardingFacade;
 import org.sopt.kareer.domain.member.fixture.MemberFixture;
 import org.sopt.kareer.domain.member.fixture.MemberVisaFixture;
+import org.sopt.kareer.domain.member.service.LocalizedOnboardQueryService;
+import org.sopt.kareer.global.auth.facade.AuthFacade;
 import org.sopt.kareer.support.ControllerTestSupport;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -25,7 +34,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WebMvcTest(MemberController.class)
+@AutoConfigureMockMvc(addFilters = false)
+@ActiveProfiles("test")
 class MemberControllerTest extends ControllerTestSupport {
+
+    @MockBean
+    private MemberFacade memberFacade;
+
+    @MockBean
+    private MemberOcrFacade memberOcrFacade;
+
+    @MockBean
+    private MemberOnboardingFacade memberOnboardingFacade;
+
+    @MockBean
+    private LocalizedOnboardQueryService localizedOnboardQueryService;
+
+    @MockBean
+    private AuthFacade authFacade;
 
     private UsernamePasswordAuthenticationToken authenticatedMember() {
         return new UsernamePasswordAuthenticationToken(1L, null, List.of());
