@@ -11,7 +11,7 @@ import org.sopt.kareer.domain.member.facade.MemberFacade;
 import org.sopt.kareer.domain.member.facade.MemberOcrFacade;
 import org.sopt.kareer.domain.member.facade.MemberOnboardingFacade;
 import org.sopt.kareer.domain.member.service.LocalizedOnboardQueryService;
-import org.sopt.kareer.global.auth.service.AuthService;
+import org.sopt.kareer.global.auth.facade.AuthFacade;
 import org.sopt.kareer.global.response.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +30,7 @@ public class MemberController implements MemberApi {
     private final MemberFacade memberFacade;
     private final MemberOcrFacade memberOcrFacade;
     private final MemberOnboardingFacade memberOnboardingFacade;
-    private final AuthService authService;
+    private final AuthFacade authFacade;
     private final LocalizedOnboardQueryService localizedOnboardQueryService;
 
     @Override
@@ -88,7 +88,7 @@ public class MemberController implements MemberApi {
                                                            HttpServletRequest request,
                                                            HttpServletResponse response) {
         memberFacade.deleteMember(memberId);
-        authService.signOut(request, response);
+        authFacade.signOut(request, response);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok("회원 탈퇴에 성공하였습니다."));
     }
