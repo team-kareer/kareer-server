@@ -34,7 +34,7 @@ class AuthControllerTest extends ControllerTestSupport {
     void exchangeLoginCode() throws Exception {
         TokenExchangeRequest request = new TokenExchangeRequest("login-code");
         TokenExchangeResponse response = new TokenExchangeResponse("access-token", true);
-        given(authService.exchange(any(TokenExchangeRequest.class), any(HttpServletResponse.class)))
+        given(authFacade.exchange(any(TokenExchangeRequest.class), any(HttpServletResponse.class)))
                 .willReturn(response);
 
         mockMvc.perform(post("/api/v1/auth/code/exchange")
@@ -46,7 +46,7 @@ class AuthControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.data.accessToken").value(response.accessToken()))
                 .andExpect(jsonPath("$.data.onboardingRequired").value(response.onboardingRequired()));
 
-        verify(authService).exchange(any(TokenExchangeRequest.class), any(HttpServletResponse.class));
+        verify(authFacade).exchange(any(TokenExchangeRequest.class), any(HttpServletResponse.class));
     }
 
     @DisplayName("로그인 코드 요청 값이 비어있으면 400을 반환한다.")
@@ -58,14 +58,14 @@ class AuthControllerTest extends ControllerTestSupport {
                 .andDo(print())
                 .andExpect(status().isBadRequest());
 
-        verifyNoInteractions(authService);
+        verifyNoInteractions(authFacade);
     }
 
     @DisplayName("로그인 코드 교환 중 인증 오류가 발생하면 401을 반환한다.")
     @Test
     void exchangeLoginCodeUnauthorized() throws Exception {
         TokenExchangeRequest request = new TokenExchangeRequest("login-code");
-        given(authService.exchange(any(TokenExchangeRequest.class), any(HttpServletResponse.class)))
+        given(authFacade.exchange(any(TokenExchangeRequest.class), any(HttpServletResponse.class)))
                 .willThrow(new GlobalException(GlobalErrorCode.UNAUTHORIZED));
 
         mockMvc.perform(post("/api/v1/auth/code/exchange")
@@ -76,14 +76,14 @@ class AuthControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.code").value(GlobalErrorCode.UNAUTHORIZED.getHttpStatus()))
                 .andExpect(jsonPath("$.message").value(GlobalErrorCode.UNAUTHORIZED.getMessage()));
 
-        verify(authService).exchange(any(TokenExchangeRequest.class), any(HttpServletResponse.class));
+        verify(authFacade).exchange(any(TokenExchangeRequest.class), any(HttpServletResponse.class));
     }
 
     @DisplayName("Refresh Token 쿠키를 이용해 Access Token을 재발급한다.")
     @Test
     void reissueToken() throws Exception {
         TokenResponse response = TokenResponse.from("new-access-token");
-        given(authService.reissue(any(HttpServletRequest.class), any(HttpServletResponse.class)))
+        given(authFacade.reissue(any(HttpServletRequest.class), any(HttpServletResponse.class)))
                 .willReturn(response);
 
         mockMvc.perform(post("/api/v1/auth/reissue"))
@@ -92,6 +92,6 @@ class AuthControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.message").value("토큰이 재발급되었습니다."))
                 .andExpect(jsonPath("$.data.accessToken").value(response.accessToken()));
 
-        verify(authService).reissue(any(HttpServletRequest.class), any(HttpServletResponse.class));
+        verify(authFacade).reissue(any(HttpServletRequest.class), any(HttpServletResponse.class));
     }
 }

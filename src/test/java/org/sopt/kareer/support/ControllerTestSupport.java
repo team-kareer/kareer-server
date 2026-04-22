@@ -14,7 +14,7 @@ import org.sopt.kareer.domain.roadmap.controller.PhaseActionController;
 import org.sopt.kareer.domain.roadmap.controller.PhaseController;
 import org.sopt.kareer.domain.roadmap.facade.PhaseActionFacade;
 import org.sopt.kareer.domain.roadmap.facade.PhaseFacade;
-import org.sopt.kareer.global.auth.service.AuthService;
+import org.sopt.kareer.global.auth.facade.AuthFacade;
 import org.sopt.kareer.global.external.discord.client.DiscordClient;
 import org.sopt.kareer.global.jwt.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +75,7 @@ public abstract class ControllerTestSupport {
     protected DiscordClient discordClient;
 
     @MockBean
-    protected AuthService authService;
+    protected AuthFacade authFacade;
 
     @MockBean
     protected PhaseFacade phaseFacade;
