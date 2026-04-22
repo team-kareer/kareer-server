@@ -1,5 +1,4 @@
-
-package org.sopt.kareer.domain.jobposting.service;
+package org.sopt.kareer.domain.jobposting.facade;
 
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.jobposting.dto.response.JobPostingListResponse;
@@ -11,17 +10,14 @@ import org.sopt.kareer.domain.jobposting.exception.JobPostingException;
 import org.sopt.kareer.domain.jobposting.repository.JobPostingBookmarkRepository;
 import org.sopt.kareer.domain.jobposting.repository.JobPostingRepository;
 import org.sopt.kareer.domain.jobposting.util.ResumeContextService;
-import org.sopt.kareer.domain.member.entity.Member;
-import org.sopt.kareer.domain.member.service.MemberService;
 import org.sopt.kareer.domain.roadmap.entity.actionitem.ActionItem;
 import org.sopt.kareer.domain.roadmap.repository.ActionItemRepository;
 import org.sopt.kareer.global.external.ai.builder.context.MemberContextBuilder;
 import org.sopt.kareer.global.external.ai.enums.RagType;
 import org.sopt.kareer.global.external.ai.service.OpenAiService;
-import org.sopt.kareer.global.external.ai.service.RagEmbeddingService;
 import org.sopt.kareer.global.external.ai.service.RagSearchService;
 import org.springframework.ai.document.Document;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,20 +28,18 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Component
 @RequiredArgsConstructor
-@Service
 @Transactional(readOnly = true)
-public class JobPostingService {
+public class JobPostingRecommendFacade {
 
     private final ResumeContextService resumeContextService;
-    private final RagEmbeddingService ragEmbeddingService;
     private final OpenAiService openAiService;
-    private final JobPostingRepository jobPostingRepository;
-    private final JobPostingBookmarkRepository jobPostingBookmarkRepository;
+    private final RagSearchService ragSearchService;
     private final MemberContextBuilder memberContextBuilder;
     private final ActionItemRepository actionItemRepository;
-    private final MemberService memberService;
-    private final RagSearchService ragSearchService;
+    private final JobPostingRepository jobPostingRepository;
+    private final JobPostingBookmarkRepository jobPostingBookmarkRepository;
 
     public JobPostingListResponse recommend(Long memberId, List<MultipartFile> files, boolean includeCompletedTodos) {
 
@@ -53,22 +47,21 @@ public class JobPostingService {
             throw new JobPostingException(JobPostingErrorCode.TOO_MANY_FILES);
         }
 
-
         var memberContext = memberContextBuilder.load(memberId);
         String userContext = memberContext.contextText();
 
         String enrichedUserContext = userContext;
-                if (includeCompletedTodos) {
-                        List<ActionItem> completedTodos = actionItemRepository.findAllByMemberIdAndCompletedTrue(memberId);
-                      String userTodoText = completedTodos.stream()
-                              .map(todo -> "- " + todo.getTitle())
-                              .collect(Collectors.joining("\n"));
-                        enrichedUserContext = """
+        if (includeCompletedTodos) {
+            List<ActionItem> completedTodos = actionItemRepository.findAllByMemberIdAndCompletedTrue(memberId);
+            String userTodoText = completedTodos.stream()
+                    .map(todo -> "- " + todo.getTitle())
+                    .collect(Collectors.joining("\n"));
+            enrichedUserContext = """
                     %s
 
                     [USER_COMPLETED_TODO]
                    %s""".formatted(userContext, userTodoText);
-                }
+        }
 
         String resumeContext = resumeContextService.buildContext(files);
 
@@ -78,18 +71,15 @@ public class JobPostingService {
 
                 [RESUME_OR_COVER_LETTER]
                 %s
-                
+
                 """.formatted(enrichedUserContext, resumeContext);
 
         List<Document> retrieved = ragSearchService.search(combinedContext, 4, RagType.JOBPOSTING);
-
         List<Long> recommendedIds = openAiService.recommendJobPosting(combinedContext, retrieved);
 
         List<JobPosting> jobPostings = jobPostingRepository.findAllById(recommendedIds);
-
         Map<Long, JobPosting> jobPostingMap = jobPostings.stream()
                 .collect(Collectors.toMap(JobPosting::getId, Function.identity()));
-
         List<JobPosting> orderedJobPostings = recommendedIds.stream()
                 .map(jobPostingMap::get)
                 .filter(Objects::nonNull)
@@ -97,7 +87,6 @@ public class JobPostingService {
 
         List<JobPostingBookmark> bookmarked = jobPostingBookmarkRepository
                 .findAllByMemberIdAndJobPostingId(memberId, recommendedIds);
-
         Set<Long> bookmarkedIds = bookmarked.stream()
                 .map(b -> b.getJobPosting().getId())
                 .collect(Collectors.toSet());
@@ -108,38 +97,4 @@ public class JobPostingService {
 
         return new JobPostingListResponse(responses);
     }
-
-    @Transactional
-    public void createOrDeleteBookmark(Long memberId, Long jobPostingId) {
-
-        JobPosting jobPosting = jobPostingRepository.findById(jobPostingId)
-                .orElseThrow(() -> new JobPostingException(JobPostingErrorCode.JOB_POSTING_NOT_FOUND));
-
-        Member member = memberService.getById(memberId);
-
-        if(jobPostingBookmarkRepository.existsByJobPostingIdAndMemberId(jobPostingId, memberId)){
-            jobPostingBookmarkRepository.deleteByJobPostingIdAndMemberId(jobPostingId, memberId);
-            return;
-        }
-
-        JobPostingBookmark jobPostingBookmark = JobPostingBookmark.create(member, jobPosting);
-        jobPostingBookmarkRepository.save(jobPostingBookmark);
-
-    }
-
-    public JobPostingListResponse getJobPostingBookmarks(Long memberId){
-
-        memberService.getById(memberId);
-
-        List<JobPostingResponse> responses = jobPostingBookmarkRepository
-                .findAllByMemberId(memberId)
-                .stream()
-                .map(JobPostingBookmark::getJobPosting)
-                .map(jp -> JobPostingResponse.from(jp, true))
-                .toList();
-
-        return new JobPostingListResponse(responses);
-
-    }
-
 }
