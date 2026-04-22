@@ -2,6 +2,8 @@ package org.sopt.kareer.domain.jobposting.facade;
 
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.jobposting.dto.response.JobPostingListResponse;
+import org.sopt.kareer.domain.jobposting.dto.response.JobPostingResponse;
+import org.sopt.kareer.domain.jobposting.entity.JobPosting;
 import org.sopt.kareer.domain.jobposting.service.JobPostingCommandService;
 import org.sopt.kareer.domain.jobposting.service.JobPostingQueryService;
 import org.sopt.kareer.domain.member.entity.Member;
@@ -34,6 +36,10 @@ public class JobPostingFacade {
 
     public JobPostingListResponse getJobPostingBookmarks(Long memberId) {
         memberQueryService.getMemberById(memberId);
-        return jobPostingQueryService.getJobPostingBookmarks(memberId);
+        List<JobPosting> jobPostings = jobPostingQueryService.getBookmarkedJobPostings(memberId);
+        List<JobPostingResponse> responses = jobPostings.stream()
+                .map(jp -> JobPostingResponse.from(jp, true))
+                .toList();
+        return new JobPostingListResponse(responses);
     }
 }
