@@ -1,14 +1,5 @@
 package org.sopt.kareer.domain.member.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +13,14 @@ import org.sopt.kareer.domain.member.repository.MemberRepository;
 import org.sopt.kareer.global.oauth.dto.OAuthAttributes;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
 class MemberServiceConcurrencyTest {
 
@@ -29,7 +28,7 @@ class MemberServiceConcurrencyTest {
     private MemberRepository memberRepository;
 
     @InjectMocks
-    private MemberService memberService;
+    private MemberCommandService memberCommandService;
 
     @DisplayName("OAuth 회원 저장 중 충돌이 발생하면 재조회 결과를 반환한다.")
     @Test
@@ -52,7 +51,7 @@ class MemberServiceConcurrencyTest {
         when(memberRepository.save(any(Member.class)))
                 .thenThrow(new DataIntegrityViolationException("duplicate"));
 
-        Member result = memberService.findOrCreateByOAuth(attributes);
+        Member result = memberCommandService.findOrCreateByOAuth(attributes);
 
         assertThat(result).isEqualTo(existing);
         verify(memberRepository, times(2))

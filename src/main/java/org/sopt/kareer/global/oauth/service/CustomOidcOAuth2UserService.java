@@ -3,7 +3,7 @@ package org.sopt.kareer.global.oauth.service;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.entity.Member;
-import org.sopt.kareer.domain.member.service.MemberService;
+import org.sopt.kareer.domain.member.service.MemberCommandService;
 import org.sopt.kareer.global.oauth.dto.OAuthAttributes;
 import org.sopt.kareer.global.oauth.principal.CustomOAuth2User;
 import org.springframework.dao.DataAccessException;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomOidcOAuth2UserService extends OidcUserService {
 
-    private final MemberService memberService;
+    private final MemberCommandService memberCommandService;
 
     @Override
     public OidcUser loadUser(OidcUserRequest userRequest) {
@@ -36,7 +36,7 @@ public class CustomOidcOAuth2UserService extends OidcUserService {
 
     private Member findOrCreateMember(OAuthAttributes oauthAttributes) {
         try {
-            return memberService.findOrCreateByOAuth(oauthAttributes);
+            return memberCommandService.findOrCreateByOAuth(oauthAttributes);
         } catch (DataAccessException ex) {
             throw new AuthenticationServiceException("OAuth 회원 정보를 저장하지 못했습니다.", ex);
         }
