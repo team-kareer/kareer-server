@@ -1,19 +1,17 @@
 package org.sopt.kareer.domain.member.service;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.sopt.kareer.domain.member.dto.response.LocalizedItemResponse;
-import org.sopt.kareer.domain.member.dto.response.OnboardCountriesResponse;
-import org.sopt.kareer.domain.member.dto.response.OnboardFieldsResponse;
-import org.sopt.kareer.domain.member.dto.response.OnboardMajorsResponse;
-import org.sopt.kareer.domain.member.dto.response.OnboardUniversitiesResponse;
-import org.sopt.kareer.domain.member.entity.*;
+import org.sopt.kareer.domain.member.dto.response.*;
+import org.sopt.kareer.domain.member.entity.LocalizedOnboardCategory;
+import org.sopt.kareer.domain.member.entity.LocalizedOnboardCategoryTranslation;
 import org.sopt.kareer.domain.member.entity.enums.LocalizedOnboardCategoryType;
 import org.sopt.kareer.domain.member.repository.LocalizedOnboardCategoryRepository;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

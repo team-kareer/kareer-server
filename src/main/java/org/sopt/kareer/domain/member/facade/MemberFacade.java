@@ -13,7 +13,6 @@ import org.sopt.kareer.domain.member.service.MemberCommandService;
 import org.sopt.kareer.domain.member.service.MemberDeletionService;
 import org.sopt.kareer.domain.member.service.MemberQueryService;
 import org.sopt.kareer.domain.member.service.dto.request.MypageCommand;
-import org.sopt.kareer.domain.member.service.dto.response.MemberCompletion;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,8 +66,7 @@ public class MemberFacade {
     }
 
     public MemberCompletionResponse getCompletion(Long memberId) {
-        MemberCompletion completion = memberQueryService.getMemberCompletion(memberId);
-        return MemberCompletionResponse.of(completion.onboardingRequired(), completion.agreeTerm());
+        return MemberCompletionResponse.toResponse(memberQueryService.getMemberCompletion(memberId));
     }
 
     @Transactional
