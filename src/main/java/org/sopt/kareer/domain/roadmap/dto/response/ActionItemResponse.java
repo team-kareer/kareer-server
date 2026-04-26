@@ -1,8 +1,9 @@
 package org.sopt.kareer.domain.roadmap.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.sopt.kareer.domain.roadmap.entity.actionitem.ActionItem;
+
 import java.time.LocalDate;
-import org.sopt.kareer.domain.roadmap.entity.ActionItem;
 
 @Schema(description = "Action Item 응답(Todo)")
 public record ActionItemResponse(

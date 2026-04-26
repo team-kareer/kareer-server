@@ -1,7 +1,7 @@
 package org.sopt.kareer.domain.roadmap.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.sopt.kareer.domain.roadmap.entity.PhaseAction;
+import org.sopt.kareer.domain.roadmap.entity.phaseaction.PhaseAction;
 
 import java.util.List;
 

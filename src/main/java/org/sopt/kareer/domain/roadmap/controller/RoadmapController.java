@@ -2,8 +2,7 @@ package org.sopt.kareer.domain.roadmap.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapTestResponse;
-import org.sopt.kareer.domain.roadmap.service.RoadMapService;
-import org.sopt.kareer.domain.roadmap.service.RoadmapTranslationService;
+import org.sopt.kareer.domain.roadmap.facade.RoadmapGenerateFacade;
 import org.sopt.kareer.global.response.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,15 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/roadmap")
 public class RoadmapController implements RoadmapApi {
 
-    private final RoadMapService roadMapService;
-    private final RoadmapTranslationService roadmapTranslationService;
+    private final RoadmapGenerateFacade roadmapGenerateFacade;
 
     @Override
     public ResponseEntity<BaseResponse<Void>> generateRoadmap(
             @AuthenticationPrincipal Long memberId) {
 
-        var target = roadMapService.createRoadmap(memberId);
-        roadmapTranslationService.translateAllLanguages(target);
+        roadmapGenerateFacade.generateRoadmap(memberId);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.ok("AI 로드맵 생성에 성공하였습니다."));
@@ -35,6 +32,6 @@ public class RoadmapController implements RoadmapApi {
             @AuthenticationPrincipal Long memberId) {
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(BaseResponse.ok(roadMapService.createRoadmapTest(memberId), "AI 로드맵 생성에 성공하였습니다."));
+                .body(BaseResponse.ok(roadmapGenerateFacade.generateRoadmapForTest(memberId), "AI 로드맵 생성에 성공하였습니다."));
     }
 }

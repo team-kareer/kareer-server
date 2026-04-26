@@ -1,6 +1,6 @@
 package org.sopt.kareer.domain.roadmap.repository;
 
-import org.sopt.kareer.domain.roadmap.entity.PhaseTranslation;
+import org.sopt.kareer.domain.roadmap.entity.phase.PhaseTranslation;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

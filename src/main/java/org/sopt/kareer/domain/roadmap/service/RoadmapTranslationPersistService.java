@@ -2,7 +2,11 @@ package org.sopt.kareer.domain.roadmap.service;
 
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.roadmap.dto.translation.RoadmapTranslationTarget;
-import org.sopt.kareer.domain.roadmap.entity.*;
+import org.sopt.kareer.domain.roadmap.entity.actionitem.ActionItem;
+import org.sopt.kareer.domain.roadmap.entity.actionitem.ActionItemTranslation;
+import org.sopt.kareer.domain.roadmap.entity.phase.Phase;
+import org.sopt.kareer.domain.roadmap.entity.phase.PhaseTranslation;
+import org.sopt.kareer.domain.roadmap.entity.phaseaction.*;
 import org.sopt.kareer.domain.roadmap.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

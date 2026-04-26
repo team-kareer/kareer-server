@@ -1,8 +1,8 @@
 package org.sopt.kareer.domain.roadmap.fixture;
 
-import org.sopt.kareer.domain.roadmap.entity.Phase;
-import org.sopt.kareer.domain.roadmap.entity.PhaseAction;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseActionType;
+import org.sopt.kareer.domain.roadmap.entity.phase.Phase;
+import org.sopt.kareer.domain.roadmap.entity.phaseaction.PhaseAction;
 
 import java.time.LocalDate;
 

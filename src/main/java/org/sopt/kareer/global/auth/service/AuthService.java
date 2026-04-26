@@ -4,12 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.entity.Member;
-import org.sopt.kareer.domain.member.exception.MemberException;
-import org.sopt.kareer.domain.member.service.MemberService;
-import org.sopt.kareer.global.auth.dto.LoginCodePayload;
-import org.sopt.kareer.global.auth.dto.request.TokenExchangeRequest;
-import org.sopt.kareer.global.auth.dto.response.TokenExchangeResponse;
-import org.sopt.kareer.global.auth.dto.response.TokenResponse;
 import org.sopt.kareer.global.auth.util.RefreshTokenCookieManager;
 import org.sopt.kareer.global.exception.customexception.GlobalException;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
@@ -27,8 +21,6 @@ public class AuthService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtTokenUtil jwtTokenUtil;
-    private final MemberService memberService;
-    private final LoginCodeService loginCodeService;
     private final RefreshTokenCookieManager refreshTokenCookieManager;
     private final TokenBlacklistService tokenBlacklistService;
 
@@ -47,32 +39,15 @@ public class AuthService {
         }
     }
 
-    public TokenResponse reissue(HttpServletRequest request, HttpServletResponse response) {
+    public Long extractMemberIdFromRefreshCookie(HttpServletRequest request) {
         String refreshToken = refreshTokenCookieManager.read(request)
                 .orElseThrow(() -> new GlobalException(GlobalErrorCode.UNAUTHORIZED));
-        Long memberId = jwtTokenUtil.extractMemberId(refreshToken, TokenType.REFRESH);
-
-        try {
-            Member member = memberService.getById(memberId);
-            JwtTokenDTO newToken = jwtTokenProvider.generate(member);
-            refreshTokenCookieManager.write(response, newToken.refreshToken());
-            return TokenResponse.of(newToken);
-        } catch (MemberException ex) {
-            throw new GlobalException(GlobalErrorCode.UNAUTHORIZED);
-        }
+        return jwtTokenUtil.extractMemberId(refreshToken, TokenType.REFRESH);
     }
 
-    public TokenExchangeResponse exchange(TokenExchangeRequest request, HttpServletResponse response) {
-        LoginCodePayload payload = loginCodeService.consume(request.code());
-
-        try {
-            Member member = memberService.getById(payload.memberId());
-            JwtTokenDTO newToken = jwtTokenProvider.generate(member);
-            refreshTokenCookieManager.write(response, newToken.refreshToken());
-            return new TokenExchangeResponse(newToken.accessToken(), payload.onboardingRequired());
-        } catch (MemberException ex) {
-            throw new GlobalException(GlobalErrorCode.UNAUTHORIZED);
-        }
+    public JwtTokenDTO generateToken(Member member, HttpServletResponse response) {
+        JwtTokenDTO token = jwtTokenProvider.generate(member);
+        refreshTokenCookieManager.write(response, token.refreshToken());
+        return token;
     }
-
 }
