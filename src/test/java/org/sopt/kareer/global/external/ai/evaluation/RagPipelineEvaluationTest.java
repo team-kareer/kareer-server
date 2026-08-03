@@ -74,7 +74,7 @@ class RagPipelineEvaluationTest {
     void evaluateRagPipelines() throws Exception {
         List<GoldenCase> goldenCases = new GoldenSetLoader(objectMapper).load();
         RagasMetricsCalculator metrics = new RagasMetricsCalculator(chatClientBuilder);
-        RagasReportPrinter printer = new RagasReportPrinter();
+        RagasReportPrinter printer = new RagasReportPrinter(objectMapper);
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
 
         List<CompletableFuture<CaseResult>> futures = goldenCases.stream()

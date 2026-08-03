@@ -1,5 +1,7 @@
 package org.sopt.kareer.global.external.ai.evaluation;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +19,12 @@ import java.util.List;
 public class RagasReportPrinter {
 
     private static final Logger log = LoggerFactory.getLogger(RagasReportPrinter.class);
+
+    private final ObjectMapper objectMapper;
+
+    public RagasReportPrinter(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     private record CaseRow(
             String caseId,
@@ -138,47 +146,49 @@ public class RagasReportPrinter {
         return value == null ? "-" : String.format("%.2f", value);
     }
 
-    private String toJson() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\"generatedAt\":\"").append(Instant.now()).append("\",\"cases\":[");
-        for (int i = 0; i < rows.size(); i++) {
-            if (i > 0) {
-                sb.append(",");
-            }
-            CaseRow r = rows.get(i);
-            sb.append("{")
-                    .append("\"caseId\":\"").append(escapeJson(r.caseId())).append("\",")
-                    .append("\"policyPrecision\":").append(r.policyPrecision()).append(",")
-                    .append("\"policyRecall\":").append(r.policyRecall()).append(",")
-                    .append("\"requiredDocPrecision\":").append(r.requiredDocPrecision()).append(",")
-                    .append("\"requiredDocRecall\":").append(r.requiredDocRecall()).append(",")
-                    .append("\"faithfulness\":").append(r.avgFaithfulness()).append(",")
-                    .append("\"answerRelevancy\":").append(r.avgAnswerRelevancy()).append(",")
-                    .append("\"phases\":[");
-            List<PhaseResult> phases = r.phaseResults();
-            for (int p = 0; p < phases.size(); p++) {
-                if (p > 0) {
-                    sb.append(",");
-                }
-                PhaseResult ph = phases.get(p);
-                sb.append("{")
-                        .append("\"sequence\":").append(ph.sequence()).append(",")
-                        .append("\"goal\":\"").append(escapeJson(ph.goal())).append("\",")
-                        .append("\"faithfulness\":").append(ph.faithfulness()).append(",")
-                        .append("\"answerRelevancy\":").append(ph.answerRelevancy())
-                        .append("}");
-            }
-            sb.append("]}");
-        }
-        sb.append("]}");
-        return sb.toString();
+    private record ReportData(String generatedAt, List<CaseJson> cases) {
     }
 
-    private String escapeJson(String value) {
-        if (value == null) {
-            return "";
-        }
-        return value.replace("\\", "\\\\").replace("\"", "\\\"");
+    private record CaseJson(
+            String caseId,
+            double policyPrecision,
+            double policyRecall,
+            double requiredDocPrecision,
+            double requiredDocRecall,
+            double faithfulness,
+            double answerRelevancy,
+            List<PhaseJson> phases
+    ) {
+    }
+
+    private record PhaseJson(int sequence, String goal, double faithfulness, double answerRelevancy) {
+    }
+
+    /**
+     * goal(LLM이 생성한 Phase 텍스트)처럼 신뢰할 수 없는 자유 텍스트가 그대로 {@code <script>} 블록 안에
+     * 꽂혀 들어가므로, 손으로 문자열을 이어붙이지 않고 주입받은 {@link ObjectMapper}로 직렬화한다 —
+     * 개행/탭 등 제어 문자를 JSON 이스케이프 규칙대로 정확히 처리해준다. 여기에 더해, 직렬화된 JSON에
+     * 남아있는 {@code <} 문자를 유니코드 이스케이프로 한 번 더 치환한다 — goal에 {@code </script>}가 포함돼
+     * 있으면 HTML 파서가 JS 문자열 리터럴 경계와 무관하게 그 지점에서 스크립트 태그를 조기 종료시키기 때문이다.
+     */
+    private String toJson() throws JsonProcessingException {
+        List<CaseJson> caseJsons = rows.stream()
+                .map(r -> new CaseJson(
+                        r.caseId(),
+                        r.policyPrecision(),
+                        r.policyRecall(),
+                        r.requiredDocPrecision(),
+                        r.requiredDocRecall(),
+                        r.avgFaithfulness(),
+                        r.avgAnswerRelevancy(),
+                        r.phaseResults().stream()
+                                .map(p -> new PhaseJson(p.sequence(), p.goal(), p.faithfulness(), p.answerRelevancy()))
+                                .toList()
+                ))
+                .toList();
+
+        String json = objectMapper.writeValueAsString(new ReportData(Instant.now().toString(), caseJsons));
+        return json.replace("<", "\\u003c");
     }
 
     private static final String HTML_TEMPLATE = """
