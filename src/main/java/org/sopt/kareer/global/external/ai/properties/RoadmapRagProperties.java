@@ -9,5 +9,6 @@ public record RoadmapRagProperties(
         int careerActionTopK,
         int careerGuideTopK,
         int careerTodoTopK,
-        int candidatePoolTopK
+        int candidatePoolTopK,
+        double careerDomainMinSimilarity
 ) {}

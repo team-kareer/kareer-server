@@ -95,16 +95,21 @@ public class RequiredDocumentRetriever {
                         domain -> cosineSimilarity(targetJobEmbedding, embeddingModel.embed(domain))
                 ));
 
-        String closestDomain = similarityByDomain.entrySet().stream()
+        Map.Entry<String, Double> closest = similarityByDomain.entrySet().stream()
                 .max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
                 .orElseThrow();
 
+        if (closest.getValue() < props.careerDomainMinSimilarity()) {
+            log.warn("[REQUIRED_DOCUMENT] targetJob=\"{}\" is below similarity threshold {} (best match: {}={}) — treating as unclassified",
+                    targetJob, props.careerDomainMinSimilarity(), closest.getKey(), closest.getValue());
+            return List.of();
+        }
+
         log.info("[REQUIRED_DOCUMENT] targetJob=\"{}\" matched to domain=\"{}\" (candidates: {})",
-                targetJob, closestDomain, similarityByDomain);
+                targetJob, closest.getKey(), similarityByDomain);
 
         return candidates.stream()
-                .filter(d -> closestDomain.equalsIgnoreCase(Objects.toString(d.getMetadata().get(DOMAIN), "")))
+                .filter(d -> closest.getKey().equalsIgnoreCase(Objects.toString(d.getMetadata().get(DOMAIN), "")))
                 .toList();
     }
 
