@@ -78,10 +78,10 @@ class JobPostingBookmarkRepositoryTest {
         jobPostingBookmarkRepository.save(JobPostingBookmark.create(member, jobPosting3));
 
        //when
-        List<JobPosting> foundBookmarks = jobPostingBookmarkRepository.findAllByMemberId(member.getId());
+        List<JobPosting> foundJobPostings = jobPostingBookmarkRepository.findAllByMemberId(member.getId());
 
         //then
-        assertThat(foundBookmarks.size()).isEqualTo(3);
+        assertThat(foundJobPostings.size()).isEqualTo(3);
     }
 
     @DisplayName("memberId와 jobPostingId로 존재하는 북마크들을 조회할 수 있다.")
