@@ -23,7 +23,7 @@ class RagasReportPrinterTest {
         RagasReportPrinter printer = new RagasReportPrinter(objectMapper);
         String goalWithControlChars = "line1\nline2\tindented";
         printer.recordCase(
-                "case-1", 1.0, 1.0, 1.0, 1.0,
+                "case-1", 1.0, 1.0, 1.0, 1.0, 0.8, "비자 경로와 직무가 대체로 일관됨",
                 List.of(new PhaseResult(1, goalWithControlChars, 1.0, 1.0))
         );
         Path reportPath = tempDir.resolve("report.html");
@@ -45,7 +45,7 @@ class RagasReportPrinterTest {
         RagasReportPrinter printer = new RagasReportPrinter(objectMapper);
         String maliciousGoal = "</script><script>alert(1)</script>";
         printer.recordCase(
-                "case-1", 1.0, 1.0, 1.0, 1.0,
+                "case-1", 1.0, 1.0, 1.0, 1.0, 0.8, "비자 경로와 직무가 대체로 일관됨",
                 List.of(new PhaseResult(1, maliciousGoal, 1.0, 1.0))
         );
         Path reportPath = tempDir.resolve("report.html");

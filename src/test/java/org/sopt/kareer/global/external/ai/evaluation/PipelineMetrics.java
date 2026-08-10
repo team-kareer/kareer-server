@@ -6,6 +6,7 @@ public record PipelineMetrics(
         Double contextRecall,
         Double faithfulness,
         Double answerRelevancy,
+        Double jobVisaPathCoherence,
         int caseCount
 ) {
 }

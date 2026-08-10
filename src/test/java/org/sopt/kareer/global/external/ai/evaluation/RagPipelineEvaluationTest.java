@@ -92,6 +92,8 @@ class RagPipelineEvaluationTest {
                     outcome.policyRecall(),
                     outcome.requiredDocPrecision(),
                     outcome.requiredDocRecall(),
+                    outcome.jobVisaPathCoherence(),
+                    outcome.jobVisaPathCoherenceReason(),
                     outcome.phaseResults()
             );
         }
@@ -144,6 +146,7 @@ class RagPipelineEvaluationTest {
                     metrics.contextRecall(goldenCase.referenceAnswer(), context.policyDocs()),
                     metrics.contextPrecision(query, answerText, requiredDocumentDocs),
                     metrics.contextRecall(goldenCase.referenceAnswer(), requiredDocumentDocs),
+                    metrics.jobVisaPathCoherence(goldenCase.targetJob(), answerText),
                     phaseResults
             );
         });
@@ -163,7 +166,15 @@ class RagPipelineEvaluationTest {
             double policyRecall,
             double requiredDocPrecision,
             double requiredDocRecall,
+            RagasMetricsCalculator.CustomMetricResult jobVisaPathCoherenceResult,
             List<PhaseResult> phaseResults
     ) {
+        double jobVisaPathCoherence() {
+            return jobVisaPathCoherenceResult.score();
+        }
+
+        String jobVisaPathCoherenceReason() {
+            return jobVisaPathCoherenceResult.reason();
+        }
     }
 }

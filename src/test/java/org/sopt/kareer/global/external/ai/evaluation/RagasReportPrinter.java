@@ -32,6 +32,8 @@ public class RagasReportPrinter {
             double policyRecall,
             double requiredDocPrecision,
             double requiredDocRecall,
+            double jobVisaPathCoherence,
+            String jobVisaPathCoherenceReason,
             List<PhaseResult> phaseResults
     ) {
         double avgFaithfulness() {
@@ -51,9 +53,20 @@ public class RagasReportPrinter {
             double policyRecall,
             double requiredDocPrecision,
             double requiredDocRecall,
+            double jobVisaPathCoherence,
+            String jobVisaPathCoherenceReason,
             List<PhaseResult> phaseResults
     ) {
-        rows.add(new CaseRow(caseId, policyPrecision, policyRecall, requiredDocPrecision, requiredDocRecall, phaseResults));
+        rows.add(new CaseRow(
+                caseId,
+                policyPrecision,
+                policyRecall,
+                requiredDocPrecision,
+                requiredDocRecall,
+                jobVisaPathCoherence,
+                jobVisaPathCoherenceReason,
+                phaseResults
+        ));
     }
 
     public void printReport() {
@@ -65,11 +78,12 @@ public class RagasReportPrinter {
         log.info("========== RAGAS-equivalent evaluation report ({} cases) ==========", rows.size());
         for (CaseRow row : rows) {
             log.info(
-                    "[case={}] policy(precision={}, recall={}) requiredDoc(precision={}, recall={}) generation-avg(faithfulness={}, answerRelevancy={})",
+                    "[case={}] policy(precision={}, recall={}) requiredDoc(precision={}, recall={}) generation-avg(faithfulness={}, answerRelevancy={}) custom(jobVisaPathCoherence={}, reason={})",
                     row.caseId(),
                     format(row.policyPrecision()), format(row.policyRecall()),
                     format(row.requiredDocPrecision()), format(row.requiredDocRecall()),
-                    format(row.avgFaithfulness()), format(row.avgAnswerRelevancy())
+                    format(row.avgFaithfulness()), format(row.avgAnswerRelevancy()),
+                    format(row.jobVisaPathCoherence()), row.jobVisaPathCoherenceReason()
             );
             for (PhaseResult phase : row.phaseResults()) {
                 log.info(
@@ -82,12 +96,13 @@ public class RagasReportPrinter {
 
         for (PipelineMetrics metrics : pipelineAverages()) {
             log.info(
-                    "[{}] contextPrecision={} contextRecall={} faithfulness={} answerRelevancy={} (n={})",
+                    "[{}] contextPrecision={} contextRecall={} faithfulness={} answerRelevancy={} jobVisaPathCoherence={} (n={})",
                     metrics.pipelineName(),
                     format(metrics.contextPrecision()),
                     format(metrics.contextRecall()),
                     format(metrics.faithfulness()),
                     format(metrics.answerRelevancy()),
+                    format(metrics.jobVisaPathCoherence()),
                     metrics.caseCount()
             );
         }
@@ -117,12 +132,14 @@ public class RagasReportPrinter {
                 average(CaseRow::policyRecall),
                 null,
                 null,
+                null,
                 rows.size()
         );
         PipelineMetrics requiredDoc = new PipelineMetrics(
                 "Required Document RAG",
                 average(CaseRow::requiredDocPrecision),
                 average(CaseRow::requiredDocRecall),
+                null,
                 null,
                 null,
                 rows.size()
@@ -133,6 +150,7 @@ public class RagasReportPrinter {
                 null,
                 average(CaseRow::avgFaithfulness),
                 average(CaseRow::avgAnswerRelevancy),
+                average(CaseRow::jobVisaPathCoherence),
                 rows.size()
         );
         return List.of(policy, requiredDoc, overall);
@@ -157,6 +175,8 @@ public class RagasReportPrinter {
             double requiredDocRecall,
             double faithfulness,
             double answerRelevancy,
+            double jobVisaPathCoherence,
+            String jobVisaPathCoherenceReason,
             List<PhaseJson> phases
     ) {
     }
@@ -181,6 +201,8 @@ public class RagasReportPrinter {
                         r.requiredDocRecall(),
                         r.avgFaithfulness(),
                         r.avgAnswerRelevancy(),
+                        r.jobVisaPathCoherence(),
+                        r.jobVisaPathCoherenceReason(),
                         r.phaseResults().stream()
                                 .map(p -> new PhaseJson(p.sequence(), p.goal(), p.faithfulness(), p.answerRelevancy()))
                                 .toList()
@@ -212,6 +234,7 @@ public class RagasReportPrinter {
                 --series-recall:    #eb6834;
                 --series-faithfulness: #1baf7a;
                 --series-relevancy:    #eda100;
+                --series-coherence:     #8a63d2;
                 --status-good:      #0ca30c;
                 --status-critical:  #d03b3b;
               }
@@ -230,6 +253,7 @@ public class RagasReportPrinter {
                   --series-recall:    #d95926;
                   --series-faithfulness: #199e70;
                   --series-relevancy:    #c98500;
+                  --series-coherence:     #9b7ce0;
                 }
               }
               :root[data-theme="dark"] {
@@ -246,6 +270,7 @@ public class RagasReportPrinter {
                 --series-recall:    #d95926;
                 --series-faithfulness: #199e70;
                 --series-relevancy:    #c98500;
+                --series-coherence:     #9b7ce0;
               }
 
               * { box-sizing: border-box; }
@@ -397,15 +422,16 @@ public class RagasReportPrinter {
 
               <div class="card">
                 <h2>Overall generation quality by case</h2>
-                <p class="card-sub">Faithfulness / Answer Relevancy, 최종 생성된 로드맵 기준 (파이프라인 구분 없음)</p>
+                <p class="card-sub">Faithfulness / Answer Relevancy / Job-Visa Path Coherence, 최종 생성된 로드맵 기준 (파이프라인 구분 없음)</p>
                 <div class="legend">
                   <span class="legend-item"><span class="legend-swatch" style="background:var(--series-faithfulness)"></span>Faithfulness</span>
                   <span class="legend-item"><span class="legend-swatch" style="background:var(--series-relevancy)"></span>Answer Relevancy</span>
+                  <span class="legend-item"><span class="legend-swatch" style="background:var(--series-coherence)"></span>Job-Visa Path Coherence</span>
                 </div>
                 <button class="table-toggle" data-target="table-overall">테이블로 보기</button>
                 <div class="chart-scroll"><div id="chart-overall"></div></div>
                 <table class="data-table" id="table-overall">
-                  <thead><tr><th>Case</th><th>Faithfulness</th><th>Answer Relevancy</th></tr></thead>
+                  <thead><tr><th>Case</th><th>Faithfulness</th><th>Answer Relevancy</th><th>Job-Visa Path Coherence</th><th>Reason</th></tr></thead>
                   <tbody></tbody>
                 </table>
               </div>
@@ -448,7 +474,8 @@ public class RagasReportPrinter {
                 { label: 'Required Doc RAG — Precision', value: avg(cases, d => d.requiredDocPrecision), color: 'var(--series-precision)' },
                 { label: 'Required Doc RAG — Recall', value: avg(cases, d => d.requiredDocRecall), color: 'var(--series-recall)' },
                 { label: 'Overall — Faithfulness', value: avg(cases, d => d.faithfulness), color: 'var(--series-faithfulness)' },
-                { label: 'Overall — Answer Relevancy', value: avg(cases, d => d.answerRelevancy), color: 'var(--series-relevancy)' }
+                { label: 'Overall — Answer Relevancy', value: avg(cases, d => d.answerRelevancy), color: 'var(--series-relevancy)' },
+                { label: 'Overall — Job-Visa Path Coherence', value: avg(cases, d => d.jobVisaPathCoherence), color: 'var(--series-coherence)' }
               ];
 
               const statGrid = document.getElementById('stat-grid');
@@ -623,7 +650,8 @@ public class RagasReportPrinter {
 
               renderGroupedBarChart('chart-overall', [
                 { name: 'Faithfulness', color: 'var(--series-faithfulness)', get: d => d.faithfulness },
-                { name: 'Answer Relevancy', color: 'var(--series-relevancy)', get: d => d.answerRelevancy }
+                { name: 'Answer Relevancy', color: 'var(--series-relevancy)', get: d => d.answerRelevancy },
+                { name: 'Job-Visa Path Coherence', color: 'var(--series-coherence)', get: d => d.jobVisaPathCoherence }
               ]);
 
               function pill(value) {
@@ -701,7 +729,8 @@ public class RagasReportPrinter {
                   tr.appendChild(tdCase);
                   cols.forEach(c => {
                     const td = document.createElement('td');
-                    td.textContent = fmt(c.get(d));
+                    const value = c.get(d);
+                    td.textContent = typeof value === 'number' ? fmt(value) : value;
                     tr.appendChild(td);
                   });
                   tbody.appendChild(tr);
@@ -709,7 +738,12 @@ public class RagasReportPrinter {
               }
               fillTable('table-policy', [{ get: d => d.policyPrecision }, { get: d => d.policyRecall }]);
               fillTable('table-required', [{ get: d => d.requiredDocPrecision }, { get: d => d.requiredDocRecall }]);
-              fillTable('table-overall', [{ get: d => d.faithfulness }, { get: d => d.answerRelevancy }]);
+              fillTable('table-overall', [
+                { get: d => d.faithfulness },
+                { get: d => d.answerRelevancy },
+                { get: d => d.jobVisaPathCoherence },
+                { get: d => d.jobVisaPathCoherenceReason || '-' }
+              ]);
 
               document.querySelectorAll('.table-toggle').forEach(btn => {
                 btn.addEventListener('click', () => {
