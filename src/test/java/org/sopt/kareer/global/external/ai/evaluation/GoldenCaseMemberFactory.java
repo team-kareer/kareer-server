@@ -14,11 +14,15 @@ public class GoldenCaseMemberFactory {
     }
 
     public static Member toMember(GoldenCase goldenCase) {
+        return toMember(goldenCase, goldenCase.caseId());
+    }
+
+    public static Member toMember(GoldenCase goldenCase, String uniqueSuffix) {
         return Member.builder()
-                .name("ragas-eval-" + goldenCase.caseId())
-                .email("ragas-eval-" + goldenCase.caseId() + "@example.com")
+                .name("ragas-eval-" + uniqueSuffix)
+                .email("ragas-eval-" + uniqueSuffix + "@example.com")
                 .provider(OAuthProvider.GOOGLE)
-                .providerId("ragas-eval-" + goldenCase.caseId())
+                .providerId("ragas-eval-" + uniqueSuffix)
                 .status(MemberStatus.ACTIVE)
                 .targetJob(goldenCase.targetJob())
                 .degreeCode(goldenCase.degreeCode())

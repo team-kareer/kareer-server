@@ -8,9 +8,11 @@ import org.sopt.kareer.domain.member.entity.MemberVisa;
 import org.sopt.kareer.domain.member.repository.MemberRepository;
 import org.sopt.kareer.domain.member.repository.MemberVisaRepository;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapResponse;
-import org.sopt.kareer.domain.roadmap.service.RoadmapGenerateService;
 import org.sopt.kareer.domain.roadmap.service.dto.response.RoadmapGenerationContext;
+import org.sopt.kareer.global.external.ai.builder.context.MemberContextBuilder;
 import org.sopt.kareer.global.external.ai.service.OpenAiService;
+import org.sopt.kareer.global.external.ai.service.PolicyDocumentRetriever;
+import org.sopt.kareer.global.external.ai.service.RequiredDocumentRetriever;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.document.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
@@ -35,9 +38,8 @@ import java.util.concurrent.ExecutorService;
  * <p>골든셋 케이스는 서로 완전히 독립적이므로(각자 다른 Member/MemberVisa, 다른 RoadmapGenerationContext),
  * 케이스마다 별도의 트랜잭션을 열어 virtual-thread executor로 동시에 실행한다. 케이스당 가장 오래 걸리는
  * 구간(로드맵 생성 자체)이 순차로 쌓이는 게 병목이었기 때문에, judge 호출 병렬화보다 이쪽이 실제 개선폭이 크다.
- * 클래스 레벨 {@code @Transactional}은 테스트를 실행하는 메인 스레드에만 적용되고 다른 스레드가 연 트랜잭션까지
- * 자동으로 롤백해주지 않으므로, 케이스별 트랜잭션은 {@link TransactionTemplate}으로 직접 열고
- * 끝날 때 rollback-only로 마킹해 DB에 흔적을 남기지 않는다.
+ * 각 케이스는 테스트 Member/MemberVisa 생성과 정리만 짧은 트랜잭션으로 처리한다. RAG 검색, 로드맵 생성,
+ * RAGAS judge 호출은 OpenAI/Cohere 지연 중 DB 커넥션을 점유하지 않도록 트랜잭션 밖에서 실행한다.
  *
  * <pre>{@code ./gradlew ragasEval -Dspring.profiles.active=local}</pre>
  */
@@ -53,7 +55,13 @@ class RagPipelineEvaluationTest {
     private MemberVisaRepository memberVisaRepository;
 
     @Autowired
-    private RoadmapGenerateService roadmapGenerateService;
+    private MemberContextBuilder memberContextBuilder;
+
+    @Autowired
+    private RequiredDocumentRetriever requiredDocumentRetriever;
+
+    @Autowired
+    private PolicyDocumentRetriever policyDocumentRetriever;
 
     @Autowired
     private OpenAiService openAiService;
@@ -107,13 +115,9 @@ class RagPipelineEvaluationTest {
             RagasMetricsCalculator metrics,
             TransactionTemplate transactionTemplate
     ) {
-        return transactionTemplate.execute(status -> {
-            status.setRollbackOnly();
-
-            Member member = memberRepository.save(GoldenCaseMemberFactory.toMember(goldenCase));
-            MemberVisa visa = memberVisaRepository.save(GoldenCaseMemberFactory.toVisa(member, goldenCase));
-
-            RoadmapGenerationContext context = roadmapGenerateService.prepareTestGeneration(member, visa);
+        EvaluationSubject subject = createEvaluationSubject(goldenCase, transactionTemplate);
+        try {
+            RoadmapGenerationContext context = buildContext(subject);
             RoadmapResponse roadmap = openAiService.generateRoadmap(
                     context.memberContextText(),
                     context.visaDocs(),
@@ -149,6 +153,40 @@ class RagPipelineEvaluationTest {
                     metrics.jobVisaPathCoherence(goldenCase.targetJob(), answerText),
                     phaseResults
             );
+        } finally {
+            cleanupEvaluationSubject(subject.memberId(), transactionTemplate);
+        }
+    }
+
+    private EvaluationSubject createEvaluationSubject(GoldenCase goldenCase, TransactionTemplate transactionTemplate) {
+        return transactionTemplate.execute(status -> {
+            String uniqueSuffix = goldenCase.caseId() + "-" + UUID.randomUUID();
+            Member member = memberRepository.save(GoldenCaseMemberFactory.toMember(goldenCase, uniqueSuffix));
+            MemberVisa visa = memberVisaRepository.save(GoldenCaseMemberFactory.toVisa(member, goldenCase));
+            return new EvaluationSubject(member.getId(), visa);
+        });
+    }
+
+    private RoadmapGenerationContext buildContext(EvaluationSubject subject) {
+        MemberContextBuilder.MemberAndContext memberContext = memberContextBuilder.load(subject.memberId());
+
+        List<Document> visaDocs = requiredDocumentRetriever.retrieveVisaAll(subject.visa());
+
+        RequiredDocumentRetriever.CareerSelectedDocs careerSelected = requiredDocumentRetriever.retrieveCareer(memberContext.member());
+        List<Document> careerDocs = new ArrayList<>();
+        careerDocs.addAll(careerSelected.actionRequired());
+        careerDocs.addAll(careerSelected.aiGuideRisk());
+        careerDocs.addAll(careerSelected.todoList());
+
+        List<Document> policyDocs = policyDocumentRetriever.retrievePolicy(memberContext.member(), subject.visa());
+
+        return new RoadmapGenerationContext(memberContext.contextText(), visaDocs, careerDocs, policyDocs);
+    }
+
+    private void cleanupEvaluationSubject(Long memberId, TransactionTemplate transactionTemplate) {
+        transactionTemplate.executeWithoutResult(status -> {
+            memberVisaRepository.deleteAllByMemberId(memberId);
+            memberRepository.deleteById(memberId);
         });
     }
 
@@ -176,5 +214,8 @@ class RagPipelineEvaluationTest {
         String jobVisaPathCoherenceReason() {
             return jobVisaPathCoherenceResult.reason();
         }
+    }
+
+    private record EvaluationSubject(Long memberId, MemberVisa visa) {
     }
 }
