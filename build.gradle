@@ -140,6 +140,10 @@ tasks.register('ragasEval', Test) {
     useJUnitPlatform {
         includeTags 'ragas-eval'
     }
+    testLogging {
+        showStandardStreams = true
+        events 'passed', 'failed', 'skipped'
+    }
     testClassesDirs = sourceSets.test.output.classesDirs
     classpath = sourceSets.test.runtimeClasspath
     outputs.upToDateWhen { false }
