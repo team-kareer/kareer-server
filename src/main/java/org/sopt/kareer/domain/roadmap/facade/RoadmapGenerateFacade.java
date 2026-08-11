@@ -8,6 +8,9 @@ import org.sopt.kareer.domain.member.service.MemberQueryService;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapTestResponse;
 import org.sopt.kareer.domain.roadmap.dto.translation.RoadmapTranslationTarget;
+import org.sopt.kareer.domain.roadmap.progress.NoOpRoadmapProgressNotifier;
+import org.sopt.kareer.domain.roadmap.progress.RoadmapGenerationStep;
+import org.sopt.kareer.domain.roadmap.progress.RoadmapProgressNotifier;
 import org.sopt.kareer.domain.roadmap.service.RoadMapPersistService;
 import org.sopt.kareer.domain.roadmap.service.RoadmapGenerateService;
 import org.sopt.kareer.domain.roadmap.service.RoadmapTranslationPersistService;
@@ -36,19 +39,42 @@ public class RoadmapGenerateFacade {
     private final ExecutorService executorService;
 
     public void generateRoadmap(Long memberId) {
-        Member member = memberQueryService.getMemberById(memberId);
-        MemberVisa visa = memberQueryService.getVisaByMemberId(memberId);
+        generateRoadmap(memberId, NoOpRoadmapProgressNotifier.INSTANCE);
+    }
 
-        RoadmapGenerationContext context = roadmapGenerateService.prepareGeneration(member, visa);
+    public void generateRoadmap(Long memberId, RoadmapProgressNotifier progressNotifier) {
+        progressNotifier.started(RoadmapGenerationStep.USER_ANALYSIS);
 
-        RoadmapResponse response = openAiService.generateRoadmap(
-                context.memberContextText(),
-                context.visaDocs(),
-                context.careerDocs(),
-                context.policyDocs()
-        );
+        Member member;
+        MemberVisa visa;
+        try {
+            member = memberQueryService.getMemberById(memberId);
+            visa = memberQueryService.getVisaByMemberId(memberId);
+        } catch (RuntimeException exception) {
+            progressNotifier.failed(RoadmapGenerationStep.USER_ANALYSIS);
+            throw exception;
+        }
 
-        RoadmapTranslationTarget target = roadMapPersistService.saveRoadMap(member, response);
+        RoadmapGenerationContext context = roadmapGenerateService.prepareGeneration(member, visa, progressNotifier);
+        progressNotifier.completed(RoadmapGenerationStep.POLICY_SEARCH);
+        progressNotifier.started(RoadmapGenerationStep.ROADMAP_WRITING);
+
+        RoadmapTranslationTarget target;
+        try {
+            RoadmapResponse response = openAiService.generateRoadmap(
+                    context.memberContextText(),
+                    context.visaDocs(),
+                    context.careerDocs(),
+                    context.policyDocs()
+            );
+
+            target = roadMapPersistService.saveRoadMap(member, response);
+            progressNotifier.completed(RoadmapGenerationStep.ROADMAP_WRITING);
+        } catch (RuntimeException exception) {
+            progressNotifier.failed(RoadmapGenerationStep.ROADMAP_WRITING);
+            throw exception;
+        }
+
         translateAllLanguages(target);
     }
 
