@@ -78,7 +78,7 @@ class JobPostingBookmarkRepositoryTest {
         jobPostingBookmarkRepository.save(JobPostingBookmark.create(member, jobPosting3));
 
        //when
-        List<JobPostingBookmark> foundBookmarks = jobPostingBookmarkRepository.findAllByMemberId(member.getId());
+        List<JobPosting> foundBookmarks = jobPostingBookmarkRepository.findAllByMemberId(member.getId());
 
         //then
         assertThat(foundBookmarks.size()).isEqualTo(3);
