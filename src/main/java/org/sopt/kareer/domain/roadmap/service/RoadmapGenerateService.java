@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.entity.MemberVisa;
 import org.sopt.kareer.domain.roadmap.entity.enums.RoadmapActiveStatus;
+import org.sopt.kareer.domain.roadmap.progress.NoOpRoadmapProgressNotifier;
+import org.sopt.kareer.domain.roadmap.progress.RoadmapGenerationStep;
+import org.sopt.kareer.domain.roadmap.progress.RoadmapProgressNotifier;
 import org.sopt.kareer.domain.roadmap.repository.ActionItemRepository;
 import org.sopt.kareer.domain.roadmap.repository.RoadmapRepository;
 import org.sopt.kareer.domain.roadmap.service.dto.response.RoadmapGenerationContext;
@@ -29,23 +32,49 @@ public class RoadmapGenerateService {
 
     @Transactional
     public RoadmapGenerationContext prepareGeneration(Member member, MemberVisa visa) {
-        roadmapRepository.findByMember_IdAndStatus(member.getId(), RoadmapActiveStatus.ACTIVE)
-                .ifPresent(existing -> {
-                    actionItemRepository.deactivateAllByRoadmapId(existing.getId());
-                    existing.deactivate();
-                });
+        return prepareGeneration(member, visa, NoOpRoadmapProgressNotifier.INSTANCE);
+    }
 
-        return buildContext(member, visa, false);
+    @Transactional
+    public RoadmapGenerationContext prepareGeneration(
+            Member member,
+            MemberVisa visa,
+            RoadmapProgressNotifier progressNotifier
+    ) {
+        RoadmapGenerationStep currentStep = RoadmapGenerationStep.USER_ANALYSIS;
+
+        try {
+            roadmapRepository.findByMember_IdAndStatus(member.getId(), RoadmapActiveStatus.ACTIVE)
+                    .ifPresent(existing -> {
+                        actionItemRepository.deactivateAllByRoadmapId(existing.getId());
+                        existing.deactivate();
+                    });
+
+            var memberContext = memberContextBuilder.load(member.getId());
+            progressNotifier.completed(RoadmapGenerationStep.USER_ANALYSIS);
+
+            currentStep = RoadmapGenerationStep.POLICY_SEARCH;
+            progressNotifier.started(currentStep);
+
+            return buildContext(member, visa, false, memberContext.contextText());
+        } catch (RuntimeException exception) {
+            progressNotifier.failed(currentStep);
+            throw exception;
+        }
     }
 
     @Transactional(readOnly = true)
     public RoadmapGenerationContext prepareTestGeneration(Member member, MemberVisa visa) {
-        return buildContext(member, visa, true);
+        var memberContext = memberContextBuilder.load(member.getId());
+        return buildContext(member, visa, true, memberContext.contextText());
     }
 
-    private RoadmapGenerationContext buildContext(Member member, MemberVisa visa, boolean requireVisa) {
-        var memberContext = memberContextBuilder.load(member.getId());
-
+    private RoadmapGenerationContext buildContext(
+            Member member,
+            MemberVisa visa,
+            boolean requireVisa,
+            String memberContextText
+    ) {
         List<Document> visaDocs = requireVisa
                 ? requiredRetriever.retrieveVisaAll(visa)
                 : (visa == null ? List.of() : requiredRetriever.retrieveVisaAll(visa));
@@ -58,6 +87,6 @@ public class RoadmapGenerateService {
 
         List<Document> policyDocs = policyDocumentRetriever.retrievePolicy(member, visa);
 
-        return new RoadmapGenerationContext(memberContext.contextText(), visaDocs, careerDocs, policyDocs);
+        return new RoadmapGenerationContext(memberContextText, visaDocs, careerDocs, policyDocs);
     }
 }

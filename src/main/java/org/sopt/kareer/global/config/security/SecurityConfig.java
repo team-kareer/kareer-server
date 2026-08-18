@@ -1,5 +1,6 @@
 package org.sopt.kareer.global.config.security;
 
+import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.global.jwt.filter.JwtAuthenticationFilter;
 import org.sopt.kareer.global.jwt.filter.JwtExceptionFilter;
@@ -72,6 +73,7 @@ public class SecurityConfig {
                         .failureHandler(failureHandler)
                 )
                 .authorizeHttpRequests(authorize -> authorize
+                        .dispatcherTypeMatchers(DispatcherType.ASYNC).permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-resources/**")
                             .hasRole("SWAGGER")
                         .requestMatchers("/v3/api-docs/**").permitAll()

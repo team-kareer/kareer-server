@@ -16,7 +16,7 @@ public interface JobPostingBookmarkRepository extends JpaRepository<JobPostingBo
     @Query("""
     SELECT jp
     FROM JobPostingBookmark jpb
-    JOIN FETCH jpb.jobPosting jp
+    JOIN jpb.jobPosting jp
     WHERE jpb.member.id = :memberId
     ORDER BY jp.deadline asc
 """)
