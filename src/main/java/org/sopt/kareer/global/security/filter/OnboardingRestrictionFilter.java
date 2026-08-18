@@ -4,19 +4,20 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.entity.enums.MemberStatus;
 import org.sopt.kareer.domain.member.exception.MemberErrorCode;
 import org.sopt.kareer.domain.member.exception.MemberException;
-import org.sopt.kareer.domain.member.service.MemberService;
+import org.sopt.kareer.domain.member.service.MemberQueryService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -44,7 +45,7 @@ public class OnboardingRestrictionFilter extends OncePerRequestFilter {
             "/api/v2/members/onboard/**"
     );
 
-    private final MemberService memberService;
+    private final MemberQueryService memberQueryService;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     @Override
@@ -70,7 +71,7 @@ public class OnboardingRestrictionFilter extends OncePerRequestFilter {
             return;
         }
 
-        Member member = memberService.getById(memberId);
+        Member member = memberQueryService.getMemberById(memberId);
         if (member.getStatus() == MemberStatus.PENDING) {
             throw new MemberException(MemberErrorCode.ONBOARDING_REQUIRED);
         }

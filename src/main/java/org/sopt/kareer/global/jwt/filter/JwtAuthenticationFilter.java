@@ -4,13 +4,10 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.exception.MemberException;
-import org.sopt.kareer.domain.member.service.MemberService;
+import org.sopt.kareer.domain.member.service.MemberQueryService;
 import org.sopt.kareer.global.auth.service.TokenBlacklistService;
 import org.sopt.kareer.global.exception.customexception.GlobalException;
 import org.sopt.kareer.global.exception.errorcode.GlobalErrorCode;
@@ -23,12 +20,16 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;
-    private final MemberService memberService;
+    private final MemberQueryService memberQueryService;
     private final Optional<TokenBlacklistService> tokenBlacklistService;
 
     @Override
@@ -44,7 +45,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             });
             try {
                 Long memberId = jwtTokenUtil.extractMemberId(token, TokenType.ACCESS);
-                Member member = memberService.getById(memberId);
+                Member member = memberQueryService.getMemberById(memberId);
                 setAuthentication(request, member);
             } catch (MemberException ex) {
                 throw new GlobalException(GlobalErrorCode.UNAUTHORIZED);

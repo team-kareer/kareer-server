@@ -5,11 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.fixture.MemberFixture;
 import org.sopt.kareer.domain.member.repository.MemberRepository;
-import org.sopt.kareer.domain.roadmap.entity.Phase;
-import org.sopt.kareer.domain.roadmap.entity.PhaseAction;
-import org.sopt.kareer.domain.roadmap.entity.PhaseActionGuideline;
+import org.sopt.kareer.domain.roadmap.entity.Roadmap;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseActionType;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseStatus;
+import org.sopt.kareer.domain.roadmap.entity.phase.Phase;
+import org.sopt.kareer.domain.roadmap.entity.phaseaction.PhaseAction;
+import org.sopt.kareer.domain.roadmap.entity.phaseaction.PhaseActionGuideline;
 import org.sopt.kareer.domain.roadmap.fixture.PhaseActionFixture;
 import org.sopt.kareer.domain.roadmap.fixture.PhaseFixture;
 import org.sopt.kareer.global.config.QuerydslConfig;
@@ -31,6 +32,9 @@ public class PhaseActionGuidelineRepositoryTest {
     private MemberRepository memberRepository;
 
     @Autowired
+    private RoadmapRepository roadmapRepository;
+
+    @Autowired
     private PhaseRepository phaseRepository;
 
     @Autowired
@@ -44,7 +48,8 @@ public class PhaseActionGuidelineRepositoryTest {
     void findContentByPhaseActionId() {
         // given
         Member member1 = memberRepository.save(MemberFixture.getMember("test-provider-id-1"));
-        Phase phase1 = phaseRepository.save(PhaseFixture.getPhase(member1, 1, PhaseStatus.CURRENT));
+        Roadmap roadmap1 = roadmapRepository.save(Roadmap.create(member1));
+        Phase phase1 = phaseRepository.save(PhaseFixture.getPhase(roadmap1, 1, PhaseStatus.CURRENT));
 
         PhaseAction action1 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);
         PhaseAction action2 = PhaseActionFixture.getPhaseAction(phase1, PhaseActionType.VISA);

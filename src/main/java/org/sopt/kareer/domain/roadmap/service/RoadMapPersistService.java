@@ -4,10 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.roadmap.dto.response.RoadmapResponse;
 import org.sopt.kareer.domain.roadmap.dto.translation.RoadmapTranslationTarget;
-import org.sopt.kareer.domain.roadmap.entity.*;
+import org.sopt.kareer.domain.roadmap.entity.Roadmap;
+import org.sopt.kareer.domain.roadmap.entity.actionitem.ActionItem;
 import org.sopt.kareer.domain.roadmap.entity.enums.ActionItemType;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseActionType;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseStatus;
+import org.sopt.kareer.domain.roadmap.entity.phase.Phase;
+import org.sopt.kareer.domain.roadmap.entity.phaseaction.PhaseAction;
+import org.sopt.kareer.domain.roadmap.entity.phaseaction.PhaseActionGuideline;
+import org.sopt.kareer.domain.roadmap.entity.phaseaction.PhaseActionMistake;
 import org.sopt.kareer.domain.roadmap.exception.RoadMapException;
 import org.sopt.kareer.domain.roadmap.repository.*;
 import org.springframework.stereotype.Service;
@@ -31,14 +36,17 @@ public class RoadMapPersistService {
     private final PhaseActionGuidelineRepository phaseActionGuidelineRepository;
     private final PhaseActionMistakeRepository phaseActionMistakeRepository;
     private final ActionItemRepository actionItemRepository;
+    private final RoadmapRepository roadmapRepository;
 
     @Transactional
     public RoadmapTranslationTarget saveRoadMap(Member member, RoadmapResponse response) {
+        Roadmap roadmap = roadmapRepository.save(Roadmap.create(member));
+
         List<RoadmapTranslationTarget.PhaseTarget> phaseTargets = new ArrayList<>();
 
         for (RoadmapResponse.PhasePlan phasePlan : Optional.ofNullable(response.phases()).orElse(Collections.emptyList())) {
             Phase savedPhase = phaseRepository.save(Phase.create(
-                    member,
+                    roadmap,
                     phasePlan.sequence(),
                     phasePlan.goal(),
                     phasePlan.description(),

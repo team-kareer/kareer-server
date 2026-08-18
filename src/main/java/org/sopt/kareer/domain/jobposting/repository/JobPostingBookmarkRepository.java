@@ -1,8 +1,10 @@
 package org.sopt.kareer.domain.jobposting.repository;
 
+import org.sopt.kareer.domain.jobposting.entity.JobPosting;
 import org.sopt.kareer.domain.jobposting.entity.JobPostingBookmark;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -12,9 +14,13 @@ public interface JobPostingBookmarkRepository extends JpaRepository<JobPostingBo
     void deleteByJobPostingIdAndMemberId(Long jobPostingId, Long memberId);
 
     @Query("""
-        select jpb from JobPostingBookmark jpb where jpb.member.id = :memberId order by jpb.jobPosting.deadline asc
-    """)
-    List<JobPostingBookmark> findAllByMemberId(Long memberId);
+    SELECT jp
+    FROM JobPostingBookmark jpb
+    JOIN jpb.jobPosting jp
+    WHERE jpb.member.id = :memberId
+    ORDER BY jp.deadline asc
+""")
+    List<JobPosting> findAllByMemberId(@Param("memberId") Long memberId);
 
     @Query("""
     select jpb

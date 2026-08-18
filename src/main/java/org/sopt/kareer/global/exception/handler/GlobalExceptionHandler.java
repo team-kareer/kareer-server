@@ -44,8 +44,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public BaseErrorResponse handleInternalServerError(Exception e) {
+    public BaseErrorResponse handleInternalServerError(Exception e, HttpServletRequest request) {
         log.error(e.getMessage(), e);
+        DiscordEmbedMessage message = DiscordEmbedMessageBuilder.buildDiscordEmbedMessage(e, request, activeProfile);
+        discordClient.send(webhookUrl, message);
         return BaseErrorResponse.of(INTERNAL_SERVER_ERROR, e.getMessage());
     }
 

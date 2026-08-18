@@ -10,7 +10,12 @@ import org.sopt.kareer.domain.roadmap.dto.response.RoadmapPhaseDetailResponse;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseStatus;
 import org.sopt.kareer.domain.roadmap.exception.RoadMapException;
 import org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode;
+import org.sopt.kareer.domain.roadmap.facade.PhaseFacade;
 import org.sopt.kareer.support.ControllerTestSupport;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,7 +28,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@WebMvcTest(PhaseController.class)
+@AutoConfigureMockMvc(addFilters = false)
+@ActiveProfiles("test")
 class PhaseControllerTest extends ControllerTestSupport {
+
+    @MockBean
+    private PhaseFacade phaseFacade;
 
     @DisplayName("Phase 리스트를 성공적으로 조회한다.")
     @Test
@@ -40,12 +51,12 @@ class PhaseControllerTest extends ControllerTestSupport {
                 LocalDate.of(2025, 5, 31)
         );
 
-        given(phaseService.getPhases(any())).willReturn(
+        given(phaseFacade.getPhases(any())).willReturn(
                 new PhaseListResponse(List.of(phase1))
         );
 
         // when & then
-        mockMvc.perform(get("/api/v1/phases"))
+        mockMvc.perform(get("/api/v1/roadmap/phases"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Phase 리스트가 조회되었습니다."))
@@ -66,7 +77,6 @@ class PhaseControllerTest extends ControllerTestSupport {
             // given
             Long phaseId = 1L;
 
-            // ActionResponse 리스트 생성
             List<RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse> actionsList = List.of(
                     new RoadmapPhaseDetailResponse.ActionGroupResponse.ActionResponse(
                             1L,
@@ -77,19 +87,17 @@ class PhaseControllerTest extends ControllerTestSupport {
                     )
             );
 
-            // ActionGroupResponse 맵 생성
             Map<String, RoadmapPhaseDetailResponse.ActionGroupResponse> actionsMap = Map.of(
                     "Visa", new RoadmapPhaseDetailResponse.ActionGroupResponse(1L, actionsList)
             );
 
-            // Response 생성
             RoadmapPhaseDetailResponse response = new RoadmapPhaseDetailResponse(1L, actionsMap);
 
-            given(phaseService.getRoadmapPhaseDetail(any(), eq(phaseId)))
+            given(phaseFacade.getRoadmapPhaseDetail(any(), eq(phaseId)))
                     .willReturn(response);
 
             // when & then
-            mockMvc.perform(get("/api/v1/phases/{phaseId}/roadmap", phaseId))
+            mockMvc.perform(get("/api/v1/roadmap/phases/{phaseId}", phaseId))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.message").value("로드맵 Phase 상세정보가 조회되었습니다."))
@@ -104,11 +112,11 @@ class PhaseControllerTest extends ControllerTestSupport {
             // given
             Long phaseId = 0L;
 
-            given(phaseService.getRoadmapPhaseDetail(any(), eq(phaseId)))
+            given(phaseFacade.getRoadmapPhaseDetail(any(), eq(phaseId)))
                     .willThrow(new RoadMapException(RoadmapErrorCode.PHASE_NOT_FOUND));
 
             // when & then
-            mockMvc.perform(get("/api/v1/phases/{phaseId}/roadmap", phaseId))
+            mockMvc.perform(get("/api/v1/roadmap/phases/{phaseId}", phaseId))
                     .andDo(print())
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.message").value(RoadmapErrorCode.PHASE_NOT_FOUND.getMessage()));
@@ -134,11 +142,11 @@ class PhaseControllerTest extends ControllerTestSupport {
 
             HomePhaseDetailResponse response = new HomePhaseDetailResponse(1L, List.of(action));
 
-            given(phaseService.getHomePhaseDetail(any(), eq(phaseId)))
+            given(phaseFacade.getHomePhaseDetail(any(), eq(phaseId)))
                     .willReturn(response);
 
             // when & then
-            mockMvc.perform(get("/api/v1/phases/{phaseId}/home", phaseId))
+            mockMvc.perform(get("/api/v1/roadmap/phases/{phaseId}/home", phaseId))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.message").value("홈 Phase 상세정보가 조회되었습니다."))
@@ -154,11 +162,11 @@ class PhaseControllerTest extends ControllerTestSupport {
             // given
             Long phaseId = 0L;
 
-            given(phaseService.getHomePhaseDetail(any(), eq(phaseId)))
+            given(phaseFacade.getHomePhaseDetail(any(), eq(phaseId)))
                     .willThrow(new RoadMapException(RoadmapErrorCode.PHASE_NOT_FOUND));
 
             // when & then
-            mockMvc.perform(get("/api/v1/phases/{phaseId}/home", phaseId))
+            mockMvc.perform(get("/api/v1/roadmap/phases/{phaseId}/home", phaseId))
                     .andDo(print())
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.message").value(RoadmapErrorCode.PHASE_NOT_FOUND.getMessage()));

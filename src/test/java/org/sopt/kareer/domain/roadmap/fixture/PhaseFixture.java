@@ -1,8 +1,8 @@
 package org.sopt.kareer.domain.roadmap.fixture;
 
-import org.sopt.kareer.domain.member.entity.Member;
-import org.sopt.kareer.domain.roadmap.entity.Phase;
+import org.sopt.kareer.domain.roadmap.entity.Roadmap;
 import org.sopt.kareer.domain.roadmap.entity.enums.PhaseStatus;
+import org.sopt.kareer.domain.roadmap.entity.phase.Phase;
 
 import java.time.LocalDate;
 
@@ -13,7 +13,7 @@ public class PhaseFixture {
     public static final LocalDate START_DATE = LocalDate.of(2026, 6, 1);
     public static final LocalDate END_DATE = LocalDate.of(2026, 8, 31);
 
-    public static Phase getPhase(Member member, int sequence, PhaseStatus phaseStatus) {
-        return Phase.create(member, sequence, GOAL, DESCRIPTION, phaseStatus, START_DATE, END_DATE);
+    public static Phase getPhase(Roadmap roadmap, int sequence, PhaseStatus phaseStatus) {
+        return Phase.create(roadmap, sequence, GOAL, DESCRIPTION, phaseStatus, START_DATE, END_DATE);
     }
 }

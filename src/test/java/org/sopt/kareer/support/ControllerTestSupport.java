@@ -1,17 +1,7 @@
 package org.sopt.kareer.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.sopt.kareer.domain.jobposting.controller.JobPostingController;
-import org.sopt.kareer.domain.jobposting.service.JobPostingCrawler;
-import org.sopt.kareer.domain.jobposting.service.JobPostingService;
-import org.sopt.kareer.domain.member.controller.MemberController;
-import org.sopt.kareer.domain.member.service.MemberService;
-import org.sopt.kareer.domain.roadmap.controller.PhaseActionController;
-import org.sopt.kareer.domain.roadmap.controller.PhaseController;
-import org.sopt.kareer.domain.roadmap.service.PhaseActionService;
-import org.sopt.kareer.domain.roadmap.service.PhaseService;
-import org.sopt.kareer.domain.roadmap.service.RoadMapService;
-import org.sopt.kareer.global.auth.service.AuthService;
+import org.sopt.kareer.domain.member.service.MemberQueryService;
 import org.sopt.kareer.global.external.discord.client.DiscordClient;
 import org.sopt.kareer.global.jwt.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +21,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
-@WebMvcTest(controllers = {JobPostingController.class, MemberController.class, PhaseController.class, PhaseActionController.class},
-        excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE)
-        })
+@WebMvcTest(excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE)})
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 @Import(ControllerTestSupport.TestSecurityWebMvcConfig.class)
 public abstract class ControllerTestSupport {
+
     @Autowired
     protected MockMvc mockMvc;
 
@@ -45,34 +34,16 @@ public abstract class ControllerTestSupport {
     protected ObjectMapper objectMapper;
 
     @MockBean
-    protected JobPostingService jobPostingService;
-
-    @MockBean
-    protected JobPostingCrawler jobPostingCrawler;
-
-    @MockBean
     protected JwtTokenUtil jwtTokenUtil;
 
     @MockBean
-    protected MemberService memberService;
-
-    @MockBean
-    protected RoadMapService roadMapService;
+    protected MemberQueryService memberQueryService;
 
     @MockBean
     protected JpaMetamodelMappingContext mappingContext;
 
     @MockBean
     protected DiscordClient discordClient;
-
-    @MockBean
-    protected AuthService authService;
-
-    @MockBean
-    protected PhaseService phaseService;
-
-    @MockBean
-    protected PhaseActionService phaseActionService;
 
     @TestConfiguration
     static class TestSecurityWebMvcConfig implements WebMvcConfigurer {

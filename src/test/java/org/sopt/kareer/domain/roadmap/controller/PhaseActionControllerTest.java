@@ -6,7 +6,12 @@ import org.junit.jupiter.api.Test;
 import org.sopt.kareer.domain.roadmap.dto.response.AiGuideResponse;
 import org.sopt.kareer.domain.roadmap.exception.RoadMapException;
 import org.sopt.kareer.domain.roadmap.exception.RoadmapErrorCode;
+import org.sopt.kareer.domain.roadmap.facade.PhaseActionFacade;
 import org.sopt.kareer.support.ControllerTestSupport;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
@@ -18,7 +23,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WebMvcTest(PhaseActionController.class)
+@AutoConfigureMockMvc(addFilters = false)
+@ActiveProfiles("test")
 class PhaseActionControllerTest extends ControllerTestSupport {
+
+    @MockBean
+    private PhaseActionFacade phaseActionFacade;
 
     @Nested
     @DisplayName("Ai 가이드를 조회한다.")
@@ -36,11 +47,11 @@ class PhaseActionControllerTest extends ControllerTestSupport {
                     List.of("test-guideline-1", "test-guideline-2")
             );
 
-            given(phaseActionService.getAiGuide(any(),eq(phaseActionId)))
+            given(phaseActionFacade.getAiGuide(any(), eq(phaseActionId)))
                     .willReturn(response);
 
             // when & then
-            mockMvc.perform(get("/api/v1/phase-actions/{phaseActionId}/guide", phaseActionId))
+            mockMvc.perform(get("/api/v1/roadmap/phase-actions/{phaseActionId}/guide", phaseActionId))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.message").value("AI 가이드가 조회되었습니다."))
@@ -49,7 +60,6 @@ class PhaseActionControllerTest extends ControllerTestSupport {
                     .andExpect(jsonPath("$.data.mistakes.length()").value(2))
                     .andExpect(jsonPath("$.data.guidelines").isArray())
                     .andExpect(jsonPath("$.data.guidelines.length()").value(2));
-            ;
         }
 
         @Test
@@ -58,11 +68,11 @@ class PhaseActionControllerTest extends ControllerTestSupport {
             // given
             Long phaseActionId = 0L;
 
-            given(phaseActionService.getAiGuide(any(),eq(phaseActionId)))
+            given(phaseActionFacade.getAiGuide(any(), eq(phaseActionId)))
                     .willThrow(new RoadMapException(RoadmapErrorCode.PHASE_ACTION_NOT_FOUND));
 
             // when & then
-            mockMvc.perform(get("/api/v1/phase-actions/{phaseActionId}/guide", phaseActionId))
+            mockMvc.perform(get("/api/v1/roadmap/phase-actions/{phaseActionId}/guide", phaseActionId))
                     .andDo(print())
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.message").value(RoadmapErrorCode.PHASE_ACTION_NOT_FOUND.getMessage()));

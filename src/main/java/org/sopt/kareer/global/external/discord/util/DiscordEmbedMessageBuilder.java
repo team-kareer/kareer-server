@@ -46,6 +46,27 @@ public class DiscordEmbedMessageBuilder {
                 .build();
     }
 
+    public static DiscordEmbedMessage buildDiscordEmbedMessage(Exception e, HttpServletRequest request, String profile) {
+        String method = request.getMethod();
+        String url = getRequestUrl(request);
+        String timestamp = LocalDateTime.now().toString();
+        String title = "🚨 500 Internal Server Error (" + profile + ")";
+        String stackTrace = truncate(getStackTrace(e), DiscordConstants.MAX_TRACE_LENGTH);
+
+        return DiscordEmbedMessage.builder()
+                .content("# 🔥레전드 상황 발생!!!!")
+                .embed(DiscordEmbedMessage.Embed.builder()
+                        .title(title)
+                        .description(" **500 에러 발생** ")
+                        .field(field("Exception", e.getClass().getSimpleName(), true))
+                        .field(field("Message", truncate(e.getMessage(), DiscordConstants.MAX_MESSAGE_LENGTH), false))
+                        .field(field("Request", "`" + method + " " + truncate(url, DiscordConstants.MAX_URL_LENGTH) + "`", false))
+                        .field(field("Time", "`" + timestamp + "`", true))
+                        .field(field("Stacktrace", "```" + stackTrace + "```", false))
+                        .build())
+                .build();
+    }
+
     private static DiscordEmbedMessage.Field field(String name, String value, boolean inline) {
         return DiscordEmbedMessage.Field.builder()
                 .name(name)

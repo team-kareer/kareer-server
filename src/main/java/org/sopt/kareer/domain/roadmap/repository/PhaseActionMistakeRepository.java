@@ -1,6 +1,6 @@
 package org.sopt.kareer.domain.roadmap.repository;
 
-import org.sopt.kareer.domain.roadmap.entity.PhaseActionMistake;
+import org.sopt.kareer.domain.roadmap.entity.phaseaction.PhaseActionMistake;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,5 +17,5 @@ public interface PhaseActionMistakeRepository extends JpaRepository<PhaseActionM
     """)
     List<String> findContentByPhaseActionId(@Param("phaseActionId") Long phaseActionId);
 
-    void deleteAllByPhaseAction_Phase_Member_Id(Long memberId);
+    void deleteAllByPhaseAction_Phase_Roadmap_Member_Id(Long memberId);
 }

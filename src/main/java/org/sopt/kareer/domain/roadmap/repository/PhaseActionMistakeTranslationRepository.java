@@ -1,6 +1,6 @@
 package org.sopt.kareer.domain.roadmap.repository;
 
-import org.sopt.kareer.domain.roadmap.entity.PhaseActionMistakeTranslation;
+import org.sopt.kareer.domain.roadmap.entity.phaseaction.PhaseActionMistakeTranslation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,6 +23,6 @@ public interface PhaseActionMistakeTranslationRepository extends JpaRepository<P
 
     void deleteAllByMistake_PhaseAction_IdInAndLanguage(List<Long> phaseActionIds, String language);
 
-    void deleteAllByMistake_PhaseAction_Phase_Member_Id(Long memberId);
+    void deleteAllByMistake_PhaseAction_Phase_Roadmap_Member_Id(Long memberId);
 
 }
