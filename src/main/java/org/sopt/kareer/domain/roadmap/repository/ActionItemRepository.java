@@ -24,16 +24,17 @@ public interface ActionItemRepository extends JpaRepository<ActionItem, Long> {
 
     void deleteAllByMemberId(Long memberId);
 
-    @Modifying
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("""
         UPDATE ActionItem ai
-        SET ai.status = 'INACTIVE'
-        WHERE ai.phaseAction.id IN (
+        SET ai.phaseAction = NULL
+        WHERE ai.status = 'ACTIVE'
+          AND ai.phaseAction.id IN (
             SELECT pa.id FROM PhaseAction pa
             WHERE pa.phase.id IN (
                 SELECT p.id FROM Phase p WHERE p.roadmap.id = :roadmapId
             )
         )
     """)
-    void deactivateAllByRoadmapId(@Param("roadmapId") Long roadmapId);
+    void detachActiveItemsByRoadmapId(@Param("roadmapId") Long roadmapId);
 }
