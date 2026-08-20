@@ -1,8 +1,13 @@
 package org.sopt.kareer.domain.roadmap.facade;
 
 import lombok.RequiredArgsConstructor;
+import org.sopt.kareer.domain.member.entity.Member;
+import org.sopt.kareer.domain.member.service.MemberQueryService;
+import org.sopt.kareer.domain.roadmap.dto.request.ActionItemCreateRequest;
+import org.sopt.kareer.domain.roadmap.dto.request.ActionItemUpdateRequest;
 import org.sopt.kareer.domain.roadmap.dto.response.ActionItemListResponse;
 import org.sopt.kareer.domain.roadmap.dto.response.ActionItemResponse;
+import org.sopt.kareer.domain.roadmap.entity.actionitem.ActionItem;
 import org.sopt.kareer.domain.roadmap.entity.enums.ActionItemType;
 import org.sopt.kareer.domain.roadmap.service.actionitem.ActionItemCommandService;
 import org.sopt.kareer.domain.roadmap.service.actionitem.ActionItemQueryService;
@@ -19,6 +24,39 @@ public class ActionItemFacade {
 
     private final ActionItemQueryService actionItemQueryService;
     private final ActionItemCommandService actionItemCommandService;
+    private final MemberQueryService memberQueryService;
+
+    @Transactional
+    public ActionItemResponse createActionItem(Long memberId, ActionItemCreateRequest request) {
+        Member member = memberQueryService.getMemberById(memberId);
+        ActionItem created = actionItemCommandService.createActionItem(
+                member,
+                ActionItemType.from(request.type()),
+                request.title(),
+                request.deadline()
+        );
+        return ActionItemResponse.from(created);
+    }
+
+    @Transactional
+    public ActionItemResponse updateActionItem(
+            Long memberId,
+            Long actionItemId,
+            ActionItemUpdateRequest request
+    ) {
+        ActionItem updated = actionItemCommandService.updateActionItem(
+                memberId,
+                actionItemId,
+                request.title(),
+                request.deadline()
+        );
+        return ActionItemResponse.from(updated);
+    }
+
+    @Transactional
+    public void deleteActionItem(Long memberId, Long actionItemId) {
+        actionItemCommandService.deleteActionItem(memberId, actionItemId);
+    }
 
     @Transactional
     public void toggleCompletion(Long memberId, Long actionItemId) {

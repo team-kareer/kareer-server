@@ -47,7 +47,7 @@ public class ActionItem extends BaseEntity {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "phase_actions_id", nullable = false)
+    @JoinColumn(name = "phase_actions_id")
     private PhaseAction phaseAction;
 
     @Builder
@@ -70,6 +70,32 @@ public class ActionItem extends BaseEntity {
                 .member(member)
                 .phaseAction(phaseAction)
                 .build();
+    }
+
+    public static ActionItem createUserActionItem(
+            String title,
+            ActionItemType actionsType,
+            LocalDate deadline,
+            Member member
+    ) {
+        return ActionItem.builder()
+                .title(title)
+                .actionsType(actionsType)
+                .deadline(deadline)
+                .status(ActionItemStatus.ACTIVE)
+                .completed(false)
+                .member(member)
+                .phaseAction(null)
+                .build();
+    }
+
+    public void update(String title, LocalDate deadline) {
+        if (title != null) {
+            this.title = title;
+        }
+        if (deadline != null) {
+            this.deadline = deadline;
+        }
     }
 
     public void toggleCompletion() {
