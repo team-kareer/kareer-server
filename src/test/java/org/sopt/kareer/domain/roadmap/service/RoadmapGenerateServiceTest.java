@@ -8,6 +8,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.sopt.kareer.domain.member.entity.Member;
 import org.sopt.kareer.domain.member.entity.MemberVisa;
+import org.sopt.kareer.domain.roadmap.entity.Roadmap;
+import org.sopt.kareer.domain.roadmap.entity.enums.RoadmapActiveStatus;
 import org.sopt.kareer.domain.roadmap.progress.RoadmapGenerationStep;
 import org.sopt.kareer.domain.roadmap.progress.RoadmapProgressNotifier;
 import org.sopt.kareer.domain.roadmap.repository.ActionItemRepository;
@@ -121,6 +123,33 @@ class RoadmapGenerateServiceTest {
         )).isInstanceOf(IllegalStateException.class);
 
         verify(progress).failed(RoadmapGenerationStep.POLICY_SEARCH);
+    }
+
+    @Test
+    void 로드맵을_재생성하면_기존_활성_Todo를_유지하고_PhaseAction_연결을_해제한다() {
+        Roadmap existingRoadmap = Roadmap.builder()
+                .id(20L)
+                .status(RoadmapActiveStatus.ACTIVE)
+                .member(member)
+                .build();
+        given(member.getId()).willReturn(1L);
+        given(roadmapRepository.findByMember_IdAndStatus(1L, RoadmapActiveStatus.ACTIVE))
+                .willReturn(Optional.of(existingRoadmap));
+        given(memberContextBuilder.load(1L))
+                .willReturn(new MemberContextBuilder.MemberAndContext(member, "member-context"));
+        given(requiredRetriever.retrieveVisaAll(visa)).willReturn(List.of());
+        given(requiredRetriever.retrieveCareer(member))
+                .willReturn(new RequiredDocumentRetriever.CareerSelectedDocs(
+                        List.of(),
+                        List.of(),
+                        List.of()
+                ));
+        given(policyDocumentRetriever.retrievePolicy(member, visa)).willReturn(List.of());
+
+        roadmapGenerateService.prepareGeneration(member, visa, progress);
+
+        verify(actionItemRepository).detachActiveItemsByRoadmapId(20L);
+        assertThat(existingRoadmap.getStatus()).isEqualTo(RoadmapActiveStatus.INACTIVE);
     }
 
 }

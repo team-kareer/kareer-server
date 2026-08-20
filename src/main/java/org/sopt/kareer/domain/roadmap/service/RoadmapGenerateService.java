@@ -46,7 +46,7 @@ public class RoadmapGenerateService {
         try {
             roadmapRepository.findByMember_IdAndStatus(member.getId(), RoadmapActiveStatus.ACTIVE)
                     .ifPresent(existing -> {
-                        actionItemRepository.deactivateAllByRoadmapId(existing.getId());
+                        actionItemRepository.detachActiveItemsByRoadmapId(existing.getId());
                         existing.deactivate();
                     });
 
