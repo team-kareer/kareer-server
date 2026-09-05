@@ -1,0 +1,60 @@
+# Promtail이 로그를 어디까지 읽었는지 기록
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://${MONITORING_HOST}:3100/loki/api/v1/push  # 모니터링 서버의 Loki 주소
+scrape_configs:
+  - job_name: info_blue
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: info_logs
+          deployment: blue
+          __path__: /app/logs/blue/info/*.log
+
+  - job_name: info_green
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: info_logs
+          deployment: green
+          __path__: /app/logs/green/info/*.log
+
+  - job_name: warn_blue
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: warn_logs
+          deployment: blue
+          __path__: /app/logs/blue/warn/*.log
+
+  - job_name: warn_green
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: warn_logs
+          deployment: green
+          __path__: /app/logs/green/warn/*.log
+
+  - job_name: error_blue
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: error_logs
+          deployment: blue
+          __path__: /app/logs/blue/error/*.log
+
+  - job_name: error_green
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: error_logs
+          deployment: green
+          __path__: /app/logs/green/error/*.log
