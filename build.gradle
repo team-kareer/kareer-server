@@ -129,5 +129,22 @@ jib {
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        excludeTags 'ragas-eval'
+    }
+}
+
+tasks.register('ragasEval', Test) {
+    group = 'verification'
+    description = 'Runs the Spring AI-native RAGAS-equivalent evaluation against the Policy/Required Document RAG pipelines. Requires real Postgres+pgvector+OpenAI (local profile).'
+    useJUnitPlatform {
+        includeTags 'ragas-eval'
+    }
+    testLogging {
+        showStandardStreams = true
+        events 'passed', 'failed', 'skipped'
+    }
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    outputs.upToDateWhen { false }
 }

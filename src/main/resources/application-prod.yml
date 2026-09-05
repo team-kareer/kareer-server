@@ -51,6 +51,7 @@ spring:
       career-guide-top-k: 4
       career-todo-top-k: 6
       candidate-pool-top-k: 30
+      career-domain-min-similarity: 0.1
   security:
     oauth2:
       client:

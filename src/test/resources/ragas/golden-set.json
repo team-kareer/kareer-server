@@ -1,0 +1,11 @@
+[
+  {
+    "caseId": "policy-d2-backend-bachelor",
+    "description": "D-2 유학생, 마케팅 취업 목표, 경영학 학사 졸업예정",
+    "targetJob": "마케팅",
+    "degreeCode": "south-korea-bachelor",
+    "expectedGraduationDate": "2027-02-28",
+    "visaType": "D2",
+    "referenceAnswer": "TODO: 실제 임베딩된 정책 문서를 확인한 뒤, 이 프로필(D-2, 백엔드 개발자, 학사 졸업예정)에 대해 정책상 안내되어야 할 핵심 내용을 사람이 직접 요약해서 채워 넣을 것 (예: 졸업 후 구직활동 비자 전환 요건, 취업 가능 비자 종류 등)."
+  }
+]
