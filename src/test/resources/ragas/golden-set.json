@@ -1,38 +1,11 @@
 [
   {
     "caseId": "policy-d2-backend-bachelor",
-    "description": "D-2 유학생, 백엔드 개발자 취업 목표, 학사 졸업예정",
-    "targetJob": "백엔드 개발자",
+    "description": "D-2 유학생, 마케팅 취업 목표, 경영학 학사 졸업예정",
+    "targetJob": "마케팅",
     "degreeCode": "south-korea-bachelor",
     "expectedGraduationDate": "2027-02-28",
     "visaType": "D2",
     "referenceAnswer": "TODO: 실제 임베딩된 정책 문서를 확인한 뒤, 이 프로필(D-2, 백엔드 개발자, 학사 졸업예정)에 대해 정책상 안내되어야 할 핵심 내용을 사람이 직접 요약해서 채워 넣을 것 (예: 졸업 후 구직활동 비자 전환 요건, 취업 가능 비자 종류 등)."
-  },
-  {
-    "caseId": "required-doc-d10-jobseeking",
-    "description": "D-10 구직비자 소지자, 비자 연장/전환에 필요한 서류 문의",
-    "targetJob": "백엔드 개발자",
-    "degreeCode": "south-korea-bachelor",
-    "expectedGraduationDate": "2026-02-28",
-    "visaType": "D10",
-    "referenceAnswer": "TODO: 실제 임베딩된 D-10 필수서류 문서를 확인한 뒤, 비자 연장/전환에 필요한 서류 체크리스트를 사람이 직접 요약해서 채워 넣을 것."
-  },
-  {
-    "caseId": "policy-e7-it-engineer",
-    "description": "E-7 취업비자 소지, IT 엔지니어로 재직 중",
-    "targetJob": "IT 엔지니어",
-    "degreeCode": "south-korea-master",
-    "expectedGraduationDate": "2025-08-31",
-    "visaType": "E7",
-    "referenceAnswer": "TODO: 실제 임베딩된 정책 문서를 확인한 뒤, E-7 취업비자·IT 직군 프로필에 대해 정책상 안내되어야 할 핵심 내용을 사람이 직접 요약해서 채워 넣을 것."
-  },
-  {
-    "caseId": "required-doc-e7-career-extension",
-    "description": "E-7 취업비자 소지자, 커리어(이직/연장) 관련 필수서류 문의",
-    "targetJob": "IT 엔지니어",
-    "degreeCode": "south-korea-master",
-    "expectedGraduationDate": "2025-08-31",
-    "visaType": "E7",
-    "referenceAnswer": "TODO: 실제 임베딩된 커리어 필수서류 문서를 확인한 뒤, 이직/연장 시 필요한 서류·절차를 사람이 직접 요약해서 채워 넣을 것."
   }
 ]
